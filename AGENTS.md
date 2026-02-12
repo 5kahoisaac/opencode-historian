@@ -4,7 +4,7 @@ This document provides guidelines for AI agents operating in this repository.
 
 ## Project Overview
 
-**pencode-historian** - mnemonics agent for OpenCode powered by qmd. Built with TypeScript, Bun, and Biome.
+**pencode-historian** - "Historian" agent with mnemonics for OpenCode powered by qmd.
 
 ## Commands
 
