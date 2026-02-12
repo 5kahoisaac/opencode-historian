@@ -8,10 +8,10 @@
 ### Core Infrastructure
 
 - [ ] **CORE-01**: MCP server registers tools with OpenCode
-- [ ] **CORE-02**: Global memory storage at `~/.config/opencode/memory/`
-- [ ] **CORE-03**: Project-scoped memory storage at `.opencode/memory/` (configurable)
+- [ ] **CORE-02**: Global memory storage at `~/.opencode/mnemonics/` (fixed path)
+- [ ] **CORE-03**: Project-scoped memory storage at `.mnemonics/`
 - [ ] **CORE-04**: Markdown files with YAML frontmatter format
-- [ ] **CORE-05**: bun:sqlite for metadata and indexing
+- [ ] ~~**CORE-05**: bun:sqlite for metadata and indexing~~ — Removed (rely on qmd for indexing)
 - [ ] **CORE-06**: qmd collection naming uses folder name: `{folder_name}/mnemonics/{memory_type}`
 
 ### Memory Operations (OpenCode Custom Tools)
