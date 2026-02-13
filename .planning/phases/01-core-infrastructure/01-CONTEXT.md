@@ -1,7 +1,7 @@
 # Phase 1: Core Infrastructure - Context
 
 **Gathered:** 2026-02-13
-**Status:** In progress — discussion paused
+**Status:** In progress — discussion paused (session 2)
 
 <domain>
 ## Phase Boundary
@@ -35,16 +35,41 @@ Plugin foundation with MCP registration, storage layers, configuration, and proj
 - **File naming:** Title-based (e.g., `my-decision.md`)
 - **Collision handling:** Prompt user with options (keep both, overwrite, combine)
 
-### Configuration Options (Phase 1)
-- **externalPaths:** `string[]` — additional read-only memory sources (default: `[]`)
-- **memoryTypes:** `custom[]` — extend default 9 memory types (default: `[]`)
-- **autoCompound:** `boolean` — enable/disable auto-compound prompt (default: `true`)
-- **Config format:** Support both `.json` and `.jsonc` formats
+### Configuration Schema (Extended)
+Flat structure with the following fields:
+
+```typescript
+interface PluginConfig {
+  // Agent config
+  model: string;
+  temperature?: number;
+  appendPrompt?: string;
+  
+  // Storage config
+  externalPaths?: string[];
+  memoryTypes?: CustomMemoryType[];
+  
+  // Behavior config
+  autoCompound?: boolean;  // default: true
+  
+  // Debug config
+  logLevel?: 'debug' | 'info' | 'warn' | 'error';
+  debug?: boolean;
+}
+```
+
+**Config file format:** Support both `.json` and `.jsonc`
+
+### Tool Restrictions
+- Memory tools restricted to historian subagent only (not accessible by main agent)
+- Implementation: Agent-scoped registration — memory tools only registered in historian agent config, not globally
+- **Still to decide:** Can main agent delegate to @historian for memory operations?
 
 ### Claude's Discretion
-- Exact config file schema structure
+- Exact config file schema TypeScript interface
 - Error messages for invalid config
 - Logging/debug output format
+- Validation error handling
 
 </decisions>
 
@@ -69,12 +94,11 @@ Plugin foundation with MCP registration, storage layers, configuration, and proj
 ## Still to Discuss
 
 - [ ] Historian agent setup (prompts, model)
-- [ ] Tool restrictions (how to restrict memory tools to historian only)
-- [ ] Configuration schema details
+- [ ] Tool restrictions — delegation question: Can main agent delegate to @historian for memory operations?
 
 </pending>
 
 ---
 
 *Phase: 01-core-infrastructure*
-*Context gathered: 2026-02-13 (paused)*
+*Context gathered: 2026-02-13 (session 2 paused)*
