@@ -20,21 +20,30 @@ All memory operations are implemented as OpenCode custom tools following the `To
 
 **Design Principle:** Read actions use qmd MCP tools (lightweight, safe). Write actions use qmd CLI commands. ALL qmd operations MUST include `--index {folder_name}`.
 
+**Scope Constraint:** This is a project-scope plugin. Write operations (remember, compound, forget) MUST ONLY operate on files inside `.mnemonics/**/*`. This protects global collection (`~/.config/opencode/mnemonics/`) and external materials from accidental modification. Read operations (recall) can access all sources.
+
 - [ ] **CRUD-01**: `memory_remember` — Create memory file, add to qmd collection
   - LLM determines memory type, saves to corresponding path
+  - MUST ONLY save to `.mnemonics/**/*` (project scope)
   - Runs: `qmd collection add .mnemonics/{memory_type} --name {memory_type} --index {folder_name} --mask "**/*.md"`
 - [ ] **CRUD-02**: ~~`memory_list`~~ — Removed (causes excessive token usage)
 - [ ] **CRUD-03**: `memory_recall` — Query/search memories via qmd MCP tools
+  - LLM determines memory type from user prompt → search with collection filter
   - Uses MCP tool: `qmd_vsearch` (semantic + keyword hybrid search)
   - Reference: https://github.com/tobi/qmd?tab=readme-ov-file#mcp-server
-  - Query by collection (memory type) and index (folder_name)
+  - Can read from all sources (project, global, external)
 - [ ] **CRUD-04**: `memory_compound` — Merge new content into existing memory
   - LLM finds memory location via `qmd_vsearch` MCP tool
   - If no match: call `memory_remember`
-  - If match: compound content into existing file (ONLY files inside `.mnemonics/**/*.md`)
+  - If match: compound content into existing file
+  - MUST ONLY modify files inside `.mnemonics/**/*` (project scope)
   - Update index: `qmd update --index {folder_name}`, verify: `qmd status`
-- [ ] **CRUD-05**: `memory_forget` — Delete memory file and update qmd index
-  - Delete file (e.g., `rm .mnemonics/decision/architectural/old-record.md`)
+- [ ] **CRUD-05**: `memory_forget` — Delete memory file with user confirmation
+  - Use `qmd_search` MCP tool with keyword to find related files
+  - Show related files to user
+  - Ask user confirmation before deletion
+  - After confirmation: delete file via `rm`
+  - MUST ONLY delete files inside `.mnemonics/**/*` (project scope)
   - Update index: `qmd update --index {folder_name}`, verify: `qmd status`
 
 ### System Integration

@@ -28,7 +28,7 @@ Plugin foundation with MCP registration, storage layers, configuration, and proj
 - Background tasks: Deferred to Phase 5/6 (add when needed for QMD indexing/compounding)
 
 ### Storage Structure
-- **Global memory path:** `~/.opencode/mnemonics/` — FIXED, not configurable
+- **Global memory path:** `~/.config/opencode/mnemonics/` — FIXED, not configurable
 - **Project memory path:** `.mnemonics/` — always relative to project root
 - **External paths:** Configured in global + project config, project scope overrides global
 - **SQLite:** REMOVED — rely on qmd for all indexing/search
@@ -71,12 +71,14 @@ interface PluginConfig {
 - **Design principle:** Read actions use qmd MCP tools (lightweight, safe). Write actions use qmd CLI commands.
 - **ALL qmd operations MUST include** `--index {folder_name}` option
 
-| Operation | Tool Type | Command/Tool |
-|-----------|-----------|--------------|
-| `memory_recall` | MCP tool | `qmd_vsearch` (semantic + keyword hybrid) |
-| `memory_remember` | CLI | `qmd collection add ... --index {folder_name}` |
-| `memory_compound` | MCP + CLI | `qmd_vsearch` → file ops → `qmd update --index {folder_name}` |
-| `memory_forget` | CLI | file delete → `qmd update --index {folder_name}` |
+**Scope Constraint:** This is a project-scope plugin. Write operations (remember, compound, forget) MUST ONLY operate on files inside `.mnemonics/**/*`. This protects global collection (`~/.config/opencode/mnemonics/`) and external materials from accidental modification. Read operations (recall) can access all sources.
+
+| Operation | Tool Type | Command/Tool | Scope |
+|-----------|-----------|--------------|-------|
+| `memory_recall` | MCP tool | `qmd_vsearch` (LLM determines memory type → collection filter) | All sources |
+| `memory_remember` | CLI | `qmd collection add ... --index {folder_name}` | `.mnemonics/**/*` ONLY |
+| `memory_compound` | MCP + CLI | `qmd_vsearch` → file ops → `qmd update --index {folder_name}` | `.mnemonics/**/*` ONLY |
+| `memory_forget` | MCP + CLI | `qmd_search` → user confirm → `rm` → `qmd update --index {folder_name}` | `.mnemonics/**/*` ONLY |
 
 ### Claude's Discretion
 - Exact config file schema TypeScript interface
