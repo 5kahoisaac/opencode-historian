@@ -1,6 +1,6 @@
 # Phase 1: Core Infrastructure - Context
 
-**Gathered:** 2026-02-13
+**Gathered:** 2026-02-16
 **Status:** Ready for planning
 
 <domain>
@@ -23,7 +23,7 @@ Plugin foundation with MCP registration, storage layers, configuration, and proj
 ### Plugin Entry Point
 - Export full plugin object (agents, tools, config, hooks, events)
 - Plugin name: `opencode-historian`
-- Config location: User-level first (~/.opencode/opencode-historian.json or .jsonc), project-level overrides (.opencode/opencode-historian.json or .jsonc)
+- Config location: User-level first (`~/.opencode/opencode-historian.json` or `.jsonc`), project-level overrides (`.opencode/opencode-historian.json` or `.jsonc`)
 - Hooks: Minimal stub event handler for Phase 1 (full hooks added in later phases)
 - Background tasks: Deferred to Phase 5/6 (add when needed for QMD indexing/compounding)
 
@@ -35,14 +35,14 @@ Plugin foundation with MCP registration, storage layers, configuration, and proj
 - **File naming:** Title-based (e.g., `my-decision.md`)
 - **Collision handling:** Prompt user with options (keep both, overwrite, combine)
 
-### Configuration Schema (Extended)
+### Configuration Schema
 Flat structure with the following fields:
 
 ```typescript
 interface PluginConfig {
   // Agent config
   model: string;
-  temperature?: number;
+  temperature?: number;      // default: 0.3
   appendPrompt?: string;
   
   // Storage config
@@ -50,7 +50,7 @@ interface PluginConfig {
   memoryTypes?: CustomMemoryType[];
   
   // Behavior config
-  autoCompound?: boolean;  // default: true
+  autoCompound?: boolean;    // default: true
   
   // Debug config
   logLevel?: 'debug' | 'info' | 'warn' | 'error';
@@ -60,14 +60,42 @@ interface PluginConfig {
 
 **Config file format:** Support both `.json` and `.jsonc`
 
+### Historian Agent Configuration
+```typescript
+{
+  name: 'historian',
+  model: 'opencode/kimi-k2.5-free',  // Primary model
+  fallbackModels: [
+    'opencode/gpt-5-nano',
+    'opencode/big-pickle'
+  ],
+  temperature: 0.3,  // Balanced creativity for memory expansion
+  description: 'Memory management specialist for contextual information',
+  tools: ['memory_remember', 'memory_recall', 'memory_compound', 'memory_forget']
+}
+```
+
+**Temperature rationale (0.3):**
+- Creative enough to expand on user thoughts (add examples, ask clarifying questions)
+- Focused enough to stay on-topic and relevant to memory context
+- Example: "Remember camelCase for naming" → agent asks clarifying questions and provides examples
+
+**Prompt strategy:**
+- Base prompt defines historian's role and tool usage guidelines
+- `appendPrompt` from config allows user customization
+- Prompt emphasizes: scope awareness, format constraints, delegation policy, confirmation for destructive ops
+
 ### Tool Restrictions
 - Memory tools restricted to historian subagent only (not accessible by main agent)
 - Implementation: Agent-scoped registration — memory tools only registered in historian agent config, not globally
-- **Delegation policy:**
-  - `memory_recall` — **Delegatable** (read-only, safe to delegate)
-  - `memory_remember` — **NOT delegatable** (write operation, requires explicit @historian)
-  - `memory_compound` — **NOT delegatable** (write operation, requires explicit @historian)
-  - `memory_forget` — **NOT delegatable** (write operation, requires explicit @historian)
+
+**Delegation policy:**
+| Tool | Delegatable | Reason |
+|------|-------------|--------|
+| `memory_recall` | ✅ Yes | Read-only, safe to delegate |
+| `memory_remember` | ❌ No | Write operation, requires explicit @historian |
+| `memory_compound` | ❌ No | Write operation, requires explicit @historian |
+| `memory_forget` | ❌ No | Write operation, requires explicit @historian |
 
 ### qmd Integration Design
 - **Index naming:** `{folder_name}` (e.g., `opencode-historian`)
@@ -75,13 +103,13 @@ interface PluginConfig {
 - **Design principle:** Read actions use qmd MCP tools (lightweight, safe). Write actions use qmd CLI commands.
 - **ALL qmd operations MUST include** `--index {folder_name}` option
 
-**Scope Constraint:** This is a project-scope plugin. Write operations (remember, compound, forget) MUST ONLY operate on files inside `.mnemonics/**/*`. This protects global collection (`~/.config/opencode/mnemonics/`) and external materials from accidental modification. Read operations (recall) can access all sources.
+**Scope Constraint:** Write operations (remember, compound, forget) MUST ONLY operate on files inside `.mnemonics/**/*`. This protects global collection (`~/.config/opencode/mnemonics/`) and external materials. Read operations (recall) can access all sources.
 
-**Format Constraint:** Memory files MUST be in `.md` (Markdown) format only. This ensures easy text-based compounding, human readability, git-friendliness, and full-text search indexing. External sources (read-only) can contain any format, but the plugin only indexes `.md` files.
+**Format Constraint:** Memory files MUST be `.md` format only. Ensures easy compounding, human readability, git-friendliness, and full-text search.
 
 | Operation | Tool Type | Command/Tool | Scope | Format |
 |-----------|-----------|--------------|-------|--------|
-| `memory_recall` | MCP tool | `qmd_vsearch` (LLM determines memory type → collection filter) | All sources | Any (but only .md indexed) |
+| `memory_recall` | MCP tool | `qmd_vsearch` | All sources | Any (only .md indexed) |
 | `memory_remember` | CLI | `qmd collection add ... --index {folder_name}` | `.mnemonics/**/*` ONLY | `.md` ONLY |
 | `memory_compound` | MCP + CLI | `qmd_vsearch` → file ops → `qmd update --index {folder_name}` | `.mnemonics/**/*` ONLY | `.md` ONLY |
 | `memory_forget` | MCP + CLI | `qmd_search` → user confirm → `rm` → `qmd update --index {folder_name}` | `.mnemonics/**/*` ONLY | `.md` ONLY |
@@ -111,43 +139,7 @@ interface PluginConfig {
 
 </deferred>
 
-<pending>
-## Historian Agent Setup (Decided)
-
-### Agent Configuration
-```typescript
-{
-  name: 'historian',
-  model: 'opencode/kimi-k2.5-free',  // Primary model
-  fallbackModels: [
-    'opencode/gpt-5-nano',
-    'opencode/big-pickle'
-  ],
-  temperature: 0.3,  // Balanced creativity for memory expansion
-  description: 'Memory management specialist for contextual information',
-  // Memory tools registered here (agent-scoped, not global)
-  tools: ['memory_remember', 'memory_recall', 'memory_compound', 'memory_forget']
-}
-```
-
-### Temperature Rationale
-- **0.3**: Sweet spot for memory tasks
-  - Creative enough to expand on user thoughts (add examples, ask clarifying questions)
-  - Focused enough to stay on-topic and relevant to the memory context
-  - Example behavior: When user says "Remember camelCase for naming", agent responds with clarifying questions and examples rather than just acknowledging
-
-### Prompt Strategy
-- Base prompt defines historian's role and tool usage guidelines
-- `appendPrompt` from config allows user customization
-- Prompt emphasizes:
-  - Scope awareness (.mnemonics/ for writes, all sources for reads)
-  - Format constraints (.md only for writes)
-  - Delegation policy (recall delegatable, writes require @historian)
-  - Confirmation for destructive operations (forget, overwrite)
-
-</pending>
-
 ---
 
 *Phase: 01-core-infrastructure*
-*Context gathered: 2026-02-13 (session 3 paused)*
+*Context gathered: 2026-02-16*
