@@ -63,7 +63,11 @@ interface PluginConfig {
 ### Tool Restrictions
 - Memory tools restricted to historian subagent only (not accessible by main agent)
 - Implementation: Agent-scoped registration — memory tools only registered in historian agent config, not globally
-- **Still to decide:** Can main agent delegate to @historian for memory operations?
+- **Delegation policy:**
+  - `memory_recall` — **Delegatable** (read-only, safe to delegate)
+  - `memory_remember` — **NOT delegatable** (write operation, requires explicit @historian)
+  - `memory_compound` — **NOT delegatable** (write operation, requires explicit @historian)
+  - `memory_forget` — **NOT delegatable** (write operation, requires explicit @historian)
 
 ### qmd Integration Design
 - **Index naming:** `{folder_name}` (e.g., `opencode-historian`)
@@ -111,7 +115,6 @@ interface PluginConfig {
 ## Still to Discuss
 
 - [ ] Historian agent setup (prompts, model)
-- [ ] Tool restrictions — delegation question: Can main agent delegate to @historian for memory operations?
 
 </pending>
 
