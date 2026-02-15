@@ -73,12 +73,14 @@ interface PluginConfig {
 
 **Scope Constraint:** This is a project-scope plugin. Write operations (remember, compound, forget) MUST ONLY operate on files inside `.mnemonics/**/*`. This protects global collection (`~/.config/opencode/mnemonics/`) and external materials from accidental modification. Read operations (recall) can access all sources.
 
-| Operation | Tool Type | Command/Tool | Scope |
-|-----------|-----------|--------------|-------|
-| `memory_recall` | MCP tool | `qmd_vsearch` (LLM determines memory type → collection filter) | All sources |
-| `memory_remember` | CLI | `qmd collection add ... --index {folder_name}` | `.mnemonics/**/*` ONLY |
-| `memory_compound` | MCP + CLI | `qmd_vsearch` → file ops → `qmd update --index {folder_name}` | `.mnemonics/**/*` ONLY |
-| `memory_forget` | MCP + CLI | `qmd_search` → user confirm → `rm` → `qmd update --index {folder_name}` | `.mnemonics/**/*` ONLY |
+**Format Constraint:** Memory files MUST be in `.md` (Markdown) format only. This ensures easy text-based compounding, human readability, git-friendliness, and full-text search indexing. External sources (read-only) can contain any format, but the plugin only indexes `.md` files.
+
+| Operation | Tool Type | Command/Tool | Scope | Format |
+|-----------|-----------|--------------|-------|--------|
+| `memory_recall` | MCP tool | `qmd_vsearch` (LLM determines memory type → collection filter) | All sources | Any (but only .md indexed) |
+| `memory_remember` | CLI | `qmd collection add ... --index {folder_name}` | `.mnemonics/**/*` ONLY | `.md` ONLY |
+| `memory_compound` | MCP + CLI | `qmd_vsearch` → file ops → `qmd update --index {folder_name}` | `.mnemonics/**/*` ONLY | `.md` ONLY |
+| `memory_forget` | MCP + CLI | `qmd_search` → user confirm → `rm` → `qmd update --index {folder_name}` | `.mnemonics/**/*` ONLY | `.md` ONLY |
 
 ### Claude's Discretion
 - Exact config file schema TypeScript interface

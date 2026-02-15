@@ -22,9 +22,18 @@ All memory operations are implemented as OpenCode custom tools following the `To
 
 **Scope Constraint:** This is a project-scope plugin. Write operations (remember, compound, forget) MUST ONLY operate on files inside `.mnemonics/**/*`. This protects global collection (`~/.config/opencode/mnemonics/`) and external materials from accidental modification. Read operations (recall) can access all sources.
 
+**Format Constraint:** Memory files MUST be in `.md` (Markdown) format only. This ensures:
+- Easy text-based compounding
+- Human readability
+- Git-friendliness
+- Full-text search indexing
+
+External sources (read-only) can contain any format (PDF, images, etc.), but the plugin only indexes `.md` files.
+
 - [ ] **CRUD-01**: `memory_remember` — Create memory file, add to qmd collection
   - LLM determines memory type, saves to corresponding path
   - MUST ONLY save to `.mnemonics/**/*` (project scope)
+  - MUST save as `.md` format only
   - Runs: `qmd collection add .mnemonics/{memory_type} --name {memory_type} --index {folder_name} --mask "**/*.md"`
 - [ ] **CRUD-02**: ~~`memory_list`~~ — Removed (causes excessive token usage)
 - [ ] **CRUD-03**: `memory_recall` — Query/search memories via qmd MCP tools
@@ -35,15 +44,17 @@ All memory operations are implemented as OpenCode custom tools following the `To
 - [ ] **CRUD-04**: `memory_compound` — Merge new content into existing memory
   - LLM finds memory location via `qmd_vsearch` MCP tool
   - If no match: call `memory_remember`
-  - If match: compound content into existing file
+  - If match: compound content into existing `.md` file (text-based merge)
   - MUST ONLY modify files inside `.mnemonics/**/*` (project scope)
+  - MUST ONLY modify `.md` files
   - Update index: `qmd update --index {folder_name}`, verify: `qmd status`
 - [ ] **CRUD-05**: `memory_forget` — Delete memory file with user confirmation
-  - Use `qmd_search` MCP tool with keyword to find related files
+  - Use `qmd_search` MCP tool with keyword to find related `.md` files
   - Show related files to user
   - Ask user confirmation before deletion
   - After confirmation: delete file via `rm`
   - MUST ONLY delete files inside `.mnemonics/**/*` (project scope)
+  - MUST ONLY delete `.md` files
   - Update index: `qmd update --index {folder_name}`, verify: `qmd status`
 
 ### System Integration
