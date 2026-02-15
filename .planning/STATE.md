@@ -2,7 +2,7 @@
 
 **Project:** opencode-historian  
 **Core Value:** AI agents can remember important context across conversations and sessions, enabling more coherent and personalized assistance.  
-**Last Updated:** 2026-02-13  
+**Last Updated:** 2026-02-16  
 
 ---
 
@@ -90,6 +90,12 @@ Success Criteria: 0/5 met
 | bun:sqlite | ✓ Locked | Built-in, zero dependencies |
 | qmd integration | ✓ Locked | Hybrid search (BM25 + vector) |
 | File-based storage | ✓ Locked | Human-readable, git-friendly |
+| Temperature | ✓ Locked | 0.3 (balanced creativity for memory expansion) |
+| Model fallback | ✓ Locked | kimi-k2.5-free → gpt-5-nano → big-pickle |
+| Write scope | ✓ Locked | .mnemonics/ only (protects global/external) |
+| Write format | ✓ Locked | .md only (git-friendly, compoundable) |
+| Read scope | ✓ Locked | All sources (global + project + external) |
+| qmd operations | ✓ Locked | MCP for reads, CLI for writes |
 
 ### Technical Debt
 
@@ -116,9 +122,15 @@ None yet
 - **Outcome:** ROADMAP.md and STATE.md written
 
 ### Current Session
-- **Started:** 2026-02-13
-- **Focus:** Awaiting user approval of roadmap
-- **Next Action:** `/gsd-plan-phase 1` once approved
+- **Started:** 2026-02-16
+- **Focus:** Phase 1 context finalized - historian agent setup decided
+- **Decisions Made:**
+  - Historian temperature: 0.3 (balanced creativity)
+  - Model fallback chain: kimi-k2.5-free → gpt-5-nano → big-pickle
+  - qmd integration design finalized (MCP for reads, CLI for writes)
+  - Scope constraints: writes only to .mnemonics/, reads from all sources
+  - Format constraints: .md only for writes
+- **Next Action:** `/gsd-plan-phase 1` to create detailed Phase 1 plan
 
 ### Upcoming Work
 

@@ -1,7 +1,7 @@
 # Phase 1: Core Infrastructure - Context
 
 **Gathered:** 2026-02-13
-**Status:** In progress — discussion paused (session 3)
+**Status:** Ready for planning
 
 <domain>
 ## Phase Boundary
@@ -112,9 +112,38 @@ interface PluginConfig {
 </deferred>
 
 <pending>
-## Still to Discuss
+## Historian Agent Setup (Decided)
 
-- [ ] Historian agent setup (prompts, model)
+### Agent Configuration
+```typescript
+{
+  name: 'historian',
+  model: 'opencode/kimi-k2.5-free',  // Primary model
+  fallbackModels: [
+    'opencode/gpt-5-nano',
+    'opencode/big-pickle'
+  ],
+  temperature: 0.3,  // Balanced creativity for memory expansion
+  description: 'Memory management specialist for contextual information',
+  // Memory tools registered here (agent-scoped, not global)
+  tools: ['memory_remember', 'memory_recall', 'memory_compound', 'memory_forget']
+}
+```
+
+### Temperature Rationale
+- **0.3**: Sweet spot for memory tasks
+  - Creative enough to expand on user thoughts (add examples, ask clarifying questions)
+  - Focused enough to stay on-topic and relevant to the memory context
+  - Example behavior: When user says "Remember camelCase for naming", agent responds with clarifying questions and examples rather than just acknowledging
+
+### Prompt Strategy
+- Base prompt defines historian's role and tool usage guidelines
+- `appendPrompt` from config allows user customization
+- Prompt emphasizes:
+  - Scope awareness (.mnemonics/ for writes, all sources for reads)
+  - Format constraints (.md only for writes)
+  - Delegation policy (recall delegatable, writes require @historian)
+  - Confirmation for destructive operations (forget, overwrite)
 
 </pending>
 
