@@ -37,13 +37,12 @@
 Phase 1: Core Infrastructure
 [░░░░░░░░░░░░░░░░░░░░] 0%
 
-Requirements: 0/15 complete
+Requirements: 0/14 complete (CORE-05 removed - rely on qmd for indexing)
 - [ ] CORE-01: MCP server registers tools with OpenCode
-- [ ] CORE-02: Global memory storage at ~/.config/opencode/memory/
-- [ ] CORE-03: Project-scoped memory storage at .opencode/memory/
+- [ ] CORE-02: Global memory storage at ~/.config/opencode/mnemonics/
+- [ ] CORE-03: Project-scoped memory storage at .mnemonics/
 - [ ] CORE-04: Markdown files with YAML frontmatter format
-- [ ] CORE-05: bun:sqlite for metadata and indexing
-- [ ] CORE-06: qmd collection naming convention
+- [ ] CORE-06: qmd index naming uses folder name; collection naming uses memory_type
 - [ ] CONF-01: JSON schema for plugin configuration
 - [ ] CONF-02: External folder/file paths for qmd collection
 - [ ] CONF-03: Config option autoCompound
@@ -68,8 +67,8 @@ Success Criteria: 0/5 met
 
 | Metric | Target | Current | Status |
 |--------|--------|---------|--------|
-| Requirements Complete | 41/41 (100%) | 0/41 (0%) | 🔴 |
-| Success Criteria Met | 34/34 (100%) | 0/34 (0%) | 🔴 |
+| Requirements Complete | 40/40 (100%) | 0/40 (0%) | 🔴 |
+| Success Criteria Met | 33/33 (100%) | 0/33 (0%) | 🔴 |
 | Phases Complete | 7/7 (100%) | 0/7 (0%) | 🔴 |
 | Test Coverage | >80% | N/A | ⚪ |
 | Build Status | Passing | N/A | ⚪ |
@@ -87,7 +86,7 @@ Success Criteria: 0/5 met
 | Biome tooling | ✓ Locked | Fast, unified lint/format/check |
 | Strict TypeScript | ✓ Locked | Catch errors early |
 | MCP protocol | ✓ Locked | OpenCode standard |
-| bun:sqlite | ✓ Locked | Built-in, zero dependencies |
+| ~~bun:sqlite~~ | ✗ Removed | Rely on qmd for all indexing |
 | qmd integration | ✓ Locked | Hybrid search (BM25 + vector) |
 | File-based storage | ✓ Locked | Human-readable, git-friendly |
 | Temperature | ✓ Locked | 0.3 (balanced creativity for memory expansion) |
@@ -139,7 +138,7 @@ None yet
 2. Implement MCP server registration
 3. Set up storage layers (global + project)
 4. Create JSON schema for configuration
-5. Implement bun:sqlite metadata store
+5. Set up qmd integration for indexing
 
 **Near-term (Phases 2-3):**
 1. Memory CRUD operations
@@ -171,7 +170,7 @@ None currently.
 |------|------------|--------|------------|
 | qmd integration complexity | Medium | High | Isolate in Phase 5; fallback to simple search |
 | MCP protocol version conflicts | Low | Medium | Pin SDK version; test thoroughly |
-| SQLite performance with large memories | Low | Medium | Monitor; consider archiving old memories |
+| Large memory file performance | Low | Medium | Monitor; consider archiving old memories |
 
 ---
 
@@ -244,15 +243,15 @@ bunx opencode-historian install
 
 | Type | Path |
 |------|------|
-| architectural decision | `.opencode/memory/decision/architectural/*.md` |
-| design decision | `.opencode/memory/decision/design/*.md` |
-| learning | `.opencode/memory/learning/*.md` |
-| user preference | `.opencode/memory/preference/user/*.md` |
-| project preference | `.opencode/memory/preference/project/*.md` |
-| issue | `.opencode/memory/blocker/issue/*.md` |
-| context | `.opencode/memory/context/*.md` |
-| recurring pattern | `.opencode/memory/pattern/recurring/*.md` |
-| conventions pattern | `.opencode/memory/pattern/conventions/*.md` |
+| architectural decision | `.mnemonics/decision/architectural/*.md` |
+| design decision | `.mnemonics/decision/design/*.md` |
+| learning | `.mnemonics/learning/*.md` |
+| user preference | `.mnemonics/preference/user/*.md` |
+| project preference | `.mnemonics/preference/project/*.md` |
+| issue | `.mnemonics/blocker/issue/*.md` |
+| context | `.mnemonics/context/*.md` |
+| recurring pattern | `.mnemonics/pattern/recurring/*.md` |
+| conventions pattern | `.mnemonics/pattern/conventions/*.md` |
 
 ---
 
