@@ -1,7 +1,7 @@
 # Phase 1: Core Infrastructure - Context
 
 **Gathered:** 2026-02-13
-**Status:** In progress — discussion paused (session 2)
+**Status:** In progress — discussion paused (session 3)
 
 <domain>
 ## Phase Boundary
@@ -65,6 +65,19 @@ interface PluginConfig {
 - Implementation: Agent-scoped registration — memory tools only registered in historian agent config, not globally
 - **Still to decide:** Can main agent delegate to @historian for memory operations?
 
+### qmd Integration Design
+- **Index naming:** `{folder_name}` (e.g., `opencode-historian`)
+- **Collection naming:** `{memory_type}` (e.g., `decision-architectural`)
+- **Design principle:** Read actions use qmd MCP tools (lightweight, safe). Write actions use qmd CLI commands.
+- **ALL qmd operations MUST include** `--index {folder_name}` option
+
+| Operation | Tool Type | Command/Tool |
+|-----------|-----------|--------------|
+| `memory_recall` | MCP tool | `qmd_vsearch` (semantic + keyword hybrid) |
+| `memory_remember` | CLI | `qmd collection add ... --index {folder_name}` |
+| `memory_compound` | MCP + CLI | `qmd_vsearch` → file ops → `qmd update --index {folder_name}` |
+| `memory_forget` | CLI | file delete → `qmd update --index {folder_name}` |
+
 ### Claude's Discretion
 - Exact config file schema TypeScript interface
 - Error messages for invalid config
@@ -101,4 +114,4 @@ interface PluginConfig {
 ---
 
 *Phase: 01-core-infrastructure*
-*Context gathered: 2026-02-13 (session 2 paused)*
+*Context gathered: 2026-02-13 (session 3 paused)*

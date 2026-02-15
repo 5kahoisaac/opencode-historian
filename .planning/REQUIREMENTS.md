@@ -12,27 +12,30 @@
 - [ ] **CORE-03**: Project-scoped memory storage at `.mnemonics/`
 - [ ] **CORE-04**: Markdown files with YAML frontmatter format
 - [ ] ~~**CORE-05**: bun:sqlite for metadata and indexing~~ — Removed (rely on qmd for indexing)
-- [ ] **CORE-06**: qmd collection naming uses folder name: `{folder_name}/mnemonics/{memory_type}`
+- [ ] **CORE-06**: qmd index naming uses folder name: `{folder_name}`; qmd collection naming uses memory_type: `{memory_type}`
 
 ### Memory Operations (OpenCode Custom Tools)
 
 All memory operations are implemented as OpenCode custom tools following the `ToolDefinition` pattern from `@opencode-ai/plugin`.
 
+**Design Principle:** Read actions use qmd MCP tools (lightweight, safe). Write actions use qmd CLI commands. ALL qmd operations MUST include `--index {folder_name}`.
+
 - [ ] **CRUD-01**: `memory_remember` — Create memory file, add to qmd collection
   - LLM determines memory type, saves to corresponding path
-  - Runs: `qmd collection add .mnemonics/{memory_type} --name {folder_name}/mnemonics/{memory_type} --mask "**/*.md"`
+  - Runs: `qmd collection add .mnemonics/{memory_type} --name {memory_type} --index {folder_name} --mask "**/*.md"`
 - [ ] **CRUD-02**: ~~`memory_list`~~ — Removed (causes excessive token usage)
-- [ ] **CRUD-03**: `memory_recall` — Query/search memories via qmd index
-  - Reference: https://github.com/tobi/qmd#examples
-  - Query by memory type index
+- [ ] **CRUD-03**: `memory_recall` — Query/search memories via qmd MCP tools
+  - Uses MCP tool: `qmd_vsearch` (semantic + keyword hybrid search)
+  - Reference: https://github.com/tobi/qmd?tab=readme-ov-file#mcp-server
+  - Query by collection (memory type) and index (folder_name)
 - [ ] **CRUD-04**: `memory_compound` — Merge new content into existing memory
-  - LLM finds memory location via qmd search
+  - LLM finds memory location via `qmd_vsearch` MCP tool
   - If no match: call `memory_remember`
-  - If match: compound content into existing file
-  - Update index: `qmd update`, verify: `qmd status`
+  - If match: compound content into existing file (ONLY files inside `.mnemonics/**/*.md`)
+  - Update index: `qmd update --index {folder_name}`, verify: `qmd status`
 - [ ] **CRUD-05**: `memory_forget` — Delete memory file and update qmd index
-  - Delete file (e.g., `rm notes/old-record.md`)
-  - Update index: `qmd update`, verify: `qmd status`
+  - Delete file (e.g., `rm .mnemonics/decision/architectural/old-record.md`)
+  - Update index: `qmd update --index {folder_name}`, verify: `qmd status`
 
 ### System Integration
 
@@ -223,11 +226,22 @@ All memory operations are implemented as OpenCode custom tools following the `To
 
 **Skills Reference:** https://github.com/tobi/qmd/tree/main/skills/qmd — Implementation patterns for qmd skills
 
-**Collection naming:** `{folder_name}/mnemonics/{memory_type}`
+**Index naming:** `{folder_name}`
+
+**Collection naming:** `{memory_type}`
 
 **READ-ONLY constraint:** If memory source is from config file (external source), the memory is read-only. Agent and tools must NOT perform any write action.
 
 **Re-index trigger:** Usually trigger qmd re-index when OpenCode session idle hook fires.
+
+**MCP vs CLI Design Principle:**
+- **Read actions** = qmd MCP tools (lightweight, safe, follows MCP design)
+  - `memory_recall` uses `qmd_vsearch` MCP tool
+  - Reserve `qmd_deep_search` for high-stakes queries
+- **Write actions** = qmd CLI commands (more control over file operations)
+  - `memory_remember` uses `qmd collection add`
+  - `memory_compound` and `memory_forget` use `qmd update`
+- **ALL qmd operations** MUST include `--index {folder_name}` option
 
 ### oh-my-opencode-slim Reference
 
