@@ -3,7 +3,7 @@
 **Version:** 1.0.0  
 **Depth:** Comprehensive  
 **Created:** 2026-02-13  
-**Requirements:** 41 v1 requirements mapped
+**Requirements:** 40 v1 requirements mapped
 
 ---
 
@@ -25,11 +25,11 @@ The roadmap follows a natural progression from infrastructure to operations, int
 
 **Requirements Mapped:**
 - CORE-01: MCP server registers tools with OpenCode
-- CORE-02: Global memory storage at `~/.config/opencode/memory/`
-- CORE-03: Project-scoped memory storage at `.opencode/memory/`
+- CORE-02: Global memory storage at `~/.config/opencode/mnemonics/`
+- CORE-03: Project-scoped memory storage at `.mnemonics/`
 - CORE-04: Markdown files with YAML frontmatter format
-- CORE-05: bun:sqlite for metadata and indexing
-- CORE-06: qmd collection naming convention
+- ~~CORE-05: bun:sqlite for metadata and indexing~~ — Removed (rely on qmd for indexing)
+- CORE-06: qmd index naming uses folder name; collection naming uses memory_type
 - CONF-01: JSON schema for plugin configuration
 - CONF-02: External folder/file paths for qmd collection
 - CONF-03: Config option `autoCompound` (boolean, default: true)
@@ -40,11 +40,22 @@ The roadmap follows a natural progression from infrastructure to operations, int
 - STRC-04: `config/` — JSON schema for plugin configuration
 - STRC-05: `utils/` — Shared utility functions
 
-**Success Criteria (Observable Behaviors):**
+**Plans:** 6 plans in 3 waves
+
+| Plan | Wave | Objective | Dependencies |
+|------|------|-----------|--------------|
+| 01-01 | 1 | Configuration infrastructure (Zod schemas, hierarchical loading) | None |
+| 01-02 | 1 | Storage layer (paths, YAML frontmatter file operations) | None |
+| 01-03 | 1 | qmd integration (MCP client for reads, CLI for writes) | None |
+| 01-04 | 2 | Historian agent and memory CRUD tools | 01-01, 01-02, 01-03 |
+| 01-05 | 2 | Shared utilities (logger, validation) | 01-01, 01-04 |
+| 01-06 | 3 | Plugin entry point and CLI integration | All above |
+
+**Success Criteria (Observable Behaviors):
 
 1. **Plugin Registration:** OpenCode recognizes opencode-historian plugin and lists it in available tools
-2. **Storage Initialization:** Global memory folder `~/.config/opencode/memory/` is created on first run
-3. **Project Storage:** When plugin initializes in a project, `.opencode/memory/` folder is created
+2. **Storage Initialization:** Global memory folder `~/.config/opencode/mnemonics/` is created on first run
+3. **Project Storage:** When plugin initializes in a project, `.mnemonics/` folder is created
 4. **Configuration Validation:** Configuration file accepts user settings and validates against JSON schema
 5. **Project Structure:** Repository follows oh-my-opencode-slim pattern with agents/, tools/, cli/, config/, utils/ directories
 
@@ -174,14 +185,13 @@ The roadmap follows a natural progression from infrastructure to operations, int
 **Dependencies:** Phase 1 (Core Infrastructure) — can be developed in parallel after Phase 1
 
 **Requirements Mapped:**
-- CLI-01: `bunx opencode-historian install` — Install sqlite and qmd
+- CLI-01: `bunx opencode-historian install` — Install qmd
 
 **Success Criteria (Observable Behaviors):**
 
-1. **Installation Command:** Running `bunx opencode-historian install` sets up required dependencies (sqlite, qmd)
-2. **Dependency Prompt:** If sqlite is not present, user is prompted with installation instructions
-3. **qmd Setup:** qmd is installed via appropriate method for the platform
-4. **Verification:** After install, user can verify setup with a status check
+1. **Installation Command:** Running `bunx opencode-historian install` sets up required dependencies (qmd)
+2. **qmd Setup:** qmd is installed via appropriate method for the platform
+3. **Verification:** After install, user can verify setup with a status check
 
 ---
 
@@ -189,15 +199,15 @@ The roadmap follows a natural progression from infrastructure to operations, int
 
 | Phase | Status | Requirements | Success Criteria Met |
 |-------|--------|--------------|---------------------|
-| 1 - Core Infrastructure | 🔵 Pending | 15/41 | 0/5 |
-| 2 - Memory Operations | 🔵 Pending | 10/41 | 0/6 |
-| 3 - System Integration | 🔵 Pending | 4/41 | 0/5 |
-| 4 - Self-Editing | 🔵 Pending | 3/41 | 0/4 |
-| 5 - QMD Integration | 🔵 Pending | 5/41 | 0/5 |
-| 6 - Compounding | 🔵 Pending | 6/41 | 0/5 |
-| 7 - CLI Interface | 🔵 Pending | 1/41 | 0/4 |
+| 1 - Core Infrastructure | 📋 Planned | 14/40 | 0/5 |
+| 2 - Memory Operations | 🔵 Pending | 10/40 | 0/6 |
+| 3 - System Integration | 🔵 Pending | 4/40 | 0/5 |
+| 4 - Self-Editing | 🔵 Pending | 3/40 | 0/4 |
+| 5 - QMD Integration | 🔵 Pending | 5/40 | 0/5 |
+| 6 - Compounding | 🔵 Pending | 6/40 | 0/5 |
+| 7 - CLI Interface | 🔵 Pending | 1/40 | 0/3 |
 
-**Overall:** 0/41 requirements completed, 0/34 success criteria met
+**Overall:** 0/40 requirements completed, 0/33 success criteria met
 
 ---
 
@@ -215,9 +225,9 @@ Phase 7 (CLI) [can run parallel after Phase 1]
 
 ## Coverage Validation
 
-✓ **100% Coverage:** All 41 v1 requirements mapped to exactly one phase  
+✓ **100% Coverage:** All 40 v1 requirements mapped to exactly one phase  
 ✓ **No Orphans:** Every requirement contributes to at least one success criterion  
-✓ **No Duplicates:** No requirement appears in multiple phases  
+✓ **No Duplicates:** No requirement appears in multiple phases
 
 ### Requirement-to-Phase Mapping
 
@@ -227,7 +237,7 @@ Phase 7 (CLI) [can run parallel after Phase 1]
 | CORE-02 | 1 | Storage Initialization |
 | CORE-03 | 1 | Project Storage |
 | CORE-04 | 1 | (enables all file operations) |
-| CORE-05 | 1 | (enables indexing) |
+| ~~CORE-05~~ | - | Removed (rely on qmd for indexing) |
 | CORE-06 | 1 | (naming convention) |
 | CONF-01 | 1 | Configuration Validation |
 | CONF-02 | 1 | Configuration Validation |
@@ -295,14 +305,13 @@ Phase 7 (CLI) [can run parallel after Phase 1]
 7. Important details preserved during merges
 8. Redundant information summarized
 
-### System Integration (7 criteria)
+### System Integration (6 criteria)
 1. MCP registration successful
-2. bun:sqlite provides metadata/indexing
-3. qmd connected as MCP resource
-4. Index updates after memory changes
-5. External sources appear read-only
-6. qmd re-index after compounding
-7. Scoped memory (global + project) works
+2. qmd connected as MCP resource
+3. Index updates after memory changes
+4. External sources appear read-only
+5. qmd re-index after compounding
+6. Scoped memory (global + project) works
 
 ### Agent Intelligence (7 criteria)
 1. Nine memory types available
@@ -321,7 +330,7 @@ Phase 7 (CLI) [can run parallel after Phase 1]
 |------|--------|------------|
 | qmd integration complexity | High | Phase 5 isolated; can use simpler search in Phase 2-3 |
 | Context rot in long sessions | High | Phase 6 addresses directly with compounding |
-| File-based storage performance | Medium | bun:sqlite provides indexing; qmd handles search |
+| File-based storage performance | Medium | qmd handles search and indexing |
 | MCP protocol changes | Low | SDK version pinned; v2 migration deferred to post-v1 |
 | Over-eager auto-compounding | Medium | Configurable; user can disable and trigger manually |
 
@@ -331,8 +340,8 @@ Phase 7 (CLI) [can run parallel after Phase 1]
 
 The v1 roadmap is complete when:
 
-- [ ] All 41 v1 requirements are implemented
-- [ ] All 34 success criteria are met
+- [ ] All 40 v1 requirements are implemented
+- [ ] All 33 success criteria are met
 - [ ] Plugin is installable via `bunx opencode-historian install`
 - [ ] Agent can store, retrieve, update, and delete memories
 - [ ] Memories persist across OpenCode sessions
@@ -344,10 +353,21 @@ The v1 roadmap is complete when:
 ## Next Steps
 
 1. **Current Phase:** Phase 1 - Core Infrastructure
-2. **Next Action:** `/gsd-plan-phase 1` to create detailed plan for Phase 1
-3. **Parallel Work:** Phase 7 (CLI) can be planned once Phase 1 structure is stable
+2. **Status:** 📋 Planning complete (6 plans in 3 waves)
+3. **Next Action:** `/gsd-execute-phase 01` to begin execution
+
+### Phase 1 Plan Files
+
+All plans created in `.planning/phases/01-core-infrastructure/`:
+
+- `01-01-PLAN.md` — Configuration infrastructure
+- `01-02-PLAN.md` — Storage layer
+- `01-03-PLAN.md` — qmd integration
+- `01-04-PLAN.md` — Historian agent and memory tools
+- `01-05-PLAN.md` — Shared utilities
+- `01-06-PLAN.md` — Plugin entry point and CLI
 
 ---
 
-*Last updated: 2026-02-13*  
-*Roadmap version: 1.0.0*
+*Last updated: 2026-02-16*  
+*Roadmap version: 1.0.1*
