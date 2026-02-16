@@ -13,6 +13,7 @@
 - **Memory Types**: Classify memories into 9 built-in types or custom types
 - **Agent Integration**: Runs as a specialized subagent within OpenCode
 - **Local-First**: All memories stored locally in human-readable Markdown
+- **Built-in MCPs**: QMD and Serena automatically configured
 
 ## Installation
 
@@ -25,14 +26,13 @@
 ### Install
 
 ```bash
-# Clone the repository
+# Install via npm/bun
+bun add -g opencode-historian
+
+# Or from source
 git clone https://github.com/your-org/opencode-historian.git
 cd opencode-historian
-
-# Install dependencies
 bun install
-
-# Build the plugin
 bun run build
 ```
 
@@ -46,14 +46,15 @@ Add to your `opencode.json`:
 }
 ```
 
+That's it. MCP servers (QMD, Serena) are automatically configured.
+
 ## Quick Start
 
-The Historian agent is automatically available when the plugin is loaded. It provides memory management capabilities through specialized tools:
+The Historian agent is automatically available when the plugin loads:
 
-```bash
-# The historian agent is invoked automatically when memory operations are needed
-# Or explicitly via OpenCode's agent system
-```
+1. **Automatic Memory**: Important context is captured automatically
+2. **Semantic Recall**: Query memories with natural language
+3. **Smart Classification**: Memories typed and tagged appropriately
 
 ## Memory Types
 
@@ -76,20 +77,47 @@ Built-in memory types for classification:
 ```
 opencode-historian/
 ├── src/
-│   ├── index.ts           # Plugin entry point
+│   ├── index.ts              # Plugin entry point
 │   ├── agents/
-│   │   └── historian.ts   # Historian agent configuration
-│   ├── tools/             # Memory management tools
+│   │   ├── index.ts          # Agent exports
+│   │   └── historian.ts      # Historian agent configuration
+│   ├── cli/
+│   │   └── index.ts          # CLI entry point
+│   ├── config/
+│   │   ├── index.ts          # Config exports
+│   │   ├── loader.ts         # Configuration loader
+│   │   ├── schema.ts         # Zod schema definitions
+│   │   └── constants.ts      # Configuration constants
+│   ├── mcp/
+│   │   ├── index.ts          # MCP exports
+│   │   ├── qmd.ts            # QMD MCP configuration
+│   │   ├── serena.ts         # Serena MCP configuration
+│   │   └── types.ts          # MCP type definitions
+│   ├── qmd/
+│   │   ├── index.ts          # QMD exports
+│   │   ├── cli.ts            # QMD CLI utilities
+│   │   └── client.ts         # QMD MCP client
+│   ├── skills/               # OpenCode skills (empty)
+│   ├── storage/
+│   │   ├── index.ts          # Storage exports
+│   │   ├── files.ts          # File operations
+│   │   └── paths.ts          # Path utilities
+│   ├── tools/
+│   │   ├── index.ts          # Tool exports
 │   │   ├── memory-list-types.ts
 │   │   ├── memory-remember.ts
 │   │   ├── memory-recall.ts
 │   │   ├── memory-compound.ts
 │   │   └── memory-forget.ts
-│   ├── config/            # Configuration schema
-│   ├── qmd/               # QMD client integration
-│   └── storage/           # File storage utilities
-├── docs/                  # Documentation
-└── dist/                  # Built output
+│   ├── types/
+│   │   └── index.ts          # Shared types
+│   └── utils/
+│       ├── index.ts          # Utils exports
+│       ├── helpers.ts        # Utility helpers
+│       ├── logger.ts         # Logging utilities
+│       └── validation.ts     # Validation functions
+├── docs/                     # Documentation
+└── dist/                     # Built output
 ```
 
 ## Documentation
@@ -103,20 +131,11 @@ opencode-historian/
 ## Development
 
 ```bash
-# Development build
-bun run build
-
-# Type checking
-bun run typecheck
-
-# Linting
-bun run lint
-
-# Format code
-bun run format
-
-# Run all checks
-bun run check
+bun run build      # Build TypeScript
+bun run typecheck  # Type checking
+bun run lint       # Linting
+bun run format     # Format code
+bun run check      # All checks
 ```
 
 ## License
