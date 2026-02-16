@@ -1,3 +1,0 @@
-echo "ast-grep shim file was executed. This file exists so that npm tries to create the binary. It should be replaced after the 'postinstall' script is executed."
-echo "Did your package manager execute the post-install script? (N.B. not all of them do)"
-exit 1

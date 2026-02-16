@@ -1,0 +1,22 @@
+import { z } from 'zod';
+
+export const MemoryTypeSchema = z.object({
+  name: z.string().min(1),
+  description: z.string(),
+  template: z.string().optional(),
+});
+
+export const PluginConfigSchema = z.object({
+  model: z.string().default('opencode/kimi-k2.5-free'),
+  temperature: z.number().min(0).max(2).default(0.3),
+  appendPrompt: z.string().optional(),
+  externalPaths: z.array(z.string()).optional(),
+  memoryTypes: z.array(MemoryTypeSchema).optional(),
+  autoCompound: z.boolean().default(true),
+  logLevel: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
+  debug: z.boolean().default(false),
+  disabledMcps: z.array(z.string()).optional(),
+});
+
+export type MemoryType = z.infer<typeof MemoryTypeSchema>;
+export type PluginConfig = z.infer<typeof PluginConfigSchema>;
