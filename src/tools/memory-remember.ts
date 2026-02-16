@@ -11,15 +11,14 @@ import {
   isWithinProjectMnemonics,
 } from '../storage';
 import { isValidMemoryType, toKebabCase } from '../utils';
-import { createLogger } from '../utils/logger';
+import type { Logger } from '../utils/logger';
 
 export function createRememberTool(
   qmdClient: QmdClient,
   _config: PluginConfig,
   projectRoot: string,
+  logger: Logger,
 ) {
-  const logger = createLogger(_config);
-
   return {
     name: 'memory_remember',
     description: 'Create a new memory with the given content',
