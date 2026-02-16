@@ -3,8 +3,12 @@ import * as path from 'node:path';
 import matter from 'gray-matter';
 import { z } from 'zod';
 import type { PluginConfig } from '../config';
-import type { QmdClient } from '../qmd';
-import { addToCollection, updateIndex } from '../qmd';
+import {
+  addToCollection,
+  getIndexName,
+  updateEmbedings,
+  updateIndex,
+} from '../qmd';
 import {
   createMemoryFile,
   generateFilename,
@@ -14,7 +18,6 @@ import { isValidMemoryType, toKebabCase } from '../utils';
 import type { Logger } from '../utils/logger';
 
 export function createRememberTool(
-  qmdClient: QmdClient,
   _config: PluginConfig,
   projectRoot: string,
   logger: Logger,
@@ -81,14 +84,15 @@ export function createRememberTool(
       logger.info(`Created memory file: ${filePath}`);
 
       // Add to collection (pass directory, not file - qmd watches directories)
-      const indexName = qmdClient.getIndexName(projectRoot);
+      const indexName = getIndexName(projectRoot);
       await addToCollection(mnemonicsDir, normalizedMemoryType, {
         index: indexName,
         logger,
       });
 
-      // Update index
+      // Update index and embedings
       await updateIndex({ index: indexName });
+      await updateEmbedings({ index: indexName });
 
       return {
         success: true,

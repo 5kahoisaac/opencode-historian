@@ -1,12 +1,7 @@
 import type { PluginConfig } from '../config';
-import type { QmdClient } from '../qmd';
 import { getBuiltinMemoryTypes } from '../utils';
 
-export function createListTypesTool(
-  _qmdClient: QmdClient,
-  config: PluginConfig,
-  _projectRoot: string,
-) {
+export function createListTypesTool(config: PluginConfig) {
   return {
     name: 'memory_list_types',
     description:

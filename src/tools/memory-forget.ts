@@ -1,14 +1,12 @@
 import * as fs from 'node:fs';
 import { z } from 'zod';
 import type { PluginConfig } from '../config';
-import type { QmdClient } from '../qmd';
-import { updateIndex } from '../qmd';
+import { getIndexName, search, updateIndex } from '../qmd';
 import { isWithinProjectMnemonics } from '../storage';
 import type { Logger } from '../utils/logger';
 import { toKebabCase } from '../utils/validation';
 
 export function createForgetRequestTool(
-  qmdClient: QmdClient,
   _config: PluginConfig,
   projectRoot: string,
   logger: Logger,
@@ -35,8 +33,8 @@ export function createForgetRequestTool(
         ? toKebabCase(memoryType)
         : undefined;
       // Search memories
-      const indexName = qmdClient.getIndexName(projectRoot);
-      const searchResults = await qmdClient.search(query, {
+      const indexName = getIndexName(projectRoot);
+      const searchResults = await search(query, {
         index: indexName,
         collection: normalizedMemoryType,
         n: 10,

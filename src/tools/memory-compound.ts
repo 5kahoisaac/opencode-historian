@@ -2,15 +2,13 @@ import * as fs from 'node:fs';
 import * as matter from 'gray-matter';
 import { z } from 'zod';
 import type { PluginConfig } from '../config';
-import type { QmdClient } from '../qmd';
-import { updateIndex } from '../qmd';
+import { getIndexName, search, updateEmbedings, updateIndex } from '../qmd';
 import { isWithinProjectMnemonics, parseMemoryFile } from '../storage';
 import { isValidMemoryType, toKebabCase } from '../utils';
 import type { Logger } from '../utils/logger';
 import { createRememberTool } from './memory-remember';
 
 export function createCompoundTool(
-  qmdClient: QmdClient,
   _config: PluginConfig,
   projectRoot: string,
   logger: Logger,
@@ -34,8 +32,8 @@ export function createCompoundTool(
       memoryType?: string;
     }) => {
       // Search existing memories
-      const indexName = qmdClient.getIndexName(projectRoot);
-      const searchResults = await qmdClient.search(query, {
+      const indexName = getIndexName(projectRoot);
+      const searchResults = await search(query, {
         index: indexName,
         n: 1,
       });
@@ -50,12 +48,7 @@ export function createCompoundTool(
         );
 
         // Create remember tool and call it
-        const rememberTool = createRememberTool(
-          qmdClient,
-          _config,
-          projectRoot,
-          logger,
-        );
+        const rememberTool = createRememberTool(_config, projectRoot, logger);
         const rememberResult = await rememberTool.handler({
           title: query, // Use query as title
           content: modifications,
@@ -116,8 +109,9 @@ export function createCompoundTool(
 
       logger.info(`Updated memory file: ${filePath}`);
 
-      // Update index
+      // Update index and embedings
       await updateIndex({ index: indexName });
+      await updateEmbedings({ index: indexName });
 
       return {
         success: true,

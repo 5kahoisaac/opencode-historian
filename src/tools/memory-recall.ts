@@ -1,11 +1,10 @@
 import { z } from 'zod';
 import type { PluginConfig } from '../config';
-import type { QmdClient } from '../qmd';
+import { getIndexName, vectorSearch } from '../qmd';
 import type { Logger } from '../utils/logger';
 import { toKebabCase } from '../utils/validation';
 
 export function createRecallTool(
-  qmdClient: QmdClient,
   _config: PluginConfig,
   projectRoot: string,
   logger: Logger,
@@ -33,10 +32,10 @@ export function createRecallTool(
 
       try {
         // Search project memories
-        const projectIndex = qmdClient.getIndexName(projectRoot);
+        const projectIndex = getIndexName(projectRoot);
         let projectResults: any[] = [];
         try {
-          projectResults = await qmdClient.vectorSearch(query, {
+          projectResults = await vectorSearch(query, {
             index: projectIndex,
             collection: normalizedMemoryType,
             n: limit || 10,
