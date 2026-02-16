@@ -103,12 +103,13 @@ export function getBuiltinMemoryTypes(): MemoryType[] {
 
 /**
  * Converts a string to kebab-case.
- * Handles camelCase, PascalCase, spaces, and underscores.
+ * Handles camelCase, PascalCase, spaces, underscores, and slashes.
  * Examples:
  *   "architectural decision" -> "architectural-decision"
  *   "architectural_decision" -> "architectural-decision"
  *   "architecturalDecision" -> "architectural-decision"
  *   "ArchitecturalDecision" -> "architectural-decision"
+ *   "architectural/decision" -> "architectural-decision"
  */
 export function toKebabCase(str: string): string {
   // Convert camelCase to kebab-case
@@ -116,8 +117,8 @@ export function toKebabCase(str: string): string {
     .replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2')
     .toLowerCase();
 
-  // Replace spaces and underscores with hyphens
-  const result = camelToKebab.replace(/[\s_]/g, '-');
+  // Replace spaces, underscores, and slashes with hyphens
+  const result = camelToKebab.replace(/[\s_/]/g, '-');
 
   return result;
 }
