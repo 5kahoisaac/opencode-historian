@@ -20,6 +20,24 @@ export interface SearchResult {
   path: string;
   score: number;
   content?: string;
+  docid?: string;
+  title?: string;
+  snippet?: string;
+}
+
+/**
+ * Maps qmd CLI output to SearchResult format.
+ * qmd returns 'file' property, we normalize to 'path'.
+ */
+function mapToSearchResult(raw: any): SearchResult {
+  return {
+    path: raw.file || raw.path || '',
+    score: raw.score || 0,
+    content: raw.snippet || raw.content,
+    docid: raw.docid,
+    title: raw.title,
+    snippet: raw.snippet,
+  };
 }
 
 /**
@@ -59,7 +77,7 @@ export async function search(
   try {
     const { stdout } = await execAsync(command);
     const results = JSON.parse(stdout);
-    return Array.isArray(results) ? results : [];
+    return Array.isArray(results) ? results.map(mapToSearchResult) : [];
   } catch (error) {
     // If qmd fails or returns invalid JSON, return empty array
     return [];
@@ -81,7 +99,7 @@ export async function vectorSearch(
   try {
     const { stdout } = await execAsync(command);
     const results = JSON.parse(stdout);
-    return Array.isArray(results) ? results : [];
+    return Array.isArray(results) ? results.map(mapToSearchResult) : [];
   } catch (error) {
     // If qmd fails or returns invalid JSON, return empty array
     return [];
