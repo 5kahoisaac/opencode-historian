@@ -3,11 +3,9 @@ import { tool } from '@opencode-ai/plugin';
 import { createHistorianAgent } from './agents';
 import { loadPluginConfig } from './config';
 import { createBuiltinMcps } from './mcp';
-import { addExternalPathsToIndex, updateIndex } from './qmd';
-import { StubQmdClient } from './qmd/client';
+import { addExternalPathsToIndex, getIndexName, updateIndex } from './qmd';
 import { createMemoryTools } from './tools';
 import { createLogger } from './utils/logger';
-import { toKebabCase } from './utils/validation';
 
 const OpencodeHistorian: Plugin = async (ctx) => {
   // Load configuration
@@ -19,14 +17,9 @@ const OpencodeHistorian: Plugin = async (ctx) => {
   // Create historian agent
   const historianAgent = createHistorianAgent(config);
 
-  // For now, use a stub QmdClient since MCP client is not provided by OpenCode
-  // The qmd MCP server will be started via the mcp hook, and tools will
-  // handle the gracefully degraded state until it's connected
-  const qmdClient = new StubQmdClient();
-
   // Initialize external paths into "context" collection (non-blocking)
   if (config.externalPaths && config.externalPaths.length > 0) {
-    const indexName = toKebabCase(ctx.directory.split('/').pop() || 'project');
+    const indexName = getIndexName(ctx.directory);
     // Run asynchronously without blocking plugin initialization
     addExternalPathsToIndex(config.externalPaths, { index: indexName })
       .then(() => updateIndex({ index: indexName }))
@@ -37,13 +30,8 @@ const OpencodeHistorian: Plugin = async (ctx) => {
       });
   }
 
-  // Create memory tools using the stub QmdClient
-  const memoryToolsArray = createMemoryTools(
-    qmdClient,
-    config,
-    ctx.directory,
-    logger,
-  );
+  // Create memory tools using CLI-based functions
+  const memoryToolsArray = createMemoryTools(config, ctx.directory, logger);
 
   // Convert internal tool format to Plugin ToolDefinition format
   const toolDefinitions: Record<string, ToolDefinition> = {};

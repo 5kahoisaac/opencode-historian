@@ -7,7 +7,6 @@ export {
 } from '../config';
 // Re-export types from qmd
 export type {
-  QmdClient,
   QmdOptions,
   SearchOptions,
   SearchResult,

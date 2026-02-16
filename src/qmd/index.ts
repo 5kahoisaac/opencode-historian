@@ -2,11 +2,12 @@ export {
   addExternalPathsToIndex,
   addToCollection,
   execAsync,
+  getIndexName,
   type QmdOptions,
-  updateIndex,
-} from './cli.js';
-export {
-  QmdClient,
   type SearchOptions,
   type SearchResult,
-} from './client.js';
+  search,
+  updateEmbedings,
+  updateIndex,
+  vectorSearch,
+} from './cli.js';
