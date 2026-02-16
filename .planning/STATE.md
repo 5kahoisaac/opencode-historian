@@ -2,7 +2,7 @@
 
 **Project:** opencode-historian  
 **Core Value:** AI agents can remember important context across conversations and sessions, enabling more coherent and personalized assistance.  
-**Last Updated:** 2026-02-16  
+**Last Updated:** 2026-02-17  
 
 ---
 
@@ -74,6 +74,7 @@ Success Criteria: 0/5 met
 | Build Status | Passing | N/A | ⚪ |
 
 ---
+| Phase quick-7 P01 | 5m | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -170,6 +171,7 @@ None yet
 | 3 | Remove global scope memory and connect externalPaths | 2026-02-16 | 7b5c822 | [4-remove-global-memory-scope-and-connect-e](./quick/4-remove-global-memory-scope-and-connect-e/) |
 | 4 | Fix memory_forget tool - agent creates memories on delete | 2026-02-16 | f4917de | [5-fix-memory-forget-tool-agent-creates-mem](./quick/5-fix-memory-forget-tool-agent-creates-mem/) |
 | 6 | Fix UAT gaps - qmd index path, agent prompts, logger usage | 2026-02-17 | 0439064 | [6-fix-uat-gaps-qmd-index-path-agent-prompt](./quick/6-fix-uat-gaps-qmd-index-path-agent-prompt/) |
+| 7 | Replace QmdClient with CLI-based qmd commands | 2026-02-17 | 42cbc49 | [7-replace-qmdclient-with-cli-based-qmd-com](./quick/7-replace-qmdclient-with-cli-based-qmd-com/) |
 
 ---
 
