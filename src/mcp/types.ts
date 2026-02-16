@@ -15,4 +15,4 @@ export type LocalMcpConfig = {
 
 export type McpConfig = RemoteMcpConfig | LocalMcpConfig;
 
-export type McpName = 'qmd' | 'serena';
+export type McpName = 'serena';

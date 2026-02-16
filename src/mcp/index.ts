@@ -1,11 +1,9 @@
-import { qmd } from './qmd';
 import { serena } from './serena';
 import type { McpConfig, McpName } from './types';
 
 export type { McpConfig, McpName } from './types';
 
 const allBuiltinMcps: Record<McpName, McpConfig> = {
-  qmd,
   serena,
 };
 
