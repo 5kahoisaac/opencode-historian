@@ -118,7 +118,11 @@ export function toKebabCase(str: string): string {
     .toLowerCase();
 
   // Replace spaces, underscores, and slashes with hyphens
-  const result = camelToKebab.replace(/[\s_/]/g, '-');
+  // Also strip leading/trailing hyphens and collapse multiple hyphens
+  const result = camelToKebab
+    .replace(/[\s_/]/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-+/g, '-');
 
   return result;
 }
