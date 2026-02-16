@@ -1,12 +1,14 @@
 import { z } from 'zod';
 import type { PluginConfig } from '../config';
 import type { QmdClient } from '../qmd';
+import type { Logger } from '../utils/logger';
 import { toKebabCase } from '../utils/validation';
 
 export function createRecallTool(
   qmdClient: QmdClient,
   _config: PluginConfig,
   projectRoot: string,
+  logger: Logger,
 ) {
   return {
     name: 'memory_recall',
@@ -40,8 +42,8 @@ export function createRecallTool(
             n: limit || 10,
           });
         } catch (projectError) {
-          console.warn(
-            `[opencode-historian] Project search failed: ${projectError instanceof Error ? projectError.message : String(projectError)}`,
+          logger.warn(
+            `Project search failed: ${projectError instanceof Error ? projectError.message : String(projectError)}`,
           );
         }
 
@@ -49,9 +51,7 @@ export function createRecallTool(
         const memories = projectResults.filter((r) => r.path.endsWith('.md'));
 
         if (!memories || memories.length === 0) {
-          console.log(
-            `[opencode-historian] No memory files found for query: "${query}"`,
-          );
+          logger.info(`No memory files found for query: "${query}"`);
           return {
             memories: [],
             count: 0,
@@ -60,8 +60,8 @@ export function createRecallTool(
           };
         }
 
-        console.log(
-          `[opencode-historian] Found ${memories.length} memory files for query: "${query}"`,
+        logger.info(
+          `Found ${memories.length} memory files for query: "${query}"`,
         );
 
         return {
@@ -71,9 +71,7 @@ export function createRecallTool(
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        console.error(
-          `[opencode-historian] Error recalling memories: ${errorMessage}`,
-        );
+        logger.error(`Error recalling memories: ${errorMessage}`);
 
         // Return helpful error message instead of throwing
         return {
