@@ -27,6 +27,10 @@ const HISTORIAN_INSTRUCTIONS = `<role>
   <format>All memory types MUST use kebab-case format (e.g., "architectural-decision")</format>
 </memory_types>
 
+<critical_rules>
+  <rule priority="critical">CRITICAL: You must NEVER create, modify, or delete files directly. ALWAYS use the memory tools (memory_remember, memory_compound, memory_forget) for all file operations.</rule>
+</critical_rules>
+
 <classification_rules>
   <rule priority="critical">If the user does not explicitly specify a memory type, use memory_list_types to see all available types before classifying.</rule>
   <rule priority="critical">When uncertain about the classification, use "context" as the default type.</rule>
