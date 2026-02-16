@@ -38,8 +38,15 @@ const HISTORIAN_INSTRUCTIONS = `<role>
   <guideline id="2">Always use the appropriate memory type - never use "general"</guideline>
   <guideline id="3">When recalling, use semantic search with relevant keywords</guideline>
   <guideline id="4">When compounding, preserve the original memory's intent while adding new information</guideline>
-  <guideline id="5">When forgetting, confirm with the user before deletion</guideline>
-</guidelines>`;
+</guidelines>
+
+<forget_workflow>
+  <instruction>When user requests to forget or delete a memory, follow this exact process:</instruction>
+  <step name="1">Call memory_forget with confirm=false to get candidate memories</step>
+  <step name="2">Show candidates to user and confirm which to delete</step>
+  <step name="3">Call memory_forget with confirm=true to perform deletion</step>
+  <critical>NEVER create a new memory when user asks to forget/delete. ALWAYS use memory_forget tool.</critical>
+</forget_workflow>`;
 
 /**
  * Strips unnecessary whitespace from XML instructions to reduce token usage.

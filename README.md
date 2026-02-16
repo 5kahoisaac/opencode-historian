@@ -29,17 +29,17 @@ That's it. MCP servers are auto-configured.
 
 ## Memory Types
 
-| Type | Use For |
-|------|---------|
+| Type                     | Use For                     |
+|--------------------------|-----------------------------|
 | `architectural-decision` | System architecture choices |
-| `design-decision` | UI/UX decisions |
-| `learning` | Lessons and discoveries |
-| `user-preference` | User preferences |
-| `project-preference` | Team conventions |
-| `issue` | Known problems |
-| `context` | General context (default) |
-| `recurring-pattern` | Reusable patterns |
-| `conventions-pattern` | Coding standards |
+| `design-decision`        | UI/UX decisions             |
+| `learning`               | Lessons and discoveries     |
+| `user-preference`        | User preferences            |
+| `project-preference`     | Team conventions            |
+| `issue`                  | Known problems              |
+| `context`                | General context (default)   |
+| `recurring-pattern`      | Reusable patterns           |
+| `conventions-pattern`    | Coding standards            |
 
 ## Configuration
 
@@ -57,13 +57,13 @@ Create `.historian.json` (optional):
 
 ### Options
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `model` | `kimi-k2.5-free` | AI model |
-| `temperature` | `0.3` | Response creativity |
-| `appendPrompt` | - | Custom instructions |
-| `memoryTypes` | - | Custom memory types |
-| `disabledMcps` | - | MCPs to disable (e.g., `["serena"]`) |
+| Option         | Default | Description                          |
+|----------------|---------|--------------------------------------|
+| `model`        | -       | AI model                             |
+| `temperature`  | `0.3`   | Response creativity                  |
+| `appendPrompt` | -       | Custom instructions                  |
+| `memoryTypes`  | -       | Custom memory types                  |
+| `disabledMcps` | -       | MCPs to disable (e.g., `["serena"]`) |
 
 ## Docs
 
