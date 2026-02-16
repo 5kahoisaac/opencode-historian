@@ -3,7 +3,6 @@ export {
   addToCollection,
   execAsync,
   type QmdOptions,
-  removeFromIndex,
   updateIndex,
 } from './cli.js';
 export {

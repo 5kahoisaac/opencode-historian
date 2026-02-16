@@ -21,13 +21,6 @@ export async function updateIndex(options: QmdOptions): Promise<void> {
   await execAsync(command);
 }
 
-export async function removeFromIndex(
-  filePath: string,
-  options: QmdOptions,
-): Promise<void> {
-  await updateIndex(options);
-}
-
 /**
  * Add external paths to the index under the "context" collection.
  * Used to index external files/folders configured in externalPaths.
