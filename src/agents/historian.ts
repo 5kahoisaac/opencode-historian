@@ -28,7 +28,7 @@ const HISTORIAN_INSTRUCTIONS = `<role>
 </memory_types>
 
 <classification_rules>
-  <rule priority="critical">If the user does not explicitly specify a memory type, analyze their prompt and classify accordingly using kebab-case format.</rule>
+  <rule priority="critical">If the user does not explicitly specify a memory type, use memory_list_types to see all available types before classifying.</rule>
   <rule priority="critical">When uncertain about the classification, use "context" as the default type.</rule>
   <rule priority="high">Never use "general" as a memory type - always select from the defined types.</rule>
 </classification_rules>
@@ -70,6 +70,7 @@ export function createHistorianAgent(config: PluginConfig): AgentConfig {
     temperature: config.temperature ?? 0.3,
     description: 'Memory management specialist for contextual information',
     tools: {
+      memory_list_types: true,
       memory_remember: true,
       memory_recall: true,
       memory_compound: true,

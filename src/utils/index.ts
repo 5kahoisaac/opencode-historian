@@ -13,7 +13,6 @@ export { createLogger } from './logger';
 export {
   getBuiltinMemoryTypes,
   isValidMemoryType,
-  normalizeMemoryType,
   toKebabCase,
   validateExternalPath,
 } from './validation';

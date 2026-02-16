@@ -102,20 +102,6 @@ export function getBuiltinMemoryTypes(): MemoryType[] {
 }
 
 /**
- * Normalizes a memory type to kebab-case.
- * Handles camelCase, PascalCase, spaces, and underscores.
- * Examples:
- *   "architectural decision" -> "architectural-decision"
- *   "architectural_decision" -> "architectural-decision"
- *   "architecturalDecision" -> "architectural-decision"
- *   "ArchitecturalDecision" -> "architectural-decision"
- * @deprecated Use toKebabCase instead
- */
-export function normalizeMemoryType(type: string): string {
-  return toKebabCase(type);
-}
-
-/**
  * Converts a string to kebab-case.
  * Handles camelCase, PascalCase, spaces, and underscores.
  * Examples:
@@ -145,7 +131,7 @@ export function isValidMemoryType(
   type: string,
   customTypes?: MemoryType[],
 ): boolean {
-  const normalized = normalizeMemoryType(type);
+  const normalized = toKebabCase(type);
 
   // Check built-in types
   if (BUILTIN_MEMORY_TYPES.includes(normalized as any)) {
@@ -153,10 +139,7 @@ export function isValidMemoryType(
   }
 
   // Check custom types (also normalize for comparison)
-  if (
-    customTypes &&
-    customTypes.some((t) => normalizeMemoryType(t.name) === normalized)
-  ) {
+  if (customTypes?.some((t) => toKebabCase(t.name) === normalized)) {
     return true;
   }
 
