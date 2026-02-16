@@ -6,11 +6,15 @@ import { createBuiltinMcps } from './mcp';
 import { addExternalPathsToIndex, updateIndex } from './qmd';
 import { StubQmdClient } from './qmd/client';
 import { createMemoryTools } from './tools';
+import { createLogger } from './utils/logger';
 import { toKebabCase } from './utils/validation';
 
 const OpencodeHistorian: Plugin = async (ctx) => {
   // Load configuration
   const config = loadPluginConfig(ctx.directory);
+
+  // Create logger with config
+  const logger = createLogger(config);
 
   // Create historian agent
   const historianAgent = createHistorianAgent(config);
@@ -27,14 +31,19 @@ const OpencodeHistorian: Plugin = async (ctx) => {
     addExternalPathsToIndex(config.externalPaths, { index: indexName })
       .then(() => updateIndex({ index: indexName }))
       .catch((error) => {
-        console.warn(
-          `[opencode-historian] Failed to initialize external paths: ${error instanceof Error ? error.message : String(error)}`,
+        logger.warn(
+          `Failed to initialize external paths: ${error instanceof Error ? error.message : String(error)}`,
         );
       });
   }
 
   // Create memory tools using the stub QmdClient
-  const memoryToolsArray = createMemoryTools(qmdClient, config, ctx.directory);
+  const memoryToolsArray = createMemoryTools(
+    qmdClient,
+    config,
+    ctx.directory,
+    logger,
+  );
 
   // Convert internal tool format to Plugin ToolDefinition format
   const toolDefinitions: Record<string, ToolDefinition> = {};
@@ -105,7 +114,7 @@ const OpencodeHistorian: Plugin = async (ctx) => {
     // Event hook: Minimal stub for Phase 1
     event: async (input) => {
       if (config.debug) {
-        console.log(`[opencode-historian] Event: ${input.event.type}`);
+        logger.debug(`Event: ${input.event.type}`);
       }
       // Phase 1: No-op, Phase 2 will implement auto-compound
     },
