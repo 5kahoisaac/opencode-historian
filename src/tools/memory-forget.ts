@@ -5,12 +5,14 @@ import type { PluginConfig } from '../config';
 import type { QmdClient } from '../qmd';
 import { updateIndex } from '../qmd';
 import { isWithinProjectMnemonics } from '../storage';
+import type { Logger } from '../utils/logger';
 import { toKebabCase } from '../utils/validation';
 
 export function createForgetRequestTool(
   qmdClient: QmdClient,
   _config: PluginConfig,
   projectRoot: string,
+  logger: Logger,
 ) {
   return {
     name: 'memory_forget',
@@ -81,7 +83,7 @@ export function createForgetRequestTool(
           }
 
           deletedFiles.push(filePath);
-          console.log(`[opencode-historian] Deleted memory file: ${filePath}`);
+          logger.info(`Deleted memory file: ${filePath}`);
         } catch (error) {
           throw new Error(
             `Error deleting file ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
