@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import type { PluginConfig } from '../config';
 import { getUserConfigPath } from '../config';
 import { ensureDirectory } from '../storage';
+import { createLogger } from '../utils/logger';
 
-const DEFAULT_CONFIG = {
+const DEFAULT_CONFIG: PluginConfig = {
   model: 'opencode/kimi-k2.5-free',
   temperature: 0.3,
   autoCompound: true,
@@ -12,8 +14,10 @@ const DEFAULT_CONFIG = {
   debug: false,
 };
 
+const logger = createLogger(DEFAULT_CONFIG);
+
 async function install(): Promise<void> {
-  console.log('[opencode-historian] Installing...');
+  logger.info('Installing...');
 
   // Create user config directory
   const userConfigPath = getUserConfigPath();
@@ -24,21 +28,21 @@ async function install(): Promise<void> {
   const configFile = `${userConfigPath}.json`;
   if (!fs.existsSync(configFile)) {
     fs.writeFileSync(configFile, JSON.stringify(DEFAULT_CONFIG, null, 2));
-    console.log(`[opencode-historian] Created default config: ${configFile}`);
+    logger.info(`Created default config: ${configFile}`);
   }
 
-  console.log('[opencode-historian] Installation complete!');
+  logger.info('Installation complete!');
 }
 
 async function doctor(): Promise<void> {
-  console.log('[opencode-historian] Running doctor...');
+  logger.info('Running doctor...');
   const issues: string[] = [];
 
   // Check qmd is installed
   try {
     const { execSync } = await import('node:child_process');
     execSync('qmd --version', { encoding: 'utf-8' });
-    console.log('✓ qmd is installed');
+    logger.info('✓ qmd is installed');
   } catch {
     issues.push('✗ qmd is not installed. Run: npm install -g qmd');
   }
@@ -49,19 +53,19 @@ async function doctor(): Promise<void> {
     fs.existsSync(`${userConfigPath}.json`) ||
     fs.existsSync(`${userConfigPath}.jsonc`)
   ) {
-    console.log('✓ User config exists');
+    logger.info('✓ User config exists');
   } else {
-    console.log('⚠ User config not found. Run: opencode-historian install');
+    logger.warn('⚠ User config not found. Run: opencode-historian install');
   }
 
   if (issues.length > 0) {
-    console.log('\nIssues found:');
+    logger.info('\nIssues found:');
     issues.forEach((issue) => {
-      console.log(issue);
+      logger.info(issue);
     });
     process.exit(1);
   } else {
-    console.log('\n✓ All checks passed!');
+    logger.info('\n✓ All checks passed!');
   }
 }
 
@@ -76,12 +80,14 @@ async function main(): Promise<void> {
       await doctor();
       break;
     default:
-      console.log('Usage: opencode-historian <install|doctor>');
+      logger.info('Usage: opencode-historian <install|doctor>');
       process.exit(1);
   }
 }
 
 main().catch((error) => {
-  console.error('[opencode-historian] Error:', error);
+  logger.error(
+    `Error: ${error instanceof Error ? error.message : String(error)}`,
+  );
   process.exit(1);
 });
