@@ -1,4 +1,5 @@
 export {
+  addExternalPathsToIndex,
   addToCollection,
   execAsync,
   type QmdOptions,

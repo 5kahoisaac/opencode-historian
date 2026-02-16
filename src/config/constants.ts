@@ -22,7 +22,3 @@ export function getUserConfigPath(): string {
 export function getProjectConfigPath(projectRoot: string): string {
   return path.join(projectRoot, '.opencode', 'opencode-historian');
 }
-
-export function getGlobalMemoryPath(): string {
-  return path.join(getUserConfigDir(), 'opencode', 'mnemonics');
-}

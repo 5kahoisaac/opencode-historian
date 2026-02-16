@@ -3,7 +3,6 @@
 // Constants exports
 export {
   DEFAULT_CONFIG,
-  getGlobalMemoryPath,
   getProjectConfigPath,
   getUserConfigPath,
   PROJECT_MEMORY_DIR,

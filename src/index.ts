@@ -3,8 +3,10 @@ import { tool } from '@opencode-ai/plugin';
 import { createHistorianAgent } from './agents';
 import { loadPluginConfig } from './config';
 import { createBuiltinMcps } from './mcp';
+import { addExternalPathsToIndex, updateIndex } from './qmd';
 import { StubQmdClient } from './qmd/client';
 import { createMemoryTools } from './tools';
+import { toKebabCase } from './utils/validation';
 
 const OpencodeHistorian: Plugin = async (ctx) => {
   // Load configuration
@@ -17,6 +19,19 @@ const OpencodeHistorian: Plugin = async (ctx) => {
   // The qmd MCP server will be started via the mcp hook, and tools will
   // handle the gracefully degraded state until it's connected
   const qmdClient = new StubQmdClient();
+
+  // Initialize external paths into "context" collection (non-blocking)
+  if (config.externalPaths && config.externalPaths.length > 0) {
+    const indexName = toKebabCase(ctx.directory.split('/').pop() || 'project');
+    // Run asynchronously without blocking plugin initialization
+    addExternalPathsToIndex(config.externalPaths, { index: indexName })
+      .then(() => updateIndex({ index: indexName }))
+      .catch((error) => {
+        console.warn(
+          `[opencode-historian] Failed to initialize external paths: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      });
+  }
 
   // Create memory tools using the stub QmdClient
   const memoryToolsArray = createMemoryTools(qmdClient, config, ctx.directory);

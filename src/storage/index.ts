@@ -8,7 +8,6 @@ export {
 } from './files.js';
 export {
   ensureDirectory,
-  getGlobalMemoryPath,
   getProjectMemoryPath,
   isWithinProjectMnemonics,
 } from './paths.js';

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { getGlobalMemoryPath, getUserConfigPath } from '../config';
+import { getUserConfigPath } from '../config';
 import { ensureDirectory } from '../storage';
 
 const DEFAULT_CONFIG = {
@@ -26,13 +26,6 @@ async function install(): Promise<void> {
     fs.writeFileSync(configFile, JSON.stringify(DEFAULT_CONFIG, null, 2));
     console.log(`[opencode-historian] Created default config: ${configFile}`);
   }
-
-  // Create global memory directory
-  const globalMemoryPath = getGlobalMemoryPath();
-  ensureDirectory(globalMemoryPath);
-  console.log(
-    `[opencode-historian] Created global memory dir: ${globalMemoryPath}`,
-  );
 
   console.log('[opencode-historian] Installation complete!');
 }
@@ -59,14 +52,6 @@ async function doctor(): Promise<void> {
     console.log('✓ User config exists');
   } else {
     console.log('⚠ User config not found. Run: opencode-historian install');
-  }
-
-  // Check global memory directory
-  const globalMemoryPath = getGlobalMemoryPath();
-  if (fs.existsSync(globalMemoryPath)) {
-    console.log('✓ Global memory directory exists');
-  } else {
-    issues.push('✗ Global memory directory not found');
   }
 
   if (issues.length > 0) {

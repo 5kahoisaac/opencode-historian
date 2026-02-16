@@ -45,54 +45,28 @@ export function createRecallTool(
           );
         }
 
-        // Search global memories - collection only, no index
-        // Global memories are searched by collection (memory type) directly
-        let globalResults: any[] = [];
-        try {
-          globalResults = await qmdClient.vectorSearch(query, {
-            collection: normalizedMemoryType,
-            n: limit || 10,
-          });
-        } catch (globalError) {
-          // Global search may fail if no memories exist yet
-          console.log(
-            `[opencode-historian] Global search failed (may be first run): ${globalError instanceof Error ? globalError.message : String(globalError)}`,
-          );
-        }
+        // Filter for .md files only
+        const memories = projectResults.filter((r) => r.path.endsWith('.md'));
 
-        // Filter for .md files only and mark scope
-        const projectMemories = projectResults
-          .filter((r) => r.path.endsWith('.md'))
-          .map((r) => ({ ...r, scope: 'project' as const }));
-
-        const globalMemories = globalResults
-          .filter((r) => r.path.endsWith('.md'))
-          .map((r) => ({ ...r, scope: 'global' as const }));
-
-        // Combine results
-        const allMemories = [...projectMemories, ...globalMemories];
-
-        if (!allMemories || allMemories.length === 0) {
+        if (!memories || memories.length === 0) {
           console.log(
             `[opencode-historian] No memory files found for query: "${query}"`,
           );
           return {
             memories: [],
-            projectCount: 0,
-            globalCount: 0,
+            count: 0,
             message:
               'No memory files found matching your query. Try creating a memory first with memory_remember.',
           };
         }
 
         console.log(
-          `[opencode-historian] Found ${allMemories.length} memory files for query: "${query}" (project: ${projectMemories.length}, global: ${globalMemories.length})`,
+          `[opencode-historian] Found ${memories.length} memory files for query: "${query}"`,
         );
 
         return {
-          memories: allMemories,
-          projectCount: projectMemories.length,
-          globalCount: globalMemories.length,
+          memories,
+          count: memories.length,
         };
       } catch (error) {
         const errorMessage =
@@ -104,8 +78,7 @@ export function createRecallTool(
         // Return helpful error message instead of throwing
         return {
           memories: [],
-          projectCount: 0,
-          globalCount: 0,
+          count: 0,
           error: `Failed to search memories: ${errorMessage}. QMD service may not be available or properly configured.`,
         };
       }
