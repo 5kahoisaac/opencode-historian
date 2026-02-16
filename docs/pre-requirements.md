@@ -1,105 +1,61 @@
 # Pre-requirements
 
-The Historian plugin has minimal requirements. MCP servers and index management are handled automatically.
+Minimal setup. Everything else is automatic.
 
 ## Required
 
-### Bun Runtime
-
-[Bun](https://bun.sh/) v1.3.9+ is the JavaScript runtime.
-
 ```bash
-# Install Bun
-curl -fsSL https://bun.sh/install | bash
+# Bun runtime
+bun --version   # Need 1.3.9+
 
-# Verify
-bun --version
-```
-
-### OpenCode CLI
-
-[OpenCode](https://opencode.ai/) is the AI agent framework.
-
-```bash
-npm install -g @opencode-ai/cli
+# OpenCode CLI
 opencode --version
-```
 
-### QMD
-
-[QMD](https://github.com/sst/opencode/tree/main/packages/qmd) provides semantic search.
-
-```bash
-bun install -g qmd
+# QMD for search
 qmd --version
 ```
 
-## Automatic Setup
+## Install
 
-### MCP Servers
+```bash
+# Bun
+curl -fsSL https://bun.sh/install | bash
 
-The plugin automatically configures:
+# OpenCode
+npm install -g @opencode-ai/cli
 
-| Server | Command | Status |
-|--------|---------|--------|
-| **QMD** | `qmd mcp` | Required |
-| **Serena** | `uvx serena` | Optional |
-
-No user configuration needed. Serena can be disabled via `disabledMcps`.
-
-### Index Management
-
-The QMD index is managed automatically:
-
-- **On Remember**: Index updated after creating memories
-- **On Compound**: Index updated after modifying memories
-- **On Forget**: Index updated after deleting memories
-
-Index name is derived from your project folder automatically.
+# QMD
+bun install -g qmd
+```
 
 ## Optional
 
-### Serena (Code Analysis)
-
-For advanced codebase analysis:
+**Serena** (code analysis) - requires `uv`:
 
 ```bash
 pip install uv
 ```
 
-If not installed, Serena is skipped. Disable explicitly:
+Or disable it:
 
 ```json
-{
-  "disabledMcps": ["serena"]
-}
+{ "disabledMcps": ["serena"] }
 ```
 
-## Memory Storage
+## Automatic
 
-Memories are stored in your project:
+| Feature | Status |
+|---------|--------|
+| MCP registration | Auto |
+| Index creation | Auto |
+| Index updates | Auto |
+| Memory storage | Auto |
+
+## Storage
 
 ```
 your-project/
-└── .mnemonics/
-    ├── architectural-decision/
-    ├── learning/
-    ├── context/
-    └── ...
+└── .mnemonics/     # Created automatically
 ```
 
-Created automatically when first memory is stored.
-
-## Verification
-
-```bash
-# Check dependencies
-bun --version
-opencode --version
-qmd --version
-
-# Test QMD
-qmd --help
-```
-
-That's all. The plugin handles MCP registration and index management.
+Done.
