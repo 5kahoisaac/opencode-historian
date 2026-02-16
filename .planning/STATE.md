@@ -169,6 +169,7 @@ None yet
 | 2 | Fix docs - remove useless sections like MCP commands | 2026-02-16 | cd9ab35 | [2-fix-docs-remove-useless-sections-like-mc](./quick/2-fix-docs-remove-useless-sections-like-mc/) |
 | 3 | Remove global scope memory and connect externalPaths | 2026-02-16 | 7b5c822 | [4-remove-global-memory-scope-and-connect-e](./quick/4-remove-global-memory-scope-and-connect-e/) |
 | 4 | Fix memory_forget tool - agent creates memories on delete | 2026-02-16 | f4917de | [5-fix-memory-forget-tool-agent-creates-mem](./quick/5-fix-memory-forget-tool-agent-creates-mem/) |
+| 6 | Fix UAT gaps - qmd index path, agent prompts, logger usage | 2026-02-17 | 0439064 | [6-fix-uat-gaps-qmd-index-path-agent-prompt](./quick/6-fix-uat-gaps-qmd-index-path-agent-prompt/) |
 
 ---
 
@@ -255,15 +256,15 @@ bunx opencode-historian install
 
 | Type | Path |
 |------|------|
-| architectural decision | `.mnemonics/decision/architectural/*.md` |
-| design decision | `.mnemonics/decision/design/*.md` |
+| architectural-decision | `.mnemonics/architectural-decision/*.md` |
+| design-decision | `.mnemonics/design-decision/*.md` |
 | learning | `.mnemonics/learning/*.md` |
-| user preference | `.mnemonics/preference/user/*.md` |
-| project preference | `.mnemonics/preference/project/*.md` |
-| issue | `.mnemonics/blocker/issue/*.md` |
+| user-preference | `.mnemonics/user-preference/*.md` |
+| project-preference | `.mnemonics/project-preference/*.md` |
+| issue | `.mnemonics/issue/*.md` |
 | context | `.mnemonics/context/*.md` |
-| recurring pattern | `.mnemonics/pattern/recurring/*.md` |
-| conventions pattern | `.mnemonics/pattern/conventions/*.md` |
+| recurring-pattern | `.mnemonics/recurring-pattern/*.md` |
+| conventions-pattern | `.mnemonics/conventions-pattern/*.md` |
 
 ---
 

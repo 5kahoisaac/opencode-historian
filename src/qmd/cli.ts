@@ -18,7 +18,7 @@ export async function addToCollection(
   collectionName: string,
   options: QmdOptions,
 ): Promise<void> {
-  const command = `qmd --index ${options.index} collection add "${directoryPath}" --name ${collectionName} --mask '**/*.md'`;
+  const command = `qmd --index ${options.index} collection add ${directoryPath} --name ${collectionName} --mask '**/*.md'`;
   await execAsync(command);
 }
 
@@ -29,7 +29,7 @@ export async function updateIndex(options: QmdOptions): Promise<void> {
 
 /**
  * Add external paths to the index under the "context" collection.
- * Used to index external files/folders configured in externalPaths.
+ * Used to index external folders configured in externalPaths.
  */
 export async function addExternalPathsToIndex(
   paths: string[],
@@ -38,7 +38,7 @@ export async function addExternalPathsToIndex(
   for (const path of paths) {
     try {
       // Add to "context" collection for external paths
-      const command = `qmd --index ${options.index} collection add "${path}" --name context`;
+      const command = `qmd --index ${options.index} collection add ${path} --name context`;
       await execAsync(command);
       options.logger?.info(
         `Added external path to context collection: ${path}`,

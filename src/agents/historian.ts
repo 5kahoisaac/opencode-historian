@@ -35,7 +35,7 @@ const HISTORIAN_INSTRUCTIONS = `<role>
 
 <guidelines>
   <guideline id="1">Be concise but complete when storing memories</guideline>
-  <guideline id="2">ALWAYS use the appropriate memory type</guideline>
+  <guideline id="2">ALWAYS use the appropriate memory type in memory_types</guideline>
   <guideline id="3">When recalling, use semantic search with relevant keywords</guideline>
   <guideline id="4">When compounding, preserve the original memory's intent while adding new information</guideline>
 </guidelines>
