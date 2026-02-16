@@ -6,11 +6,13 @@ import type { QmdClient } from '../qmd';
 import { updateIndex } from '../qmd';
 import { isWithinProjectMnemonics, parseMemoryFile } from '../storage';
 import { isValidMemoryType, toKebabCase } from '../utils';
+import type { Logger } from '../utils/logger';
 
 export function createCompoundTool(
   qmdClient: QmdClient,
   _config: PluginConfig,
   projectRoot: string,
+  logger: Logger,
 ) {
   return {
     name: 'memory_compound',
@@ -87,7 +89,7 @@ export function createCompoundTool(
         );
       }
 
-      console.log(`[opencode-historian] Updated memory file: ${filePath}`);
+      logger.info(`Updated memory file: ${filePath}`);
 
       // Update index
       await updateIndex({ index: indexName });
