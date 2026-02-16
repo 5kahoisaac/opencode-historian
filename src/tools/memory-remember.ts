@@ -11,12 +11,15 @@ import {
   isWithinProjectMnemonics,
 } from '../storage';
 import { isValidMemoryType, toKebabCase } from '../utils';
+import { createLogger } from '../utils/logger';
 
 export function createRememberTool(
   qmdClient: QmdClient,
   _config: PluginConfig,
   projectRoot: string,
 ) {
+  const logger = createLogger(_config);
+
   return {
     name: 'memory_remember',
     description: 'Create a new memory with the given content',
@@ -76,12 +79,13 @@ export function createRememberTool(
         );
       }
 
-      console.log(`[opencode-historian] Created memory file: ${filePath}`);
+      logger.info(`Created memory file: ${filePath}`);
 
-      // Add to collection (normalizedMemoryType is guaranteed kebab-case)
+      // Add to collection (pass directory, not file - qmd watches directories)
       const indexName = qmdClient.getIndexName(projectRoot);
-      await addToCollection(filePath, normalizedMemoryType, {
+      await addToCollection(mnemonicsDir, normalizedMemoryType, {
         index: indexName,
+        logger,
       });
 
       // Update index

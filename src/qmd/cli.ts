@@ -1,10 +1,12 @@
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
+import type { Logger } from '../utils/logger';
 
 const execAsync = promisify(exec);
 
 export interface QmdOptions {
   index: string;
+  logger?: Logger;
 }
 
 /**
@@ -38,12 +40,12 @@ export async function addExternalPathsToIndex(
       // Add to "context" collection for external paths
       const command = `qmd --index ${options.index} collection add "${path}" --name context`;
       await execAsync(command);
-      console.log(
-        `[opencode-historian] Added external path to context collection: ${path}`,
+      options.logger?.info(
+        `Added external path to context collection: ${path}`,
       );
     } catch (error) {
-      console.warn(
-        `[opencode-historian] Failed to add external path ${path}: ${error instanceof Error ? error.message : String(error)}`,
+      options.logger?.warn(
+        `Failed to add external path ${path}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
