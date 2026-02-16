@@ -7,6 +7,7 @@ import { updateIndex } from '../qmd';
 import { isWithinProjectMnemonics, parseMemoryFile } from '../storage';
 import { isValidMemoryType, toKebabCase } from '../utils';
 import type { Logger } from '../utils/logger';
+import { createRememberTool } from './memory-remember';
 
 export function createCompoundTool(
   qmdClient: QmdClient,
@@ -43,7 +44,31 @@ export function createCompoundTool(
       const mdResults = searchResults.filter((r) => r.path.endsWith('.md'));
 
       if (!mdResults || mdResults.length === 0) {
-        throw new Error('No memory files (.md) found matching the query');
+        // No existing memory found - create new memory instead
+        logger.info(
+          `No existing memory found for query "${query}", creating new memory`,
+        );
+
+        // Create remember tool and call it
+        const rememberTool = createRememberTool(
+          qmdClient,
+          _config,
+          projectRoot,
+          logger,
+        );
+        const rememberResult = await rememberTool.handler({
+          title: query, // Use query as title
+          content: modifications,
+          memoryType: memoryType || 'context', // Default to context if no type specified
+          tags: [],
+        });
+
+        return {
+          success: true,
+          filePath: rememberResult.filePath,
+          memoryType: rememberResult.memoryType,
+          createdNew: true, // Indicate this was a new creation, not update
+        };
       }
 
       const result = mdResults[0];
@@ -98,6 +123,7 @@ export function createCompoundTool(
         success: true,
         filePath,
         memoryType: memoryFile.data.memory_type,
+        createdNew: false, // Indicate this was an update, not creation
       };
     },
   };
