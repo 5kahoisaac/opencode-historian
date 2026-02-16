@@ -1,5 +1,6 @@
 import * as fs from 'node:fs';
 import stripJsonComments from 'strip-json-comments';
+import type { Logger } from '../utils/logger';
 import { createLogger } from '../utils/logger';
 import {
   DEFAULT_CONFIG,
@@ -41,10 +42,12 @@ export function findConfigPath(
 /**
  * Load and parse a config file from the given path
  * @param filePath - Path to config file (.json or .jsonc)
+ * @param logger - Logger for error output
  * @returns Partial config object, or null if file doesn't exist or is invalid
  */
 export function loadConfigFromPath(
   filePath: string,
+  logger?: Logger,
 ): Partial<PluginConfig> | null {
   try {
     const content = fs.readFileSync(filePath, 'utf-8');
@@ -55,10 +58,11 @@ export function loadConfigFromPath(
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return null;
     }
-    console.warn(
-      `[opencode-historian] Error reading config from ${filePath}:`,
-      error,
-    );
+    if (logger) {
+      logger.warn(
+        `Error reading config from ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
     return null;
   }
 }
@@ -128,18 +132,23 @@ export function loadPluginConfig(directory: string): PluginConfig {
   const userConfigBasePath = getUserConfigPath();
   const projectConfigBasePath = getProjectConfigPath(directory);
 
+  // Create initial logger with default config for config loading phase
+  const initialLogger = createLogger(DEFAULT_CONFIG as PluginConfig);
+
   const userConfigPath = findConfigPath(userConfigBasePath);
   const projectConfigPath = findConfigPath(projectConfigBasePath);
 
   let config: Partial<PluginConfig> = { ...DEFAULT_CONFIG };
 
-  const userConfig = userConfigPath ? loadConfigFromPath(userConfigPath) : null;
+  const userConfig = userConfigPath
+    ? loadConfigFromPath(userConfigPath, initialLogger)
+    : null;
   if (userConfig) {
     config = deepMerge(config, userConfig);
   }
 
   const projectConfig = projectConfigPath
-    ? loadConfigFromPath(projectConfigPath)
+    ? loadConfigFromPath(projectConfigPath, initialLogger)
     : null;
   if (projectConfig) {
     config = deepMerge(config, projectConfig);
