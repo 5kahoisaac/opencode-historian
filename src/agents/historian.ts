@@ -43,16 +43,17 @@ const HISTORIAN_INSTRUCTIONS = `<role>
 </memory_types>
 
 <type_mapping>
-  <instruction>Map user input to EXACT memory type names:</instruction>
-  <mapping user_says="convention, conventions, coding standard, naming convention" use="conventions-pattern"/>
-  <mapping user_says="architecture, architectural, tech stack" use="architectural-decision"/>
-  <mapping user_says="design, UI, UX, component design" use="design-decision"/>
-  <mapping user_says="preference, settings, user preference" use="user-preference"/>
-  <mapping user_says="project convention, team standard" use="project-preference"/>
-  <mapping user_says="pattern, solution, reusable" use="recurring-pattern"/>
-  <mapping user_says="problem, blocker, bug, issue" use="issue"/>
-  <mapping user_says="learned, insight, discovery, lesson" use="learning"/>
-  <mapping user_says="unclear, not sure, default" use="context"/>
+  <instruction>Map user intent to EXACT memory type names:</instruction>
+  <mapping user_means="convention, conventions, coding standard, naming convention" use="conventions-pattern"/>
+  <mapping user_means="architecture, architectural, tech stack" use="architectural-decision"/>
+  <mapping user_means="design, UI, UX, component design" use="design-decision"/>
+  <mapping user_means="preference, settings, user preference" use="user-preference"/>
+  <mapping user_means="project convention, team standard" use="project-preference"/>
+  <mapping user_means="pattern, solution, reusable" use="recurring-pattern"/>
+  <mapping user_means="problem, blocker, bug, issue" use="issue"/>
+  <mapping user_means="learned, insight, discovery, lesson" use="learning"/>
+  <mapping user_means="unclear, not sure, default" use="context"/>
+  <!--CUSTOM_TYPE_MAPPINGS-->
 </type_mapping>
 
 <remember_workflow>
@@ -123,16 +124,36 @@ function stripWhitespace(xml: string): string {
 }
 
 export function createHistorianAgent(config: PluginConfig): AgentConfig {
-  // Build custom types section from config
-  const customTypesSection = config.memoryTypes?.length
-    ? `<custom_types>Custom memory types configured in this project: ${config.memoryTypes.map((t) => `"${t.name}"`).join(', ')}. Only use these custom types if they match the user's intent. If a user requests an undefined type, use the closest built-in type instead.</custom_types>`
-    : '<custom_types>This project has no custom memory types configured. Only use the built-in types listed above.</custom_types>';
+  // Build custom types content for injection
+  let instructions = HISTORIAN_INSTRUCTIONS;
 
-  // Inject custom types into instructions
-  const instructionsWithCustomTypes = HISTORIAN_INSTRUCTIONS.replace(
-    '</types>',
-    `</types>${customTypesSection}`,
-  );
+  if (config.memoryTypes?.length) {
+    // Add custom types to valid_types
+    const customTypesList = config.memoryTypes
+      .map(
+        (t) =>
+          `    "${t.name}"${' '.repeat(Math.max(0, 25 - t.name.length))}- ${t.description || 'Custom memory type'}`,
+      )
+      .join('\n');
+
+    instructions = instructions.replace(
+      '</valid_types>',
+      `${customTypesList}\n  </valid_types>`,
+    );
+
+    // Add placeholder mappings for custom types
+    const customMappings = config.memoryTypes
+      .map((t) => `  <mapping user_means="${t.name}" use="${t.name}"/>`)
+      .join('\n');
+
+    instructions = instructions.replace(
+      '<!--CUSTOM_TYPE_MAPPINGS-->',
+      customMappings,
+    );
+  }
+
+  // Remove the placeholder if no custom types
+  instructions = instructions.replace('<!--CUSTOM_TYPE_MAPPINGS-->', '');
 
   return {
     name: 'historian',
@@ -147,7 +168,7 @@ export function createHistorianAgent(config: PluginConfig): AgentConfig {
       memory_compound: true,
       memory_forget: true,
     },
-    instructions: stripWhitespace(instructionsWithCustomTypes),
+    instructions: stripWhitespace(instructions),
     prompt: config.appendPrompt,
   };
 }
