@@ -7,17 +7,21 @@ export interface QmdOptions {
   index: string;
 }
 
+/**
+ * Add a directory to a qmd collection.
+ * qmd collection add expects a directory to watch, not a single file.
+ */
 export async function addToCollection(
-  filePath: string,
+  directoryPath: string,
   collectionName: string,
   options: QmdOptions,
 ): Promise<void> {
-  const command = `qmd collection add "${filePath}" --name "${collectionName}" --index ${options.index}`;
+  const command = `qmd --index ${options.index} collection add "${directoryPath}" --name ${collectionName} --mask '**/*.md'`;
   await execAsync(command);
 }
 
 export async function updateIndex(options: QmdOptions): Promise<void> {
-  const command = `qmd update --index ${options.index}`;
+  const command = `qmd --index ${options.index} update`;
   await execAsync(command);
 }
 
@@ -32,7 +36,7 @@ export async function addExternalPathsToIndex(
   for (const path of paths) {
     try {
       // Add to "context" collection for external paths
-      const command = `qmd index add "${path}" --index ${options.index} --collection context`;
+      const command = `qmd --index ${options.index} collection add "${path}" --name context`;
       await execAsync(command);
       console.log(
         `[opencode-historian] Added external path to context collection: ${path}`,
