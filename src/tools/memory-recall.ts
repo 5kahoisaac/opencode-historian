@@ -35,11 +35,16 @@ export function createRecallTool(
         const projectIndex = getIndexName(projectRoot);
         let projectResults: any[] = [];
         try {
-          projectResults = await vectorSearch(query, {
-            index: projectIndex,
-            collection: normalizedMemoryType,
-            n: limit || 10,
-          });
+          // If no memoryType specified, search all collections by omitting collection parameter
+          const searchOptions = normalizedMemoryType
+            ? {
+                index: projectIndex,
+                collection: normalizedMemoryType,
+                n: limit || 10,
+              }
+            : { index: projectIndex, n: limit || 10 }; // Search all collections
+
+          projectResults = await vectorSearch(query, searchOptions);
         } catch (projectError) {
           logger.warn(
             `Project search failed: ${projectError instanceof Error ? projectError.message : String(projectError)}`,

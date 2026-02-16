@@ -172,6 +172,7 @@ None yet
 | 4 | Fix memory_forget tool - agent creates memories on delete | 2026-02-16 | f4917de | [5-fix-memory-forget-tool-agent-creates-mem](./quick/5-fix-memory-forget-tool-agent-creates-mem/) |
 | 6 | Fix UAT gaps - qmd index path, agent prompts, logger usage | 2026-02-17 | 0439064 | [6-fix-uat-gaps-qmd-index-path-agent-prompt](./quick/6-fix-uat-gaps-qmd-index-path-agent-prompt/) |
 | 7 | Replace QmdClient with CLI-based qmd commands | 2026-02-17 | 42cbc49 | [7-replace-qmdclient-with-cli-based-qmd-com](./quick/7-replace-qmdclient-with-cli-based-qmd-com/) |
+| 8 | Test memory recall fix with CLI-based qmd | 2026-02-17 | f4b9e4c | [8-test-memory-recall-fix-with-cli-based-qm](./quick/8-test-memory-recall-fix-with-cli-based-qm/) |
 
 ---
 

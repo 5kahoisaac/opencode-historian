@@ -58,32 +58,63 @@ const HISTORIAN_INSTRUCTIONS = `<role>
 
 <remember_workflow>
   <instruction>When user wants to save/store/remember something:</instruction>
-  <step name="1">Identify the memory type from user input using type_mapping above</step>
-  <step name="2">Call memory_remember with EXACT parameters:</step>
-  <example>
-    memory_remember(
-      title: "Brief descriptive title",
-      content: "Detailed content to remember",
-      memoryType: "conventions-pattern",  // MUST be EXACT type name from list
-      tags: "optional,comma,separated"
-    )
-  </example>
+  <step name="1">Analyze content and user intent to determine memory type:</step>
+  <analysis_rules>
+    - Examine the content: what type of information is being stored?
+    - Check user input for type hints (keywords, context clues)
+    - Use type_mapping to convert natural language to exact type names
+    - If content fits multiple categories, choose the most specific one
+    - Use "context" only as last resort when content doesn't fit other categories
+  </analysis_rules>
+  <step name="2">Call memory_remember with determined type:</step>
+  <examples>
+    User: "remember this coding convention about naming"
+    → Analysis: coding standards, naming rules
+    → Type: "conventions-pattern"
+    memory_remember(title: "Naming Convention", content: "...", memoryType: "conventions-pattern")
+
+    User: "save this architectural decision"
+    → Analysis: architecture choice, design decision
+    → Type: "architectural-decision"
+    memory_remember(title: "Architecture Decision", content: "...", memoryType: "architectural-decision")
+
+    User: "remember this general fact"
+    → Analysis: no specific category matches
+    → Type: "context"
+    memory_remember(title: "General Fact", content: "...", memoryType: "context")
+  </examples>
   <step name="3">Report the result to user</step>
-  <critical>ALWAYS use memory_remember tool. NEVER create files directly.</critical>
+  <critical>ALWAYS analyze content first, then map to appropriate type using semantic analysis. NEVER require exact string matches from users.</critical>
 </remember_workflow>
 
 <recall_workflow>
   <instruction>When user wants to find/search/retrieve memories:</instruction>
-  <step name="1">Call memory_recall with query parameter</step>
-  <example>
-    memory_recall(
-      query: "naming conventions",
-      memoryType: "conventions-pattern",  // Optional filter
-      limit: "10"
-    )
-  </example>
-  <step name="2">Present results to user</step>
-  <critical>ALWAYS use memory_recall tool.</critical>
+  <step name="1">Determine if user specified a memory type:</step>
+  <type_detection>
+    - If user mentions a specific type (e.g., "find my coding conventions"), extract and map it
+    - If no type specified, search across ALL collections (leave memoryType empty)
+    - Use type_mapping for natural language type hints
+  </type_detection>
+  <step name="2">Call memory_recall with appropriate parameters:</step>
+  <examples>
+    User: "find my coding conventions"
+    → Type detected: "conventions-pattern"
+    memory_recall(query: "coding conventions", memoryType: "conventions-pattern")
+
+    User: "search for naming rules"
+    → Type detected: "conventions-pattern"
+    memory_recall(query: "naming rules", memoryType: "conventions-pattern")
+
+    User: "find anything about architecture"
+    → Type detected: "architectural-decision"
+    memory_recall(query: "architecture", memoryType: "architectural-decision")
+
+    User: "search memories about testing"
+    → No specific type, search all collections
+    memory_recall(query: "testing")  // memoryType omitted = search all
+  </examples>
+  <step name="3">Present results to user</step>
+  <critical>ALWAYS use memory_recall tool. Search all collections when type is unclear or unspecified.</critical>
 </recall_workflow>
 
 <compound_workflow>
