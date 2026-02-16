@@ -7,7 +7,7 @@ export const MemoryTypeSchema = z.object({
 });
 
 export const PluginConfigSchema = z.object({
-  model: z.string().default('opencode/kimi-k2.5-free'),
+  model: z.string().optional(),
   temperature: z.number().min(0).max(2).default(0.3),
   appendPrompt: z.string().optional(),
   externalPaths: z.array(z.string()).optional(),

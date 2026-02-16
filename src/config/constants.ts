@@ -5,7 +5,6 @@ import type { PluginConfig } from './schema';
 export const PROJECT_MEMORY_DIR = '.mnemonics';
 
 export const DEFAULT_CONFIG: Partial<PluginConfig> = {
-  model: 'opencode/kimi-k2.5-free',
   temperature: 0.3,
   autoCompound: true,
   logLevel: 'info',

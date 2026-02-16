@@ -1,5 +1,6 @@
 import * as fs from 'node:fs';
 import stripJsonComments from 'strip-json-comments';
+import { createLogger } from '../utils/logger';
 import {
   DEFAULT_CONFIG,
   getProjectConfigPath,
@@ -10,16 +11,28 @@ import { type PluginConfig, PluginConfigSchema } from './schema';
 /**
  * Find a config file by checking for .jsonc first, then .json
  * @param basePath - Base path without extension
+ * @param log - Optional log function for debug output
  * @returns Full path to config file, or null if neither exists
  */
-export function findConfigPath(basePath: string): string | null {
+export function findConfigPath(
+  basePath: string,
+  log?: (message: string) => void,
+): string | null {
   const jsoncPath = `${basePath}.jsonc`;
   const jsonPath = `${basePath}.json`;
 
-  if (fs.existsSync(jsoncPath)) {
+  const jsoncExists = fs.existsSync(jsoncPath);
+  const jsonExists = fs.existsSync(jsonPath);
+
+  if (log) {
+    log(`Checking: ${jsoncPath} - exists: ${jsoncExists}`);
+    log(`Checking: ${jsonPath} - exists: ${jsonExists}`);
+  }
+
+  if (jsoncExists) {
     return jsoncPath;
   }
-  if (fs.existsSync(jsonPath)) {
+  if (jsonExists) {
     return jsonPath;
   }
   return null;
@@ -112,25 +125,44 @@ function deepMerge<T extends Record<string, unknown>>(
  * @returns Complete plugin configuration
  */
 export function loadPluginConfig(directory: string): PluginConfig {
-  const userConfigPath = findConfigPath(getUserConfigPath());
-  const projectConfigPath = findConfigPath(getProjectConfigPath(directory));
+  const userConfigBasePath = getUserConfigPath();
+  const projectConfigBasePath = getProjectConfigPath(directory);
+
+  const userConfigPath = findConfigPath(userConfigBasePath);
+  const projectConfigPath = findConfigPath(projectConfigBasePath);
 
   let config: Partial<PluginConfig> = { ...DEFAULT_CONFIG };
 
-  if (userConfigPath) {
-    const userConfig = loadConfigFromPath(userConfigPath);
-    if (userConfig) {
-      config = deepMerge(config, userConfig);
-    }
+  const userConfig = userConfigPath ? loadConfigFromPath(userConfigPath) : null;
+  if (userConfig) {
+    config = deepMerge(config, userConfig);
   }
 
-  if (projectConfigPath) {
-    const projectConfig = loadConfigFromPath(projectConfigPath);
-    if (projectConfig) {
-      config = deepMerge(config, projectConfig);
-    }
+  const projectConfig = projectConfigPath
+    ? loadConfigFromPath(projectConfigPath)
+    : null;
+  if (projectConfig) {
+    config = deepMerge(config, projectConfig);
   }
 
   // Apply defaults and validate final config
-  return PluginConfigSchema.parse(config);
+  const finalConfig = PluginConfigSchema.parse(config);
+
+  // Create logger with final config - it respects both debug and logLevel
+  const logger = createLogger(finalConfig);
+
+  logger.debug('Config loading:');
+  logger.debug(`  User config path: ${userConfigBasePath}.{jsonc,json}`);
+  logger.debug(`  Project config path: ${projectConfigBasePath}.{jsonc,json}`);
+  logger.debug(`  User config found: ${userConfigPath || 'none'}`);
+  logger.debug(`  Project config found: ${projectConfigPath || 'none'}`);
+  if (userConfig) {
+    logger.debug(`  User config loaded: ${JSON.stringify(userConfig)}`);
+  }
+  if (projectConfig) {
+    logger.debug(`  Project config loaded: ${JSON.stringify(projectConfig)}`);
+  }
+  logger.debug(`  Final merged config: ${JSON.stringify(finalConfig)}`);
+
+  return finalConfig;
 }

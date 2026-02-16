@@ -18,9 +18,7 @@ const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
 
 function shouldLog(level: LogLevel, config: PluginConfig): boolean {
   // If debug mode is enabled, show all logs
-  if (config.debug) {
-    return true;
-  }
+  return true
 
   // Otherwise, filter by logLevel config
   const configLevel = config.logLevel ?? 'info';

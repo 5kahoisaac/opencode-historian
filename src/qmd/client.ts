@@ -2,7 +2,7 @@ import type { Client as McpClient } from '@modelcontextprotocol/sdk/client/index
 import { toKebabCase } from '../utils';
 
 export interface SearchOptions {
-  index: string;
+  index?: string;
   collection?: string;
   n?: number;
 }
@@ -25,8 +25,8 @@ export class QmdClient {
       name: 'qmd_search',
       arguments: {
         query,
-        index: options.index,
-        collection: options.collection,
+        ...(options.index && { index: options.index }),
+        ...(options.collection && { collection: options.collection }),
         n: options.n,
       },
     });
@@ -42,8 +42,8 @@ export class QmdClient {
       name: 'qmd_vector_search',
       arguments: {
         query,
-        index: options.index,
-        collection: options.collection,
+        ...(options.index && { index: options.index }),
+        ...(options.collection && { collection: options.collection }),
         n: options.n,
       },
     });

@@ -28,12 +28,14 @@ const OpencodeHistorian: Plugin = async (ctx) => {
     // We need to convert it to use the plugin's Zod instance
     const originalArgs = toolDef.parameters as Record<string, unknown>;
 
-    // Re-create the schema using the plugin's Zod
+    // Handle tools with no parameters
     const args: Record<string, unknown> = {};
-    for (const [key, _value] of Object.entries(originalArgs)) {
-      // For now, use a simple approach - convert to string schema
-      // This works for the basic types we use (string, optional, number, boolean, array)
-      args[key] = tool.schema.string();
+    if (originalArgs && Object.keys(originalArgs).length > 0) {
+      for (const [key, _value] of Object.entries(originalArgs)) {
+        // For now, use a simple approach - convert to string schema
+        // This works for the basic types we use (string, optional, number, boolean, array)
+        args[key] = tool.schema.string();
+      }
     }
 
     toolDefinitions[toolDef.name] = {

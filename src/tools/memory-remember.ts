@@ -50,8 +50,15 @@ export function createRememberTool(
       // Create memory file
       const memoryFile = createMemoryFile(content, normalizedMemoryType, tags);
       const filename = generateFilename(title);
-      const mnemonicsDir = path.join(projectRoot, '.mnemonics');
+      const mnemonicsDir = path.join(
+        projectRoot,
+        '.mnemonics',
+        normalizedMemoryType,
+      );
       const filePath = path.join(mnemonicsDir, filename);
+
+      // Ensure subdirectory exists
+      await fs.promises.mkdir(mnemonicsDir, { recursive: true });
 
       // Validate scope
       if (!isWithinProjectMnemonics(filePath, projectRoot)) {

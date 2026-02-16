@@ -65,10 +65,10 @@ export function createHistorianAgent(config: PluginConfig): AgentConfig {
 
   return {
     name: 'historian',
-    model: config.model || 'opencode/kimi-k2.5-free',
-    fallbackModels: ['opencode/gpt-5-nano', 'opencode/big-pickle'],
+    model: config.model,
     temperature: config.temperature ?? 0.3,
     description: 'Memory management specialist for contextual information',
+    mode: 'subagent',
     tools: {
       memory_list_types: true,
       memory_remember: true,
