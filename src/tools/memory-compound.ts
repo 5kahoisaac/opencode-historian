@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import * as matter from 'gray-matter';
 import { z } from 'zod';
 import type { PluginConfig } from '../config';
-import { getIndexName, search, updateEmbedings, updateIndex } from '../qmd';
+import {getIndexName, updateEmbedings, updateIndex, vectorSearch} from '../qmd';
 import { isWithinProjectMnemonics, parseMemoryFile } from '../storage';
 import { isValidMemoryType, toKebabCase } from '../utils';
 import type { Logger } from '../utils/logger';
@@ -33,7 +33,7 @@ export function createCompoundTool(
     }) => {
       // Search existing memories
       const indexName = getIndexName(projectRoot);
-      const searchResults = await search(query, {
+      const searchResults = await vectorSearch(query, {
         index: indexName,
         n: 1,
       });
