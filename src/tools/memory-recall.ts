@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { PluginConfig } from '../config';
-import { getIndexName, vectorSearch } from '../qmd';
+import { getIndexName, deepSearch } from '../qmd';
 import type { Logger } from '../utils/logger';
 import { toKebabCase } from '../utils/validation';
 
@@ -36,15 +36,13 @@ export function createRecallTool(
         let projectResults: any[] = [];
         try {
           // If no memoryType specified, search all collections by omitting collection parameter
-          const searchOptions = normalizedMemoryType
-            ? {
-                index: projectIndex,
-                collection: normalizedMemoryType,
-                n: limit || 10,
-              }
-            : { index: projectIndex, n: limit || 10 }; // Search all collections
+          const searchOptions = {
+              index: projectIndex,
+              collection: normalizedMemoryType,
+              n: limit || 10,
+          }
 
-          projectResults = await vectorSearch(query, searchOptions);
+          projectResults = await deepSearch(query, searchOptions);
         } catch (projectError) {
           logger.warn(
             `Project search failed: ${projectError instanceof Error ? projectError.message : String(projectError)}`,

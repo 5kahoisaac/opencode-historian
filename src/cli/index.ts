@@ -7,7 +7,6 @@ import { ensureDirectory } from '../storage';
 import { createLogger } from '../utils/logger';
 
 const DEFAULT_CONFIG: PluginConfig = {
-  model: 'opencode/kimi-k2.5-free',
   temperature: 0.3,
   autoCompound: true,
   logLevel: 'info',
