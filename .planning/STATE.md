@@ -177,6 +177,7 @@ None yet
 | 9 | Unify qmd search functions with type parameter and fix lint errors | 2026-02-18 | 8369900 | [9-unify-qmd-search-functions-with-type-par](./quick/9-unify-qmd-search-functions-with-type-par/) |
 | 10 | Remove memory_compound tool, use memory_remember for create/update | 2026-02-18 | 8d86663 | [10-remove-memory-compound-tool-deprecate-fo](./quick/10-remove-memory-compound-tool-deprecate-fo/) |
 | 11 | Rewrite recall workflow with smart search type selection | 2026-02-18 | e309388 | [11-rewrite-recall-workflow-with-smart-searc](./quick/11-rewrite-recall-workflow-with-smart-searc/) |
+| 12 | memory_recall fetch full content of search results | 2026-02-18 | fc7f7b9 | [12-memory-recall-fetch-full-content-of-sear](./quick/12-memory-recall-fetch-full-content-of-sear/) |
 
 ---
 
