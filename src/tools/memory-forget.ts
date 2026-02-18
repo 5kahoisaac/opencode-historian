@@ -1,6 +1,7 @@
 import * as fs from 'node:fs';
 import { z } from 'zod';
 import type { PluginConfig } from '../config';
+import type { SearchType } from '../qmd';
 import { getIndexName, search, updateIndex } from '../qmd';
 import { isWithinProjectMnemonics } from '../storage';
 import type { Logger } from '../utils/logger';
@@ -19,15 +20,21 @@ export function createForgetRequestTool(
       query: z.string(),
       memoryType: z.string().optional(),
       confirm: z.boolean().default(false),
+      type: z
+        .enum(['search', 'vsearch', 'query'])
+        .optional()
+        .default('vsearch'),
     },
     handler: async ({
       query,
       memoryType,
       confirm = false,
+      type = 'vsearch',
     }: {
       query: string;
       memoryType?: string;
       confirm?: boolean;
+      type?: SearchType;
     }) => {
       const normalizedMemoryType = memoryType
         ? toKebabCase(memoryType)
@@ -38,6 +45,7 @@ export function createForgetRequestTool(
         index: indexName,
         collection: normalizedMemoryType,
         n: 10,
+        type,
       });
 
       // Filter for .md files only (CRUD-05)

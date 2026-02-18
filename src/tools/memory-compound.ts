@@ -2,7 +2,8 @@ import * as fs from 'node:fs';
 import * as matter from 'gray-matter';
 import { z } from 'zod';
 import type { PluginConfig } from '../config';
-import {getIndexName, updateEmbedings, updateIndex, vectorSearch} from '../qmd';
+import type { SearchType } from '../qmd';
+import { getIndexName, search, updateEmbedings, updateIndex } from '../qmd';
 import { isWithinProjectMnemonics, parseMemoryFile } from '../storage';
 import { isValidMemoryType, toKebabCase } from '../utils';
 import type { Logger } from '../utils/logger';
@@ -21,21 +22,28 @@ export function createCompoundTool(
       query: z.string(),
       modifications: z.string(),
       memoryType: z.string().optional(),
+      type: z
+        .enum(['search', 'vsearch', 'query'])
+        .optional()
+        .default('vsearch'),
     },
     handler: async ({
       query,
       modifications,
       memoryType,
+      type = 'vsearch',
     }: {
       query: string;
       modifications: string;
       memoryType?: string;
+      type?: SearchType;
     }) => {
       // Search existing memories
       const indexName = getIndexName(projectRoot);
-      const searchResults = await vectorSearch(query, {
+      const searchResults = await search(query, {
         index: indexName,
         n: 1,
+        type,
       });
 
       // Filter for .md files only (CRUD-04)

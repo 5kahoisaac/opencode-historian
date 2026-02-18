@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { PluginConfig } from '../config';
-import { getIndexName, deepSearch } from '../qmd';
+import type { SearchResult, SearchType } from '../qmd';
+import { getIndexName, search } from '../qmd';
 import type { Logger } from '../utils/logger';
 import { toKebabCase } from '../utils/validation';
 
@@ -16,15 +17,21 @@ export function createRecallTool(
       query: z.string(),
       memoryType: z.string().optional(),
       limit: z.number().optional(),
+      type: z
+        .enum(['search', 'vsearch', 'query'])
+        .optional()
+        .default('vsearch'),
     },
     handler: async ({
       query,
       memoryType,
       limit,
+      type = 'vsearch',
     }: {
       query: string;
       memoryType?: string;
       limit?: number;
+      type?: SearchType;
     }) => {
       const normalizedMemoryType = memoryType
         ? toKebabCase(memoryType)
@@ -33,16 +40,17 @@ export function createRecallTool(
       try {
         // Search project memories
         const projectIndex = getIndexName(projectRoot);
-        let projectResults: any[] = [];
+        let projectResults: SearchResult[] = [];
         try {
           // If no memoryType specified, search all collections by omitting collection parameter
           const searchOptions = {
-              index: projectIndex,
-              collection: normalizedMemoryType,
-              n: limit || 10,
-          }
+            index: projectIndex,
+            collection: normalizedMemoryType,
+            n: limit || 10,
+            type,
+          };
 
-          projectResults = await deepSearch(query, searchOptions);
+          projectResults = await search(query, searchOptions);
         } catch (projectError) {
           logger.warn(
             `Project search failed: ${projectError instanceof Error ? projectError.message : String(projectError)}`,
