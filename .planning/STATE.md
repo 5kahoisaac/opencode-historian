@@ -178,6 +178,8 @@ None yet
 | 10 | Remove memory_compound tool, use memory_remember for create/update | 2026-02-18 | 8d86663 | [10-remove-memory-compound-tool-deprecate-fo](./quick/10-remove-memory-compound-tool-deprecate-fo/) |
 | 11 | Rewrite recall workflow with smart search type selection | 2026-02-18 | e309388 | [11-rewrite-recall-workflow-with-smart-searc](./quick/11-rewrite-recall-workflow-with-smart-searc/) |
 | 12 | memory_recall fetch full content of search results | 2026-02-18 | fc7f7b9 | [12-memory-recall-fetch-full-content-of-sear](./quick/12-memory-recall-fetch-full-content-of-sear/) |
+| 13 | Rewrite historian agent instructions for better compliance | 2026-02-18 | 49ab79d | [13-rewrite-historian-agent-instructions](./quick/13-rewrite-historian-agent-instructions/) |
+| 14 | Fix memory_recall qmd:// path conversion | 2026-02-18 | 80b99fd | [14-fix-historian-recall-issue](./quick/14-fix-historian-recall-issue/) |
 
 ---
 

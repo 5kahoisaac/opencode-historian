@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { z } from 'zod';
-import type { PluginConfig } from '../config';
-import { PROJECT_MEMORY_DIR } from '../config/constants';
+import { type PluginConfig, PROJECT_MEMORY_DIR } from '../config';
 import type { SearchResult, SearchType } from '../qmd';
 import { getIndexName, search } from '../qmd';
 import { parseMemoryFile } from '../storage';

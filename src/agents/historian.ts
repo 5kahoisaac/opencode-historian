@@ -21,9 +21,10 @@ You do NOT have file system access. Use only the memory tools provided.
 architectural-decision, design-decision, learning, user-preference,
 project-preference, issue, context, recurring-pattern, conventions-pattern
 
+## Remember Workflow
+
 Default type: "context" (use when unclear)
 
-## Remember Workflow
 1. Search first: memory_recall(query)
 2. Create/update: memory_remember(title, content, memoryType, tags?)
 
