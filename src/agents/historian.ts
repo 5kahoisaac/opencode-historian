@@ -171,8 +171,7 @@ const HISTORIAN_INSTRUCTIONS = `<role>
     
     User: "how to handle refunds in our system?"
     → Natural language concept query
-    → memory_recall(query: "how to handle refunds", type: "vsearch")
-    → If no results: memory_recall(query: "how to handle refunds", type: "query")
+    → memory_recall(query: "how to handle refunds", type: "query")
   </examples>
   
   <step name="3">Present results to user</step>
