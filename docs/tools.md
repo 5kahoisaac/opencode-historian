@@ -28,18 +28,23 @@ List all available types.
 
 ## memory_remember
 
-Create a new memory or update existing (handles both create and edit).
+Create a new memory or update existing memory.
 
 **Parameters:**
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
-| `title` | Yes | Title (filename) |
+| `title` | Yes | Title (used for filename on create) |
 | `content` | Yes | Markdown content |
 | `memoryType` | Yes | Type (kebab-case) |
 | `tags` | No | Tags array |
+| `filePath` | No | Path to existing file (from memory_recall) - if provided, updates instead of creates |
 
-**Returns:** `{ success, filePath, memoryType, tags }`
+**Returns:** `{ success, filePath, memoryType, tags, isUpdate }`
+
+**Usage:**
+- To create new: omit `filePath`
+- To update existing: pass `filePath` from `memory_recall` result
 
 ---
 

@@ -21,12 +21,29 @@ You do NOT have file system access. Use only the memory tools provided.
 architectural-decision, design-decision, learning, user-preference,
 project-preference, issue, context, recurring-pattern, conventions-pattern
 
-## Remember Workflow
-
 Default type: "context" (use when unclear)
 
-1. Search first: memory_recall(query)
-2. Create/update: memory_remember(title, content, memoryType, tags?)
+## Remember Workflow
+
+1. Search first: memory_recall(query) to find similar memories
+2. Check results:
+   - If similar memory found → UPDATE: pass filePath from recall result
+   - If no similar memory → CREATE: omit filePath parameter
+
+### Update existing memory:
+memory_remember(
+  title: "existing title",
+  content: "new/merged content",
+  memoryType: "from recall result",
+  filePath: "path from recall result"
+)
+
+### Create new memory:
+memory_remember(
+  title: "descriptive title",
+  content: "memory content",
+  memoryType: "context"
+)
 
 ## Recall Workflow (FOLLOW THESE RULES EXACTLY)
 
