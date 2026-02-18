@@ -104,32 +104,62 @@ const HISTORIAN_INSTRUCTIONS = `<role>
 
 <recall_workflow>
   <instruction>When user wants to find/search/retrieve memories:</instruction>
-  <step name="1">Determine if user specified a memory type:</step>
+  
+  <step name="1">Determine search strategy based on type detection:</step>
   <type_detection>
-    - If user mentions a specific type (e.g., "find my coding conventions"), extract and map it
-    - If no type specified, search across ALL collections (leave memoryType empty)
-    - Use type_mapping for natural language type hints
+    - Analyze user query for memory type hints (keywords, context clues)
+    - Use type_mapping to identify potential memory types
   </type_detection>
-  <step name="2">Call memory_recall with appropriate parameters:</step>
+  
+  <search_strategy>
+    <case name="Multiple types detected">If query could match MORE than 1 memory type:
+      → Use vsearch (semantic) with empty memoryType to search all collections
+      → memory_recall(query: "query", type: "vsearch")
+    </case>
+    
+    <case name="Single type detected">If query clearly matches 1 memory type:
+      → First: Use search (keyword) with that memoryType for exact matches
+      → memory_recall(query: "query", type: "search", memoryType: "detected-type")
+      → If no results: Fallback to vsearch with empty memoryType
+      → memory_recall(query: "query", type: "vsearch")
+    </case>
+    
+    <case name="Cannot determine type">If cannot determine any memory type:
+      → Use query (hybrid/deep) with empty memoryType for comprehensive search
+      → memory_recall(query: "query", type: "query")
+    </case>
+  </search_strategy>
+  
+  <step name="2">Fallback rule:</step>
+  <fallback>
+    If vsearch or search returns NO results, always try query (deep search):
+    → memory_recall(query: "query", type: "query")
+  </fallback>
+  
   <examples>
     User: "find my coding conventions"
-    → Type detected: "conventions-pattern"
-    memory_recall(query: "coding conventions", memoryType: "conventions-pattern")
+    → Single type detected: "conventions-pattern"
+    → memory_recall(query: "coding conventions", type: "search", memoryType: "conventions-pattern")
+    → If no results: memory_recall(query: "coding conventions", type: "vsearch")
+    → If still no results: memory_recall(query: "coding conventions", type: "query")
 
-    User: "find anything about architecture"
-    → Type detected: "architectural-decision"
-    memory_recall(query: "architecture", memoryType: "architectural-decision")
-    
+    User: "find anything about database"
+    → Multiple types possible: "architectural-decision", "issue", "learning"
+    → memory_recall(query: "database", type: "vsearch")
+    → If no results: memory_recall(query: "database", type: "query")
+
     User: "recall memory related to naming"
-    → No specific type, search all collections
-    memory_recall(query: "naming")
+    → Cannot determine specific type
+    → memory_recall(query: "naming", type: "query")
 
-    User: "search memories about testing"
-    → No specific type, search all collections
-    memory_recall(query: "testing")  // memoryType omitted = search all
+    User: "what did I learn about testing?"
+    → Single type detected: "learning"
+    → memory_recall(query: "testing", type: "search", memoryType: "learning")
+    → If no results: memory_recall(query: "testing", type: "vsearch")
   </examples>
+  
   <step name="3">Present results to user</step>
-  <critical>ALWAYS use memory_recall tool. Search all collections when type is unclear or unspecified.</critical>
+  <critical>Use the right search type for the right situation. Always fallback to query if other methods fail.</critical>
 </recall_workflow>
 
 <forget_workflow>

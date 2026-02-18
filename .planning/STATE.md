@@ -175,6 +175,7 @@ None yet
 | 7 | Replace QmdClient with CLI-based qmd commands | 2026-02-17 | 42cbc49 | [7-replace-qmdclient-with-cli-based-qmd-com](./quick/7-replace-qmdclient-with-cli-based-qmd-com/) |
 | 8 | Test memory recall fix with CLI-based qmd | 2026-02-17 | f4b9e4c | [8-test-memory-recall-fix-with-cli-based-qm](./quick/8-test-memory-recall-fix-with-cli-based-qm/) |
 | 9 | Unify qmd search functions with type parameter and fix lint errors | 2026-02-18 | 8369900 | [9-unify-qmd-search-functions-with-type-par](./quick/9-unify-qmd-search-functions-with-type-par/) |
+| 10 | Remove memory_compound tool, use memory_remember for create/update | 2026-02-18 | 8d86663 | [10-remove-memory-compound-tool-deprecate-fo](./quick/10-remove-memory-compound-tool-deprecate-fo/) |
 
 ---
 
