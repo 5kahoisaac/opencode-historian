@@ -1,7 +1,6 @@
 import * as fs from 'node:fs';
 import stripJsonComments from 'strip-json-comments';
-import type { Logger } from '../utils/logger';
-import { createLogger } from '../utils/logger';
+import { createLogger, type Logger } from '../utils';
 import {
   DEFAULT_CONFIG,
   getProjectConfigPath,

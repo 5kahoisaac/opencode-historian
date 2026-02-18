@@ -139,7 +139,11 @@ export function isValidMemoryType(
   const normalized = toKebabCase(type);
 
   // Check built-in types
-  if (BUILTIN_MEMORY_TYPES.includes(normalized as any)) {
+  if (
+    BUILTIN_MEMORY_TYPES.includes(
+      normalized as (typeof BUILTIN_MEMORY_TYPES)[number],
+    )
+  ) {
     return true;
   }
 

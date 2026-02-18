@@ -9,20 +9,9 @@ export interface Logger {
   error(message: string, ...args: unknown[]): void;
 }
 
-const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
-  debug: 0,
-  info: 1,
-  warn: 2,
-  error: 3,
-};
-
-function shouldLog(level: LogLevel, config: PluginConfig): boolean {
+function shouldLog(_level: LogLevel, _config: PluginConfig): boolean {
   // If debug mode is enabled, show all logs
-  return true
-
-  // Otherwise, filter by logLevel config
-  const configLevel = config.logLevel ?? 'info';
-  return LOG_LEVEL_PRIORITY[level] >= LOG_LEVEL_PRIORITY[configLevel];
+  return true;
 }
 
 function formatLogMessage(level: LogLevel, message: string): string {

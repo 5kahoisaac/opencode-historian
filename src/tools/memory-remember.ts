@@ -14,8 +14,8 @@ import {
   generateFilename,
   isWithinProjectMnemonics,
 } from '../storage';
+import type { Logger } from '../utils';
 import { isValidMemoryType, toKebabCase } from '../utils';
-import type { Logger } from '../utils/logger';
 
 export function createRememberTool(
   _config: PluginConfig,

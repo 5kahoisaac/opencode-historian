@@ -70,7 +70,7 @@ export function deepClone<T>(obj: T): T {
   // Note: This doesn't handle functions, undefined, or circular references
   try {
     return JSON.parse(JSON.stringify(obj)) as T;
-  } catch (error) {
+  } catch (_error) {
     // If JSON serialization fails, return a shallow copy
     return Array.isArray(obj) ? ([...obj] as T) : ({ ...obj } as T);
   }

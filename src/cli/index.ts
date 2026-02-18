@@ -4,7 +4,7 @@ import * as path from 'node:path';
 import type { PluginConfig } from '../config';
 import { getUserConfigPath } from '../config';
 import { ensureDirectory } from '../storage';
-import { createLogger } from '../utils/logger';
+import { createLogger } from '../utils';
 
 const DEFAULT_CONFIG: PluginConfig = {
   temperature: 0.3,
