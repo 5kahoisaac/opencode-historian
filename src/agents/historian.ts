@@ -105,6 +105,18 @@ const HISTORIAN_INSTRUCTIONS = `<role>
 <recall_workflow>
   <instruction>When user wants to find/search/retrieve memories:</instruction>
   
+  <search_types>
+    <type name="search" algo="BM25 (keyword)" speed="Instant">
+      Use when you know exact terms: "API endpoint", "error 500", "function X"
+    </type>
+    <type name="vsearch" algo="Vector (semantic)" speed="Medium (~1-30s)">
+      Use for natural language, concepts: "how to handle refunds?", "authentication flow"
+    </type>
+    <type name="query" algo="Hybrid + rerank" speed="Slow (30s+)">
+      Use for complex questions needing highest precision: "compliance for EU billing"
+    </type>
+  </search_types>
+  
   <step name="1">Determine search strategy based on type detection:</step>
   <type_detection>
     - Analyze user query for memory type hints (keywords, context clues)
@@ -156,6 +168,11 @@ const HISTORIAN_INSTRUCTIONS = `<role>
     → Single type detected: "learning"
     → memory_recall(query: "testing", type: "search", memoryType: "learning")
     → If no results: memory_recall(query: "testing", type: "vsearch")
+    
+    User: "how to handle refunds in our system?"
+    → Natural language concept query
+    → memory_recall(query: "how to handle refunds", type: "vsearch")
+    → If no results: memory_recall(query: "how to handle refunds", type: "query")
   </examples>
   
   <step name="3">Present results to user</step>
