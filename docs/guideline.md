@@ -188,7 +188,7 @@ read performance. Update the database decision."
 
 **Historian automatically:**
 1. Searches for the PostgreSQL decision memory
-2. Calls `memory_compound` to update it
+2. Calls `memory_remember` to update it
 3. Preserves original content, adds new section
 
 **Updated memory:**
@@ -339,7 +339,7 @@ Deleted 3 files successfully.
 |----------|-----------|-----------|
 | New information to store | `memory_remember` | ✓ |
 | Finding relevant context | `memory_recall` | ✓ |
-| Updating existing memory | `memory_compound` | ✓ |
+| Updating existing memory | `memory_remember` | ✓ |
 | Removing outdated info | `memory_forget` | ✓ |
 | Checking available types | `memory_list_types` | ✓ |
 

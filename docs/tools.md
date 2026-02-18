@@ -7,9 +7,8 @@ Agent tools for memory management. Used automatically by the historian agent.
 | Tool | Purpose |
 |------|---------|
 | `memory_list_types` | List memory types |
-| `memory_remember` | Create memory |
+| `memory_remember` | Create or update memory |
 | `memory_recall` | Search memories |
-| `memory_compound` | Update memory |
 | `memory_forget` | Delete memory |
 
 ---
@@ -29,7 +28,7 @@ List all available types.
 
 ## memory_remember
 
-Create a memory.
+Create a new memory or update existing (handles both create and edit).
 
 **Parameters:**
 
@@ -55,24 +54,9 @@ Search memories.
 | `query` | Yes | Search query |
 | `memoryType` | No | Filter by type |
 | `limit` | No | Max results (default: 10) |
+| `type` | No | Search type: 'search', 'vsearch', or 'query' (default: 'vsearch') |
 
 **Returns:** `{ memories, message?, error? }`
-
----
-
-## memory_compound
-
-Update a memory.
-
-**Parameters:**
-
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `query` | Yes | Find target |
-| `modifications` | Yes | New content |
-| `memoryType` | No | Change type |
-
-**Returns:** `{ success, filePath, memoryType }`
 
 ---
 
@@ -87,6 +71,7 @@ Delete memories.
 | `query` | Yes | Find targets |
 | `memoryType` | No | Filter by type |
 | `confirm` | No | Confirm deletion |
+| `type` | No | Search type (default: 'vsearch') |
 
 **Returns:** 
 - Without confirm: `{ confirmRequired, candidates }`

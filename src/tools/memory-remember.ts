@@ -14,7 +14,7 @@ import {
   generateFilename,
   isWithinProjectMnemonics,
 } from '../storage';
-import { type Logger, isValidMemoryType, toKebabCase } from '../utils';
+import { isValidMemoryType, type Logger, toKebabCase } from '../utils';
 
 export function createRememberTool(
   _config: PluginConfig,
@@ -23,7 +23,8 @@ export function createRememberTool(
 ) {
   return {
     name: 'memory_remember',
-    description: 'Create a new memory with the given content',
+    description:
+      'Create a new memory with the given content (or update existing)',
     parameters: {
       title: z.string(),
       content: z.string(),
