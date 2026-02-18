@@ -1,7 +1,6 @@
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
-import type { Logger } from '../utils/logger';
-import { toKebabCase } from '../utils/validation';
+import { type Logger, toKebabCase } from '../utils';
 
 const execAsync = promisify(exec);
 

@@ -4,8 +4,7 @@ import type { PluginConfig } from '../config';
 import type { SearchType } from '../qmd';
 import { getIndexName, search, updateIndex } from '../qmd';
 import { isWithinProjectMnemonics } from '../storage';
-import type { Logger } from '../utils/logger';
-import { toKebabCase } from '../utils/validation';
+import { type Logger, toKebabCase } from '../utils';
 
 export function createForgetRequestTool(
   _config: PluginConfig,

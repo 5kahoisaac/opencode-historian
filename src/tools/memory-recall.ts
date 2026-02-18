@@ -2,8 +2,7 @@ import { z } from 'zod';
 import type { PluginConfig } from '../config';
 import type { SearchResult, SearchType } from '../qmd';
 import { getIndexName, search } from '../qmd';
-import type { Logger } from '../utils/logger';
-import { toKebabCase } from '../utils/validation';
+import { type Logger, toKebabCase } from '../utils';
 
 export function createRecallTool(
   _config: PluginConfig,

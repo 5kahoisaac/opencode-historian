@@ -5,8 +5,7 @@ import type { PluginConfig } from '../config';
 import type { SearchType } from '../qmd';
 import { getIndexName, search, updateEmbedings, updateIndex } from '../qmd';
 import { isWithinProjectMnemonics, parseMemoryFile } from '../storage';
-import { isValidMemoryType, toKebabCase } from '../utils';
-import type { Logger } from '../utils/logger';
+import { type Logger, isValidMemoryType, toKebabCase } from '../utils';
 import { createRememberTool } from './memory-remember';
 
 export function createCompoundTool(
