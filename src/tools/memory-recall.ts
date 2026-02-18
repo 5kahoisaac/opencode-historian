@@ -2,7 +2,19 @@ import { z } from 'zod';
 import type { PluginConfig } from '../config';
 import type { SearchResult, SearchType } from '../qmd';
 import { getIndexName, search } from '../qmd';
+import { parseMemoryFile } from '../storage';
 import { type Logger, toKebabCase } from '../utils';
+
+export interface MemoryRecallResult {
+  path: string;
+  score: number;
+  title: string;
+  memoryType: string;
+  tags: string[];
+  created: string;
+  modified: string;
+  content: string;
+}
 
 export function createRecallTool(
   _config: PluginConfig,
@@ -31,7 +43,12 @@ export function createRecallTool(
       memoryType?: string;
       limit?: number;
       type?: SearchType;
-    }) => {
+    }): Promise<{
+      memories: MemoryRecallResult[];
+      count: number;
+      message?: string;
+      error?: string;
+    }> => {
       const normalizedMemoryType = memoryType
         ? toKebabCase(memoryType)
         : undefined;
@@ -39,9 +56,8 @@ export function createRecallTool(
       try {
         // Search project memories
         const projectIndex = getIndexName(projectRoot);
-        let projectResults: SearchResult[] = [];
+        let searchResults: SearchResult[] = [];
         try {
-          // If no memoryType specified, search all collections by omitting collection parameter
           const searchOptions = {
             index: projectIndex,
             collection: normalizedMemoryType,
@@ -49,17 +65,17 @@ export function createRecallTool(
             type,
           };
 
-          projectResults = await search(query, searchOptions);
-        } catch (projectError) {
+          searchResults = await search(query, searchOptions);
+        } catch (searchError) {
           logger.warn(
-            `Project search failed: ${projectError instanceof Error ? projectError.message : String(projectError)}`,
+            `Search failed: ${searchError instanceof Error ? searchError.message : String(searchError)}`,
           );
         }
 
         // Filter for .md files only
-        const memories = projectResults.filter((r) => r.path.endsWith('.md'));
+        const mdResults = searchResults.filter((r) => r.path.endsWith('.md'));
 
-        if (!memories || memories.length === 0) {
+        if (!mdResults || mdResults.length === 0) {
           logger.info(`No memory files found for query: "${query}"`);
           return {
             memories: [],
@@ -67,6 +83,35 @@ export function createRecallTool(
             message:
               'No memory files found matching your query. Try creating a memory first with memory_remember.',
           };
+        }
+
+        // Fetch full content for each search result
+        const memories: MemoryRecallResult[] = [];
+        for (const result of mdResults) {
+          try {
+            const memoryFile = parseMemoryFile(result.path);
+            // Extract title from filename (e.g., "my-memory.md" -> "My Memory")
+            const filename = result.path.split('/').pop() || '';
+            const title = filename
+              .replace('.md', '')
+              .replace(/-/g, ' ')
+              .replace(/\b\w/g, (c) => c.toUpperCase());
+
+            memories.push({
+              path: result.path,
+              score: result.score,
+              title,
+              memoryType: memoryFile.data.memory_type,
+              tags: memoryFile.data.tags || [],
+              created: memoryFile.data.created,
+              modified: memoryFile.data.modified,
+              content: memoryFile.content,
+            });
+          } catch (readError) {
+            logger.warn(
+              `Failed to read memory file ${result.path}: ${readError instanceof Error ? readError.message : String(readError)}`,
+            );
+          }
         }
 
         logger.info(
@@ -82,7 +127,6 @@ export function createRecallTool(
           error instanceof Error ? error.message : String(error);
         logger.error(`Error recalling memories: ${errorMessage}`);
 
-        // Return helpful error message instead of throwing
         return {
           memories: [],
           count: 0,

@@ -45,7 +45,7 @@ Create a new memory or update existing (handles both create and edit).
 
 ## memory_recall
 
-Search memories.
+Search memories and return full content.
 
 **Parameters:**
 
@@ -56,7 +56,26 @@ Search memories.
 | `limit` | No | Max results (default: 10) |
 | `type` | No | Search type: 'search', 'vsearch', or 'query' (default: 'vsearch') |
 
-**Returns:** `{ memories, message?, error? }`
+**Returns:**
+```javascript
+{
+  memories: [
+    {
+      path: "/path/to/memory.md",
+      score: 0.95,
+      title: "Memory Title",
+      memoryType: "context",
+      tags: ["tag1", "tag2"],
+      created: "2026-02-16T10:30:00.000Z",
+      modified: "2026-02-16T10:30:00.000Z",
+      content: "Full markdown content of the memory..."
+    }
+  ],
+  count: 1,
+  message?: "If no results found",
+  error?: "If search failed"
+}
+```
 
 ---
 
