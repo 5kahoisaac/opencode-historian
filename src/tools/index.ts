@@ -1,5 +1,5 @@
 import type { PluginConfig } from '../config';
-import type { Logger } from '../utils/logger';
+import type { Logger } from '../utils';
 import { createCompoundTool } from './memory-compound';
 import { createForgetRequestTool } from './memory-forget';
 import { createListTypesTool } from './memory-list-types';
