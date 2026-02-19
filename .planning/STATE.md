@@ -186,6 +186,7 @@ None yet
 | 19 | Remove autoCompound config option | 2026-02-19 | 0312871 | [19-remove-autocompound-config-option](./quick/19-remove-autocompound-config-option/) |
 | 20 | Extract qmdPathToFsPath to utils and fix path conversion | 2026-02-20 | f4a8130 | [20-extract-qmdpathtofspath-to-utils-and-fix](./quick/20-extract-qmdpathtofspath-to-utils-and-fix/) |
 | 21 | Fix memory_forget string vs array parameter bug | 2026-02-20 | fde8045 | [21-fix-memory-forget-string-vs-array-bug](./quick/21-fix-memory-forget-string-vs-array-bug/) |
+| 22 | Revamp qmdPathToFsPath with path.join and getProjectMemoryPath | 2026-02-20 | 5ad99fd | [22-revamp-qmdpathtofspath](./quick/22-revamp-qmdpathtofspath/) |
 
 ---
 
