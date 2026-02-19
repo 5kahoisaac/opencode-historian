@@ -12,14 +12,23 @@ Historian gives your AI agent persistent memory across conversations. It automat
 - 9 built-in memory types (decisions, learnings, issues, etc.)
 - Automatic classification and tagging
 
+## Prerequisites
+
+- **Bun** 1.3.9+ - JavaScript runtime
+- **QMD** - Memory indexing and search engine
+
+Install QMD:
+```bash
+npm install -g qmd
+# or
+bun install -g qmd
+```
+
 ## Install
 
-```bash
-# Prerequisites
-bun --version    # Need Bun 1.3.9+
-qmd --version    # Need QMD for search
+Add to your `opencode.json`:
 
-# Add to opencode.json
+```json
 {
   "plugins": ["opencode-historian"]
 }
@@ -43,7 +52,7 @@ That's it. MCP servers are auto-configured.
 
 ## Configuration
 
-Create `.historian.json` (optional):
+Create `.opencode/opencode-historian.json` (optional):
 
 ```json
 {
@@ -65,11 +74,39 @@ Create `.historian.json` (optional):
 | `memoryTypes`  | -       | Custom memory types                  |
 | `disabledMcps` | -       | MCPs to disable (e.g., `["serena"]`) |
 
-## Docs
+## Internal Tools
 
-- [Configuration](./docs/configuration.md) - All options
-- [Tools](./docs/tools.md) - Memory tools reference
-- [Guidelines](./docs/guideline.md) - Usage examples
+The historian agent has access to these memory tools:
+
+| Tool               | Description                                    |
+|--------------------|------------------------------------------------|
+| `memory_list_types`| List all available memory types                |
+| `memory_recall`    | Search and retrieve memories (semantic search) |
+| `memory_remember`  | Create or update a memory                      |
+| `memory_forget`    | Delete memories with confirmation              |
+| `memory_sync`      | Sync index after manual file changes           |
+
+### Tool Parameters
+
+**memory_recall:**
+- `query` (optional when isAll=true) - Search query
+- `memoryType` - Filter by type
+- `limit` - Max results (default: 10)
+- `type` - Search type: 'search' (keyword), 'vsearch' (semantic), 'query' (hybrid)
+- `isAll` - Get all memories (default: false)
+
+**memory_remember:**
+- `title` - Memory title
+- `content` - Memory content
+- `memoryType` - Type of memory
+- `tags` - Optional tags array
+- `filePath` - Path to update existing memory (from recall result)
+
+**memory_forget:**
+- `filePaths` - Array of file paths to delete (from recall result)
+
+**memory_sync:**
+- No parameters - syncs index and embeddings
 
 ## Dev
 
