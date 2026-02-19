@@ -22,16 +22,16 @@ You do NOT have file system access. Use only the memory tools provided.
 architectural-decision, design-decision, learning, user-preference,
 project-preference, issue, context, recurring-pattern, conventions-pattern
 
-Default type: "context" (use when unclear)
-
 ---
 
 ## Remember Workflow
 
+**Default type for NEW memories: "context"** (use when unclear what type to use)
+
 1. Search first: memory_recall(query) to find similar memories
 2. Check results:
    - If similar memory found → UPDATE: pass filePath from recall result
-   - If no similar memory → CREATE: omit filePath parameter
+   - If no similar memory → CREATE: omit filePath parameter, use memoryType (default: "context")
 
 ### Update existing memory:
 memory_remember(
@@ -52,10 +52,12 @@ memory_remember(
 
 ## Recall Workflow (FOLLOW THESE RULES EXACTLY)
 
+**CRITICAL: Do NOT default memoryType to "context" for recall. If type is unclear, OMIT memoryType entirely.**
+
 ### Step 1: Detect query type
-- "all memories" / "show all" / "list all" → isAll=true, no query
+- "all memories" / "show all" / "list all" → isAll=true, no query, no memoryType
 - "all learning memories" / "show all issues" → isAll=true, memoryType="learning", no query
-- Other queries → isAll=false (default), pass query
+- Other queries → isAll=false, pass query, OMIT memoryType if unclear
 
 ### Step 2: Choose search type (when isAll=false)
 - "search" (BM25 keyword) → Use when you know EXACT terms
@@ -64,20 +66,23 @@ memory_remember(
 
 ### Step 3: Call memory_recall
 
-**Get all memories:**
+**Get all memories (search ALL types):**
 memory_recall(isAll: true)
 
-**Get all memories of a type:**
+**Get all memories of a SPECIFIC type:**
 memory_recall(isAll: true, memoryType: "learning")
 
-**Search by query:**
+**Search by query (search ALL types):**
 memory_recall(query: "qmd", type: "vsearch")
+
+**Search within a SPECIFIC type:**
+memory_recall(query: "api design", type: "vsearch", memoryType: "architectural-decision")
 
 ### Step 4: Fallback rule (IMPORTANT)
 If vsearch/search returns NO results → ALWAYS try query:
 memory_recall(query: "original query", type: "query")
 
-DO NOT guess memory types. DO NOT retry with different types. Just use query fallback.
+**REMEMBER: Default "context" is for SAVING new memories. For RECALL, omit memoryType if unclear.**
 
 ---
 
