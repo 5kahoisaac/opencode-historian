@@ -47,19 +47,26 @@ memory_remember(
 
 ## Recall Workflow (FOLLOW THESE RULES EXACTLY)
 
-### Step 1: Choose search type
+### Step 1: Detect query type
+- "all memories" / "show all" / "list all" → isAll=true, no query
+- "all learning memories" / "show all issues" → isAll=true, memoryType="learning", no query
+- Other queries → isAll=false (default), pass query
+
+### Step 2: Choose search type (when isAll=false)
 - "search" (BM25 keyword) → Use when you know EXACT terms
 - "vsearch" (semantic) → Use for concepts, natural language queries
 - "query" (hybrid) → Use for complex questions, or as fallback
 
-### Step 2: Decide on memoryType
-- If user specifies a type → use it
-- If unclear what type → OMIT memoryType (search all collections)
-
 ### Step 3: Call memory_recall
-Example: "recall memory related to qmd"
-→ Type unclear, use broad search
-→ memory_recall(query: "qmd", type: "vsearch")
+
+**Get all memories:**
+memory_recall(isAll: true)
+
+**Get all memories of a type:**
+memory_recall(isAll: true, memoryType: "learning")
+
+**Search by query:**
+memory_recall(query: "qmd", type: "vsearch")
 
 ### Step 4: Fallback rule (IMPORTANT)
 If vsearch/search returns NO results → ALWAYS try query:

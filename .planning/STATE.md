@@ -181,6 +181,7 @@ None yet
 | 13 | Rewrite historian agent instructions for better compliance | 2026-02-18 | 49ab79d | [13-rewrite-historian-agent-instructions](./quick/13-rewrite-historian-agent-instructions/) |
 | 14 | Fix memory_recall qmd:// path conversion | 2026-02-18 | 80b99fd | [14-fix-historian-recall-issue](./quick/14-fix-historian-recall-issue/) |
 | 15 | Update memory_remember to support update via filePath parameter | 2026-02-18 | 8314436 | [15-update-memory-remember-to-support-update](./quick/15-update-memory-remember-to-support-update/) |
+| 16 | Refactor memory_forget to accept filePaths parameter | 2026-02-19 | 4e36b0d | [16-refactor-memory-forget-to-accept-filepat](./quick/16-refactor-memory-forget-to-accept-filepat/) |
 
 ---
 

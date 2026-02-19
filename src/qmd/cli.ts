@@ -164,4 +164,29 @@ export async function addExternalPathsToIndex(
   }
 }
 
+/**
+ * Gets all documents from index, optionally filtered by collection.
+ * Uses qmd list command.
+ */
+export async function multiGet(
+  options: SearchOptions,
+): Promise<SearchResult[]> {
+  let command = `qmd list --index ${options.index} --json`;
+  if (options.collection) {
+    command += ` -c ${options.collection}`;
+  }
+  if (options.n) {
+    command += ` -n ${options.n}`;
+  }
+
+  try {
+    const { stdout } = await execAsync(command);
+    const results = JSON.parse(stdout);
+    return Array.isArray(results) ? results.map(mapToSearchResult) : [];
+  } catch (_error) {
+    // If qmd fails or returns invalid JSON, return empty array
+    return [];
+  }
+}
+
 export { execAsync };

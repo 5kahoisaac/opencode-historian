@@ -2,7 +2,7 @@ import path from 'node:path';
 import { z } from 'zod';
 import { type PluginConfig, PROJECT_MEMORY_DIR } from '../config';
 import type { SearchResult, SearchType } from '../qmd';
-import { getIndexName, search } from '../qmd';
+import { getIndexName, multiGet, search } from '../qmd';
 import { parseMemoryFile } from '../storage';
 import { type Logger, toKebabCase } from '../utils';
 
@@ -39,26 +39,30 @@ export function createRecallTool(
 ) {
   return {
     name: 'memory_recall',
-    description: 'Search memories using semantic similarity',
+    description:
+      'Search memories by query, or get all memories with isAll flag',
     parameters: {
-      query: z.string(),
+      query: z.string().optional(),
       memoryType: z.string().optional(),
       limit: z.number().optional(),
       type: z
         .enum(['search', 'vsearch', 'query'])
         .optional()
         .default('vsearch'),
+      isAll: z.boolean().optional().default(false),
     },
     handler: async ({
       query,
       memoryType,
       limit,
       type = 'vsearch',
+      isAll = false,
     }: {
-      query: string;
+      query?: string;
       memoryType?: string;
       limit?: number;
       type?: SearchType;
+      isAll?: boolean;
     }): Promise<{
       memories: MemoryRecallResult[];
       count: number;
@@ -70,34 +74,59 @@ export function createRecallTool(
         : undefined;
 
       try {
-        // Search project memories
         const projectIndex = getIndexName(projectRoot);
         let searchResults: SearchResult[] = [];
-        try {
-          const searchOptions = {
-            index: projectIndex,
-            collection: normalizedMemoryType,
-            n: limit || 10,
-            type,
-          };
 
-          searchResults = await search(query, searchOptions);
-        } catch (searchError) {
-          logger.warn(
-            `Search failed: ${searchError instanceof Error ? searchError.message : String(searchError)}`,
-          );
+        if (isAll) {
+          // Get all memories, optionally filtered by type
+          try {
+            searchResults = await multiGet({
+              index: projectIndex,
+              collection: normalizedMemoryType,
+              n: limit || 100, // Higher default for "all" queries
+            });
+          } catch (searchError) {
+            logger.warn(
+              `Multi-get failed: ${searchError instanceof Error ? searchError.message : String(searchError)}`,
+            );
+          }
+        } else {
+          // Query-based search
+          if (!query) {
+            return {
+              memories: [],
+              count: 0,
+              error:
+                'query is required when isAll is false. Either provide a query or set isAll=true.',
+            };
+          }
+
+          try {
+            searchResults = await search(query, {
+              index: projectIndex,
+              collection: normalizedMemoryType,
+              n: limit || 10,
+              type,
+            });
+          } catch (searchError) {
+            logger.warn(
+              `Search failed: ${searchError instanceof Error ? searchError.message : String(searchError)}`,
+            );
+          }
         }
 
         // Filter for .md files only
         const mdResults = searchResults.filter((r) => r.path.endsWith('.md'));
 
         if (!mdResults || mdResults.length === 0) {
-          logger.info(`No memory files found for query: "${query}"`);
+          const searchDesc = isAll
+            ? `${normalizedMemoryType || 'all'} memories`
+            : `query: "${query}"`;
+          logger.info(`No memory files found for ${searchDesc}`);
           return {
             memories: [],
             count: 0,
-            message:
-              'No memory files found matching your query. Try creating a memory first with memory_remember.',
+            message: `No memory files found for ${searchDesc}. Try creating a memory first with memory_remember.`,
           };
         }
 
@@ -132,9 +161,10 @@ export function createRecallTool(
           }
         }
 
-        logger.info(
-          `Found ${memories.length} memory files for query: "${query}"`,
-        );
+        const searchDesc = isAll
+          ? `${normalizedMemoryType || 'all'} memories`
+          : `query: "${query}"`;
+        logger.info(`Found ${memories.length} memory files for ${searchDesc}`);
 
         return {
           memories,

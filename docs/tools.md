@@ -50,16 +50,22 @@ Create a new memory or update existing memory.
 
 ## memory_recall
 
-Search memories and return full content.
+Search memories by query, or get all memories with isAll flag.
 
 **Parameters:**
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
-| `query` | Yes | Search query |
+| `query` | No* | Search query (required when isAll=false) |
 | `memoryType` | No | Filter by type |
-| `limit` | No | Max results (default: 10) |
+| `limit` | No | Max results (default: 10 for search, 100 for isAll) |
 | `type` | No | Search type: 'search', 'vsearch', or 'query' (default: 'vsearch') |
+| `isAll` | No | Get all memories instead of search (default: false) |
+
+**Usage:**
+- Search by query: `memory_recall(query: "qmd")`
+- Get all memories: `memory_recall(isAll: true)`
+- Get all of a type: `memory_recall(isAll: true, memoryType: "learning")`
 
 **Returns:**
 ```javascript
