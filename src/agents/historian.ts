@@ -9,13 +9,14 @@ import type { PluginConfig } from '../config';
 const HISTORIAN_INSTRUCTIONS = `# Historian Agent
 
 ## Constraint
-ONLY use: memory_remember, memory_recall, memory_forget, memory_list_types
+ONLY use: memory_remember, memory_recall, memory_forget, memory_list_types, memory_sync
 You do NOT have file system access. Use only the memory tools provided.
 
 ## Command Routing
 - "forget"/"delete" → forget workflow (memory_forget)
 - "remember"/"save"/"update"/"merge" → remember workflow (memory_remember)
 - "find"/"recall"/"search"/"show" → recall workflow (memory_recall)
+- "sync"/"reindex"/"refresh" → sync workflow (memory_sync)
 
 ## Memory Types (exact names, kebab-case)
 architectural-decision, design-decision, learning, user-preference,
@@ -88,7 +89,18 @@ DO NOT guess memory types. DO NOT retry with different types. Just use query fal
 5. If user confirms → call memory_forget with the filePaths:
    memory_forget(filePaths: ["/path/to/memory1.md", "/path/to/memory2.md"])
 
-NEVER delete without confirmation. NEVER call memory_forget without filePaths from memory_recall.`;
+NEVER delete without confirmation. NEVER call memory_forget without filePaths from memory_recall.
+
+## Sync Workflow
+
+Use memory_sync when:
+- User says they manually edited/created memory files
+- User wants to refresh the index
+- User mentions files were changed outside the tool
+
+Just call: memory_sync()
+
+This updates the qmd index and embeddings to reflect manual changes.`;
 
 /**
  * Creates historian agent configuration.
@@ -119,6 +131,7 @@ export function createHistorianAgent(config: PluginConfig): AgentConfig {
       memory_remember: true,
       memory_recall: true,
       memory_forget: true,
+      memory_sync: true,
     },
     instructions,
     prompt: config.appendPrompt,

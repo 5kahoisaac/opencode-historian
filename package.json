@@ -4,9 +4,6 @@
   "description": "Historian — agent with mnemonics for OpenCode powered by qmd",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "bin": {
-    "opencode-historian": "./dist/cli/index.js"
-  },
   "type": "module",
   "license": "MIT",
   "keywords": [
@@ -34,7 +31,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "bun build src/index.ts --outdir dist --target bun --format esm && bun build src/cli/index.ts --outdir dist/cli --target bun --format esm && tsc --emitDeclarationOnly",
+    "build": "bun build src/index.ts --outdir dist --target bun --format esm && tsc --emitDeclarationOnly",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "lint": "biome lint .",

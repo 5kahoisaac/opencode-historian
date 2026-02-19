@@ -157,9 +157,8 @@ None yet
 4. Context rot prevention
 
 **Final (Phase 7):**
-1. CLI install command
-2. Documentation
-3. Release preparation
+1. Documentation
+2. Release preparation
 
 ---
 
@@ -260,9 +259,6 @@ bun test
 
 # Install dependencies
 bun install
-
-# Run CLI (when implemented)
-bunx opencode-historian install
 ```
 
 ### Memory Type Quick Reference

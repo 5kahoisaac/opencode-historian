@@ -90,6 +90,4 @@ opencode-historian/
 ## Common Patterns
 
 - This is an OpenCode plugin - most functionality lives in `src/`
-- The CLI entry point is `src/cli/index.ts`
 - The main plugin export is `src/index.ts`
-- Skills are located in `src/skills/` (included in package publish)

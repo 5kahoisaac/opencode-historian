@@ -4,6 +4,7 @@ import { createForgetTool } from './memory-forget';
 import { createListTypesTool } from './memory-list-types';
 import { createRecallTool } from './memory-recall';
 import { createRememberTool } from './memory-remember';
+import { createSyncTool } from './memory-sync';
 
 export function createMemoryTools(
   config: PluginConfig,
@@ -15,6 +16,7 @@ export function createMemoryTools(
     createRecallTool(config, projectRoot, logger),
     createRememberTool(config, projectRoot, logger),
     createForgetTool(config, projectRoot, logger),
+    createSyncTool(config, projectRoot, logger),
   ];
 }
 
@@ -23,4 +25,5 @@ export {
   createListTypesTool,
   createRecallTool,
   createRememberTool,
+  createSyncTool,
 };
