@@ -1,25 +1,9 @@
-import path from 'node:path';
 import { z } from 'zod';
-import { type PluginConfig, PROJECT_MEMORY_DIR } from '../config';
+import type { PluginConfig } from '../config';
 import type { SearchResult, SearchType } from '../qmd';
 import { getIndexName, multiGet, search } from '../qmd';
 import { parseMemoryFile } from '../storage';
-import { type Logger, toKebabCase } from '../utils';
-
-/**
- * Converts a qmd:// URI to a real filesystem path.
- * qmd returns paths like "qmd://conventions-pattern/file.md"
- * but we need ".mnemonics/conventions-pattern/file.md"
- */
-function qmdPathToFsPath(qmdPath: string, projectRoot: string): string {
-  if (qmdPath.startsWith('qmd://')) {
-    // Remove "qmd://" prefix and prepend .mnemonics directory
-    const relativePath = qmdPath.slice(6); // "conventions-pattern/file.md"
-    return path.join(projectRoot, PROJECT_MEMORY_DIR, relativePath);
-  }
-  // If it's already a filesystem path, return as-is
-  return qmdPath;
-}
+import { type Logger, qmdPathToFsPath, toKebabCase } from '../utils';
 
 export interface MemoryRecallResult {
   path: string;
@@ -145,7 +129,7 @@ export function createRecallTool(
               .replace(/\b\w/g, (c) => c.toUpperCase());
 
             memories.push({
-              path: result.path,
+              path: fsPath,
               score: result.score,
               title,
               memoryType: memoryFile.data.memory_type,

@@ -57,6 +57,23 @@ export function truncateString(
 }
 
 /**
+ * Converts a qmd:// URI to a real filesystem path.
+ * qmd returns paths like "qmd://conventions-pattern/file.md"
+ * but we need ".mnemonics/conventions-pattern/file.md"
+ */
+export function qmdPathToFsPath(
+  qmdPath: string,
+  projectRoot: string,
+  mnemonicsDir = '.mnemonics',
+): string {
+  if (qmdPath.startsWith('qmd://')) {
+    const relativePath = qmdPath.slice(6);
+    return `${projectRoot}/${mnemonicsDir}/${relativePath}`;
+  }
+  return qmdPath;
+}
+
+/**
  * Creates a deep clone of an object using structuredClone if available,
  * with a fallback to JSON parse/stringify.
  */

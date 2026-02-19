@@ -4,6 +4,7 @@
 export {
   debounce,
   deepClone,
+  qmdPathToFsPath,
   sanitizeFilename,
   truncateString,
 } from './helpers';

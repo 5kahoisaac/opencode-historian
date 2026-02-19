@@ -15,7 +15,12 @@ import {
   isWithinProjectMnemonics,
   parseMemoryFile,
 } from '../storage';
-import { isValidMemoryType, type Logger, toKebabCase } from '../utils';
+import {
+  isValidMemoryType,
+  type Logger,
+  qmdPathToFsPath,
+  toKebabCase,
+} from '../utils';
 
 export function createRememberTool(
   _config: PluginConfig,
@@ -62,20 +67,23 @@ export function createRememberTool(
 
       if (filePath) {
         // UPDATE EXISTING FILE
+        // Convert qmd:// path to filesystem path if needed
+        const resolvedPath = qmdPathToFsPath(filePath, projectRoot);
+
         // Validate scope
-        if (!isWithinProjectMnemonics(filePath, projectRoot)) {
+        if (!isWithinProjectMnemonics(resolvedPath, projectRoot)) {
           throw new Error('Write operations only allowed within .mnemonics/');
         }
 
         // Check file exists
-        if (!fs.existsSync(filePath)) {
+        if (!fs.existsSync(resolvedPath)) {
           throw new Error(
-            `File not found: ${filePath}. Cannot update non-existent memory.`,
+            `File not found: ${resolvedPath}. Cannot update non-existent memory.`,
           );
         }
 
         // Read existing file to preserve metadata
-        const existingMemory = parseMemoryFile(filePath);
+        const existingMemory = parseMemoryFile(resolvedPath);
 
         // Update the memory with new content and modified timestamp
         const updatedMemory = {
@@ -93,11 +101,11 @@ export function createRememberTool(
           updatedMemory.content,
           updatedMemory.data,
         );
-        await fs.promises.writeFile(filePath, fileContent, 'utf-8');
+        await fs.promises.writeFile(resolvedPath, fileContent, 'utf-8');
 
-        targetFilePath = filePath;
+        targetFilePath = resolvedPath;
         isUpdate = true;
-        logger.info(`Updated memory file: ${filePath}`);
+        logger.info(`Updated memory file: ${resolvedPath}`);
       } else {
         // CREATE NEW FILE
         const memoryFile = createMemoryFile(

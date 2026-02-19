@@ -3,7 +3,7 @@ import { z } from 'zod';
 import type { PluginConfig } from '../config';
 import { getIndexName, updateEmbeddings, updateIndex } from '../qmd';
 import { isWithinProjectMnemonics } from '../storage';
-import type { Logger } from '../utils';
+import { type Logger, qmdPathToFsPath } from '../utils';
 
 export function createForgetTool(
   _config: PluginConfig,
@@ -26,40 +26,45 @@ export function createForgetTool(
       const errors: string[] = [];
 
       for (const filePath of filePaths) {
+        // Convert qmd:// path to filesystem path if needed
+        const resolvedPath = qmdPathToFsPath(filePath, projectRoot);
+
         // Validate scope - only allow .mnemonics .md files
-        if (!isWithinProjectMnemonics(filePath, projectRoot)) {
-          errors.push(`Skipped ${filePath}: not within .mnemonics/ directory`);
+        if (!isWithinProjectMnemonics(resolvedPath, projectRoot)) {
+          errors.push(
+            `Skipped ${resolvedPath}: not within .mnemonics/ directory`,
+          );
           continue;
         }
 
-        if (!filePath.endsWith('.md')) {
-          errors.push(`Skipped ${filePath}: not a .md file`);
+        if (!resolvedPath.endsWith('.md')) {
+          errors.push(`Skipped ${resolvedPath}: not a .md file`);
           continue;
         }
 
         // Check file exists
-        if (!fs.existsSync(filePath)) {
-          errors.push(`Skipped ${filePath}: file not found`);
+        if (!fs.existsSync(resolvedPath)) {
+          errors.push(`Skipped ${resolvedPath}: file not found`);
           continue;
         }
 
         // Delete file
         try {
-          await fs.promises.unlink(filePath);
+          await fs.promises.unlink(resolvedPath);
 
           // Verify file no longer exists
-          if (fs.existsSync(filePath)) {
+          if (fs.existsSync(resolvedPath)) {
             errors.push(
-              `Failed to delete ${filePath}: file still exists after deletion`,
+              `Failed to delete ${resolvedPath}: file still exists after deletion`,
             );
             continue;
           }
 
-          deletedFiles.push(filePath);
-          logger.info(`Deleted memory file: ${filePath}`);
+          deletedFiles.push(resolvedPath);
+          logger.info(`Deleted memory file: ${resolvedPath}`);
         } catch (error) {
           errors.push(
-            `Error deleting ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
+            `Error deleting ${resolvedPath}: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       }
