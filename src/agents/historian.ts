@@ -48,6 +48,12 @@ memory_remember(
   memoryType: "context"
 )
 
+**Title naming rules:**
+- Be concise and descriptive
+- Do NOT include the memory type in the title (folder already shows it)
+- Good: "qmd-cli-for-writes-mcp-for-reads"
+- Bad: "architectural-decision-qmd-cli-for-writes"
+
 ---
 
 ## Recall Workflow (FOLLOW THESE RULES EXACTLY)
