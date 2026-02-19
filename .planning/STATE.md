@@ -183,6 +183,7 @@ None yet
 | 16 | Refactor memory_forget to accept filePaths parameter | 2026-02-19 | 4e36b0d | [16-refactor-memory-forget-to-accept-filepat](./quick/16-refactor-memory-forget-to-accept-filepat/) |
 | 17 | Add isAll flag to memory_recall for getting all memories | 2026-02-19 | b567150 | [17-add-isall-flag-to-memory-recall-for-gett](./quick/17-add-isall-flag-to-memory-recall-for-gett/) |
 | 18 | Add memory_sync tool and remove CLI (install/doctor) | 2026-02-19 | 5140dba | [18-add-memory-sync-tool-for-manual-index-up](./quick/18-add-memory-sync-tool-for-manual-index-up/) |
+| 19 | Remove autoCompound config option | 2026-02-19 | 0312871 | [19-remove-autocompound-config-option](./quick/19-remove-autocompound-config-option/) |
 
 ---
 
