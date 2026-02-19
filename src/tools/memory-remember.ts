@@ -6,7 +6,7 @@ import type { PluginConfig } from '../config';
 import {
   addToCollection,
   getIndexName,
-  updateEmbedings,
+  updateEmbeddings,
   updateIndex,
 } from '../qmd';
 import {
@@ -146,7 +146,7 @@ export function createRememberTool(
 
       // Update index and embeddings
       await updateIndex({ index: indexName });
-      await updateEmbedings({ index: indexName });
+      await updateEmbeddings({ index: indexName });
 
       return {
         success: true,

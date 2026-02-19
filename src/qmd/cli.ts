@@ -130,7 +130,7 @@ export async function addToCollection(
   await execAsync(command);
 }
 
-export async function updateEmbedings(options: QmdOptions): Promise<void> {
+export async function updateEmbeddings(options: QmdOptions): Promise<void> {
   const command = `qmd --index ${options.index} embed`;
   await execAsync(command);
 }

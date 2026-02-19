@@ -180,6 +180,7 @@ None yet
 | 12 | memory_recall fetch full content of search results | 2026-02-18 | fc7f7b9 | [12-memory-recall-fetch-full-content-of-sear](./quick/12-memory-recall-fetch-full-content-of-sear/) |
 | 13 | Rewrite historian agent instructions for better compliance | 2026-02-18 | 49ab79d | [13-rewrite-historian-agent-instructions](./quick/13-rewrite-historian-agent-instructions/) |
 | 14 | Fix memory_recall qmd:// path conversion | 2026-02-18 | 80b99fd | [14-fix-historian-recall-issue](./quick/14-fix-historian-recall-issue/) |
+| 15 | Update memory_remember to support update via filePath parameter | 2026-02-18 | 8314436 | [15-update-memory-remember-to-support-update](./quick/15-update-memory-remember-to-support-update/) |
 
 ---
 

@@ -8,6 +8,6 @@ export {
   type SearchResult,
   type SearchType,
   search,
-  updateEmbedings,
+  updateEmbeddings,
   updateIndex,
 } from './cli.js';
