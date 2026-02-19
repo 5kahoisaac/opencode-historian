@@ -6,7 +6,6 @@ export const PROJECT_MEMORY_DIR = '.mnemonics';
 
 export const DEFAULT_CONFIG: Partial<PluginConfig> = {
   temperature: 0.3,
-  autoCompound: true,
   logLevel: 'info',
   debug: false,
 };

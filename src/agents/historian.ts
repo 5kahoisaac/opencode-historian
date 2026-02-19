@@ -24,6 +24,8 @@ project-preference, issue, context, recurring-pattern, conventions-pattern
 
 Default type: "context" (use when unclear)
 
+---
+
 ## Remember Workflow
 
 1. Search first: memory_recall(query) to find similar memories
@@ -45,6 +47,8 @@ memory_remember(
   content: "memory content",
   memoryType: "context"
 )
+
+---
 
 ## Recall Workflow (FOLLOW THESE RULES EXACTLY)
 
@@ -75,6 +79,8 @@ memory_recall(query: "original query", type: "query")
 
 DO NOT guess memory types. DO NOT retry with different types. Just use query fallback.
 
+---
+
 ## Forget Workflow (FOLLOW EXACTLY)
 
 1. Search first: memory_recall(query)
@@ -91,6 +97,8 @@ DO NOT guess memory types. DO NOT retry with different types. Just use query fal
 
 NEVER delete without confirmation. NEVER call memory_forget without filePaths from memory_recall.
 
+---
+
 ## Sync Workflow
 
 Use memory_sync when:
@@ -100,13 +108,15 @@ Use memory_sync when:
 
 Just call: memory_sync()
 
-This updates the qmd index and embeddings to reflect manual changes.`;
+This updates the qmd index and embeddings to reflect manual changes.
+
+---`;
 
 /**
  * Creates historian agent configuration.
  */
 export function createHistorianAgent(config: PluginConfig): AgentConfig {
-  let instructions = HISTORIAN_INSTRUCTIONS;
+  let prompt = HISTORIAN_INSTRUCTIONS;
 
   // Inject custom memory types if configured
   if (config.memoryTypes?.length) {
@@ -114,10 +124,14 @@ export function createHistorianAgent(config: PluginConfig): AgentConfig {
       .map((t) => `${t.name} - ${t.description || 'Custom type'}`)
       .join('\n');
 
-    instructions = instructions.replace(
+    prompt = prompt.replace(
       'Default type: "context"',
       `Default type: "context"\n\nCustom types:\n${customTypes}`,
     );
+  }
+
+  if (config.appendPrompt) {
+    prompt = `${prompt}\n\n${config.appendPrompt}`;
   }
 
   return {
@@ -133,7 +147,6 @@ export function createHistorianAgent(config: PluginConfig): AgentConfig {
       memory_forget: true,
       memory_sync: true,
     },
-    instructions,
-    prompt: config.appendPrompt,
+    prompt,
   };
 }

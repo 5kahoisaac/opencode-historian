@@ -37,7 +37,7 @@
 Phase 1: Core Infrastructure
 [░░░░░░░░░░░░░░░░░░░░] 0%
 
-Requirements: 0/13 complete (CORE-02, CORE-05 removed - project-scoped only, rely on qmd for indexing)
+Requirements: 0/12 complete (CORE-02, CORE-05 removed - project-scoped only, rely on qmd for indexing; CONF-03 removed - auto-compound handled by agent search-first workflow)
 - [ ] CORE-01: MCP server registers tools with OpenCode
 - [x] ~~CORE-02: Global memory storage at ~/.config/opencode/mnemonics/~~ **REMOVED** - project-scoped only
 - [ ] CORE-03: Project-scoped memory storage at .mnemonics/
@@ -45,7 +45,7 @@ Requirements: 0/13 complete (CORE-02, CORE-05 removed - project-scoped only, rel
 - [ ] CORE-06: qmd index naming uses folder name; collection naming uses memory_type
 - [ ] CONF-01: JSON schema for plugin configuration
 - [ ] CONF-02: External folder/file paths for qmd collection
-- [ ] CONF-03: Config option autoCompound
+- [x] ~~CONF-03: Config option autoCompound~~ **REMOVED** - agent search-first workflow handles compounding
 - [ ] CONF-04: Config option memoryTypes
 - [ ] STRC-01: agents/ directory structure
 - [ ] STRC-02: tools/memory/ directory structure
@@ -89,6 +89,7 @@ Success Criteria: 0/5 met
 | Strict TypeScript | ✓ Locked | Catch errors early |
 | MCP protocol | ✓ Locked | OpenCode standard |
 | ~~bun:sqlite~~ | ✗ Removed | Rely on qmd for all indexing |
+| ~~autoCompound~~ | ✗ Removed | Agent search-first workflow handles compounding |
 | qmd integration | ✓ Locked | Hybrid search (BM25 + vector) |
 | File-based storage | ✓ Locked | Human-readable, git-friendly |
 | Temperature | ✓ Locked | 0.3 (balanced creativity for memory expansion) |
@@ -109,9 +110,8 @@ None yet
 ### Open Questions
 
 1. **qmd installation method:** Should we bundle qmd or require separate install?
-2. **Auto-compound timing:** What defines "session idle" for auto-prompt?
-3. **Block size limits:** Default 5000 chars — need validation during testing
-4. **External memory paths:** How to handle paths that don't exist?
+2. **Block size limits:** Default 5000 chars — need validation during testing
+3. **External memory paths:** How to handle paths that don't exist?
 
 ---
 
@@ -182,6 +182,7 @@ None yet
 | 15 | Update memory_remember to support update via filePath parameter | 2026-02-18 | 8314436 | [15-update-memory-remember-to-support-update](./quick/15-update-memory-remember-to-support-update/) |
 | 16 | Refactor memory_forget to accept filePaths parameter | 2026-02-19 | 4e36b0d | [16-refactor-memory-forget-to-accept-filepat](./quick/16-refactor-memory-forget-to-accept-filepat/) |
 | 17 | Add isAll flag to memory_recall for getting all memories | 2026-02-19 | b567150 | [17-add-isall-flag-to-memory-recall-for-gett](./quick/17-add-isall-flag-to-memory-recall-for-gett/) |
+| 18 | Add memory_sync tool and remove CLI (install/doctor) | 2026-02-19 | 5140dba | [18-add-memory-sync-tool-for-manual-index-up](./quick/18-add-memory-sync-tool-for-manual-index-up/) |
 
 ---
 

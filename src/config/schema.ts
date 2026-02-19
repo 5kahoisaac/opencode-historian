@@ -12,7 +12,6 @@ export const PluginConfigSchema = z.object({
   appendPrompt: z.string().optional(),
   externalPaths: z.array(z.string()).optional(),
   memoryTypes: z.array(MemoryTypeSchema).optional(),
-  autoCompound: z.boolean().default(true),
   logLevel: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
   debug: z.boolean().default(false),
   disabledMcps: z.array(z.string()).optional(),

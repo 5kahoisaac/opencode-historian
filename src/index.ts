@@ -98,14 +98,6 @@ const OpencodeHistorian: Plugin = async (ctx) => {
         );
       }
     },
-
-    // Event hook: Minimal stub for Phase 1
-    event: async (input) => {
-      if (config.debug) {
-        logger.debug(`Event: ${input.event.type}`);
-      }
-      // Phase 1: No-op, Phase 2 will implement auto-compound
-    },
   };
 };
 
