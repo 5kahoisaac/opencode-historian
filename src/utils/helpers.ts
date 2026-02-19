@@ -1,3 +1,6 @@
+import path from 'node:path';
+import { getProjectMemoryPath } from '../storage';
+
 /**
  * Creates a debounced version of a function.
  * The function will only be called after `ms` milliseconds have elapsed
@@ -61,14 +64,10 @@ export function truncateString(
  * qmd returns paths like "qmd://conventions-pattern/file.md"
  * but we need ".mnemonics/conventions-pattern/file.md"
  */
-export function qmdPathToFsPath(
-  qmdPath: string,
-  projectRoot: string,
-  mnemonicsDir = '.mnemonics',
-): string {
+export function qmdPathToFsPath(qmdPath: string, projectRoot: string): string {
   if (qmdPath.startsWith('qmd://')) {
-    const relativePath = qmdPath.slice(6);
-    return `${projectRoot}/${mnemonicsDir}/${relativePath}`;
+    const relativePath = qmdPath.replace('qmd://', '');
+    return path.join(getProjectMemoryPath(projectRoot), relativePath);
   }
   return qmdPath;
 }

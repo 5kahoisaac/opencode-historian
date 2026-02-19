@@ -185,6 +185,7 @@ None yet
 | 18 | Add memory_sync tool and remove CLI (install/doctor) | 2026-02-19 | 5140dba | [18-add-memory-sync-tool-for-manual-index-up](./quick/18-add-memory-sync-tool-for-manual-index-up/) |
 | 19 | Remove autoCompound config option | 2026-02-19 | 0312871 | [19-remove-autocompound-config-option](./quick/19-remove-autocompound-config-option/) |
 | 20 | Extract qmdPathToFsPath to utils and fix path conversion | 2026-02-20 | f4a8130 | [20-extract-qmdpathtofspath-to-utils-and-fix](./quick/20-extract-qmdpathtofspath-to-utils-and-fix/) |
+| 21 | Fix memory_forget string vs array parameter bug | 2026-02-20 | fde8045 | [21-fix-memory-forget-string-vs-array-bug](./quick/21-fix-memory-forget-string-vs-array-bug/) |
 
 ---
 
