@@ -15,17 +15,22 @@ export function createForgetTool(
     description:
       'Delete memory files by their paths. Pass filePaths from memory_recall results.',
     parameters: {
-      filePaths: z.array(z.string()),
+      filePaths: z
+        .union([z.array(z.string()), z.string()])
+        .transform((v) => (Array.isArray(v) ? v : [v])),
     },
-    handler: async ({ filePaths }: { filePaths: string[] }) => {
-      if (!filePaths || filePaths.length === 0) {
-        throw new Error('filePaths array is required and cannot be empty');
+    handler: async ({ filePaths }: { filePaths: string | string[] }) => {
+      // Normalize to array (handles both string and array input)
+      const paths = Array.isArray(filePaths) ? filePaths : [filePaths];
+
+      if (!paths || paths.length === 0) {
+        throw new Error('filePaths is required and cannot be empty');
       }
 
       const deletedFiles: string[] = [];
       const errors: string[] = [];
 
-      for (const filePath of filePaths) {
+      for (const filePath of paths) {
         // Convert qmd:// path to filesystem path if needed
         const resolvedPath = qmdPathToFsPath(filePath, projectRoot);
 
