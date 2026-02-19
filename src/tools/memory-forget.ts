@@ -78,6 +78,3 @@ export function createForgetTool(
     },
   };
 }
-
-// Keep backward compatibility alias
-export const createForgetRequestTool = createForgetTool;

@@ -182,6 +182,7 @@ None yet
 | 14 | Fix memory_recall qmd:// path conversion | 2026-02-18 | 80b99fd | [14-fix-historian-recall-issue](./quick/14-fix-historian-recall-issue/) |
 | 15 | Update memory_remember to support update via filePath parameter | 2026-02-18 | 8314436 | [15-update-memory-remember-to-support-update](./quick/15-update-memory-remember-to-support-update/) |
 | 16 | Refactor memory_forget to accept filePaths parameter | 2026-02-19 | 4e36b0d | [16-refactor-memory-forget-to-accept-filepat](./quick/16-refactor-memory-forget-to-accept-filepat/) |
+| 17 | Add isAll flag to memory_recall for getting all memories | 2026-02-19 | b567150 | [17-add-isall-flag-to-memory-recall-for-gett](./quick/17-add-isall-flag-to-memory-recall-for-gett/) |
 
 ---
 

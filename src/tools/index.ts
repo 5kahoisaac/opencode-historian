@@ -1,6 +1,6 @@
 import type { PluginConfig } from '../config';
 import type { Logger } from '../utils';
-import { createForgetRequestTool, createForgetTool } from './memory-forget';
+import { createForgetTool } from './memory-forget';
 import { createListTypesTool } from './memory-list-types';
 import { createRecallTool } from './memory-recall';
 import { createRememberTool } from './memory-remember';
@@ -20,7 +20,6 @@ export function createMemoryTools(
 
 export {
   createForgetTool,
-  createForgetRequestTool,
   createListTypesTool,
   createRecallTool,
   createRememberTool,
