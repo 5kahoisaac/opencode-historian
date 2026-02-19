@@ -67,13 +67,21 @@ memory_recall(query: "original query", type: "query")
 
 DO NOT guess memory types. DO NOT retry with different types. Just use query fallback.
 
-## Forget Workflow
-1. Search: memory_recall(query)
-2. Show candidates to user
-3. Ask: "Delete these? Reply 'yes' to confirm."
-4. If confirmed: memory_forget(query, confirm: "yes")
+## Forget Workflow (FOLLOW EXACTLY)
 
-NEVER delete without confirmation. NEVER use memory_remember when asked to forget.`;
+1. Search first: memory_recall(query)
+2. Filter results to only .mnemonics/*.md files (check path contains ".mnemonics/" and ends with ".md")
+3. If no results → tell user "No memories found matching that query"
+4. If results found → show list with file paths and ask:
+   "Found these memories:
+   - /path/to/memory1.md
+   - /path/to/memory2.md
+   
+   Delete these? Reply 'yes' to confirm, 'no' to cancel, or specify which paths to delete."
+5. If user confirms → call memory_forget with the filePaths:
+   memory_forget(filePaths: ["/path/to/memory1.md", "/path/to/memory2.md"])
+
+NEVER delete without confirmation. NEVER call memory_forget without filePaths from memory_recall.`;
 
 /**
  * Creates historian agent configuration.

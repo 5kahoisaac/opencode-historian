@@ -86,20 +86,29 @@ Search memories and return full content.
 
 ## memory_forget
 
-Delete memories.
+Delete memory files by their paths.
 
 **Parameters:**
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
-| `query` | Yes | Find targets |
-| `memoryType` | No | Filter by type |
-| `confirm` | No | Confirm deletion |
-| `type` | No | Search type (default: 'vsearch') |
+| `filePaths` | Yes | Array of file paths to delete (from memory_recall results) |
 
-**Returns:** 
-- Without confirm: `{ confirmRequired, candidates }`
-- With confirm: `{ success, deletedFiles, files }`
+**Returns:**
+```javascript
+{
+  success: true,
+  deletedCount: 2,
+  deletedFiles: ["/path/to/memory1.md", "/path/to/memory2.md"],
+  errors?: ["Skipped /path/other: not within .mnemonics/"]
+}
+```
+
+**Usage:**
+1. First call memory_recall to find memories
+2. Filter results to .mnemonics/*.md files
+3. Get user confirmation
+4. Pass filePaths from recall results to delete
 
 ---
 
