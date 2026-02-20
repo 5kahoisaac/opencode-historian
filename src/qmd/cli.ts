@@ -196,6 +196,18 @@ export async function listCollections(options: QmdOptions): Promise<string[]> {
 }
 
 /**
+ * Removes a collection from the qmd index.
+ * Used to clean up stale collections that reference deleted directories.
+ */
+async function removeCollection(
+  collectionName: string,
+  options: QmdOptions,
+): Promise<void> {
+  const command = `qmd --index ${options.index} collection remove ${collectionName}`;
+  await execAsync(command);
+}
+
+/**
  * Gets all documents from index, optionally filtered by collection.
  * Uses qmd ls to get file paths per collection, then fetches content.
  * When collection is specified, only gets from that collection.
