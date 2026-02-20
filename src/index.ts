@@ -159,8 +159,18 @@ const OpencodeHistorian: Plugin = async (ctx) => {
         };
       }
 
-      // Ensure historian agent is registered
-      opencodeConfig.agent.historian = historianAgent;
+      // Ensure historian agent is registered with restricted tool access
+      // Historian can ONLY use memory tools - deny all other tools
+      opencodeConfig.agent.historian = {
+        ...historianAgent,
+        permission: {
+          edit: 'deny',
+          bash: 'deny',
+          webfetch: 'deny',
+          doom_loop: 'deny',
+          external_directory: 'deny',
+        },
+      };
 
       // Merge MCP configs
       if (!opencodeConfig.mcp) {
