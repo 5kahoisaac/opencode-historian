@@ -3,7 +3,7 @@ import { getIndexName, updateEmbeddings, updateIndex } from '../qmd';
 import type { Logger } from '../utils';
 
 export function createSyncTool(
-  _config: PluginConfig,
+  config: PluginConfig,
   projectRoot: string,
   logger: Logger,
 ) {
@@ -17,7 +17,12 @@ export function createSyncTool(
         const indexName = getIndexName(projectRoot);
 
         logger.info('Syncing qmd index...');
-        await updateIndex({ index: indexName, projectRoot, logger });
+        await updateIndex({
+          index: indexName,
+          projectRoot,
+          logger,
+          externalPaths: config.externalPaths,
+        });
 
         logger.info('Updating embeddings...');
         await updateEmbeddings({ index: indexName });

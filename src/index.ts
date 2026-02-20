@@ -23,7 +23,12 @@ const OpencodeHistorian: Plugin = async (ctx) => {
     // Run asynchronously without blocking plugin initialization
     addExternalPathsToIndex(config.externalPaths, { index: indexName, logger })
       .then(() =>
-        updateIndex({ index: indexName, projectRoot: ctx.directory, logger }),
+        updateIndex({
+          index: indexName,
+          projectRoot: ctx.directory,
+          logger,
+          externalPaths: config.externalPaths,
+        }),
       )
       .catch((error) => {
         logger.warn(

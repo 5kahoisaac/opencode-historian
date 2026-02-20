@@ -6,7 +6,7 @@ import { isWithinProjectMnemonics } from '../storage';
 import { type Logger, qmdPathToFsPath } from '../utils';
 
 export function createForgetTool(
-  _config: PluginConfig,
+  config: PluginConfig,
   projectRoot: string,
   logger: Logger,
 ) {
@@ -101,7 +101,12 @@ export function createForgetTool(
 
       // Update index and embeddings
       const indexName = getIndexName(projectRoot);
-      await updateIndex({ index: indexName, projectRoot, logger });
+      await updateIndex({
+        index: indexName,
+        projectRoot,
+        logger,
+        externalPaths: config.externalPaths,
+      });
       await updateEmbeddings({ index: indexName });
 
       return {

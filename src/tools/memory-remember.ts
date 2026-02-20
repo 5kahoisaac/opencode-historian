@@ -23,7 +23,7 @@ import {
 } from '../utils';
 
 export function createRememberTool(
-  _config: PluginConfig,
+  config: PluginConfig,
   projectRoot: string,
   logger: Logger,
 ) {
@@ -55,7 +55,7 @@ export function createRememberTool(
       const normalizedMemoryType = toKebabCase(memoryType);
 
       // Validate memory type
-      if (!isValidMemoryType(normalizedMemoryType, _config.memoryTypes)) {
+      if (!isValidMemoryType(normalizedMemoryType, config.memoryTypes)) {
         throw new Error(
           `Invalid memory type: "${memoryType}". Must be one of the built-in types or configured custom types.`,
         );
@@ -153,7 +153,12 @@ export function createRememberTool(
       }
 
       // Update index and embeddings
-      await updateIndex({ index: indexName, projectRoot, logger });
+      await updateIndex({
+        index: indexName,
+        projectRoot,
+        logger,
+        externalPaths: config.externalPaths,
+      });
       await updateEmbeddings({ index: indexName });
 
       return {
