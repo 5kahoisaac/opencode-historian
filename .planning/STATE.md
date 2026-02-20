@@ -76,6 +76,7 @@ Success Criteria: 0/5 met
 ---
 | Phase quick-7 P01 | 5m | 3 tasks | 10 files |
 | Phase quick P9 | 5m | 3 tasks | 11 files |
+| Phase 23 P01 | 2m | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -127,11 +128,11 @@ None yet
 - **Focus:** Remove global memory scope, connect externalPaths
 - **Decisions Made:**
   - Removed global memory storage (CORE-02) - project-scoped only now
-  - Removed `getGlobalMemoryPath()` from codebase
+  - Removed `getGlobalMemoryPath()` from codecodebase
   - Connected `externalPaths` config to "context" collection
   - Added `addExternalPathsToIndex()` + `qmd update` on plugin init
   - Memory recall now returns `count` instead of `projectCount`/`globalCount`
-- **Quick Tasks Completed:** 2 (add memory_list_types tool, fix docs)
+- **Quick Tasks Completed:** 31 (most recent: Serena memory tool avoidance in historian prompt)
 - **Next Action:** `/gsd-plan-phase 1` to create detailed Phase 1 plan
 
 ### Upcoming Work
@@ -195,6 +196,7 @@ None yet
 | 28 | Block memory tools from non-historian agents | 2026-02-20 | 46857f7 | [28-block-memory-tools-from-non-historian](./quick/28-block-memory-tools-from-non-historian/) |
 | 29 | Restrict historian to only use memory tools | 2026-02-20 | ff5a81a | [29-restrict-historian-to-memory-tools-only](./quick/29-restrict-historian-to-memory-tools-only/) |
 | 30 | Block MCP in historian and update tool permissions | 2026-02-20 | a0e0698 | [30-block-mcp-update-tool-permissions](./quick/30-block-mcp-update-tool-permissions/) |
+| 31 | Add explicit Serena memory tool avoidance to historian prompt | 2026-02-20 | c5cd140 | [23-fix-historian-agent-prompt-to-avoid-sere](./quick/23-fix-historian-agent-prompt-to-avoid-sere/) |
 
 ---
 
