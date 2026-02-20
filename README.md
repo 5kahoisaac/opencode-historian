@@ -110,4 +110,32 @@ This means:
 - Git-friendly (commit your memories alongside code)
 - Easy to edit manually if needed
 
+## Included Skills
+
+This plugin includes a **mnemonics** skill that teaches agents how to use the historian subagent for memory operations.
+
+> **Note:** As of early 2026, OpenCode's native skills system does not automatically install `SKILL.md` files from npm-published plugin packages. You need to manually copy the skill to your project.
+
+### Install the Skill
+
+Copy the skill to your project's `.opencode/skills/` directory:
+
+```bash
+# Create skills directory if needed
+mkdir -p .opencode/skills/mnemonics
+
+# Download the skill file
+curl -o .opencode/skills/mnemonics/SKILL.md \
+  https://raw.githubusercontent.com/5kahoisaac/opencode-historian/main/src/skills/mnemonics/SKILL.md
+```
+
+Or manually copy from the package:
+```bash
+# If installed via npm/bun
+cp node_modules/opencode-historian/src/skills/mnemonics/SKILL.md \
+   .opencode/skills/mnemonics/
+```
+
+Once installed, agents can load the skill for detailed guidance on memory types and `@historian` usage.
+
 MIT
