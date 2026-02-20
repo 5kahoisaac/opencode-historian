@@ -37,14 +37,14 @@
 Phase 1: Core Infrastructure
 [░░░░░░░░░░░░░░░░░░░░] 0%
 
-Requirements: 0/12 complete (CORE-02, CORE-05 removed - project-scoped only, rely on qmd for indexing; CONF-03 removed - auto-compound handled by agent search-first workflow)
+Requirements: 0/11 complete (CORE-02, CORE-05, CONF-02, CONF-03 removed - project-scoped only, rely on qmd for indexing, manual external folder management)
 - [ ] CORE-01: MCP server registers tools with OpenCode
 - [x] ~~CORE-02: Global memory storage at ~/.config/opencode/mnemonics/~~ **REMOVED** - project-scoped only
 - [ ] CORE-03: Project-scoped memory storage at .mnemonics/
 - [ ] CORE-04: Markdown files with YAML frontmatter format
 - [ ] CORE-06: qmd index naming uses folder name; collection naming uses memory_type
 - [ ] CONF-01: JSON schema for plugin configuration
-- [ ] CONF-02: External folder/file paths for qmd collection
+- [x] ~~CONF-02: External folder/file paths for qmd collection~~ **REMOVED** - users manage external folders manually
 - [x] ~~CONF-03: Config option autoCompound~~ **REMOVED** - agent search-first workflow handles compounding
 - [ ] CONF-04: Config option memoryTypes
 - [ ] STRC-01: agents/ directory structure
@@ -95,10 +95,11 @@ Success Criteria: 0/5 met
 | File-based storage | ✓ Locked | Human-readable, git-friendly |
 | Temperature | ✓ Locked | 0.3 (balanced creativity for memory expansion) |
 | Model fallback | ✓ Locked | kimi-k2.5-free → gpt-5-nano → big-pickle |
-| Write scope | ✓ Locked | .mnemonics/ only (protects external paths) |
+| Write scope | ✓ Locked | .mnemonics/ only |
 | Write format | ✓ Locked | .md only (git-friendly, compoundable) |
-| Read scope | ✓ Locked | All sources (project + external via externalPaths) |
+| Read scope | ✓ Locked | Project .mnemonics/ only |
 | qmd operations | ✓ Locked | MCP for reads, CLI for writes |
+| ~~externalPaths~~ | ✗ Removed | Users manage external folders manually |
 
 ### Technical Debt
 
@@ -112,7 +113,6 @@ None yet
 
 1. **qmd installation method:** Should we bundle qmd or require separate install?
 2. **Block size limits:** Default 5000 chars — need validation during testing
-3. **External memory paths:** How to handle paths that don't exist?
 
 ---
 
@@ -125,14 +125,14 @@ None yet
 
 ### Current Session
 - **Started:** 2026-02-16
-- **Focus:** Remove global memory scope, connect externalPaths
+- **Focus:** Remove externalPaths feature, simplify index management
 - **Decisions Made:**
   - Removed global memory storage (CORE-02) - project-scoped only now
   - Removed `getGlobalMemoryPath()` from codecodebase
-  - Connected `externalPaths` config to "context" collection
-  - Added `addExternalPathsToIndex()` + `qmd update` on plugin init
-  - Memory recall now returns `count` instead of `projectCount`/`globalCount`
-- **Quick Tasks Completed:** 33 (most recent: Fix updateIndex with externalPaths)
+  - Removed `externalPaths` config option and `addExternalPathsToIndex()` function
+  - Rewrote `updateIndex` to manage collections based on memoryTypes
+  - Stale collection cleanup only applies to valid memory type names
+- **Quick Tasks Completed:** 34 (most recent: Remove externalPaths feature)
 - **Next Action:** `/gsd-plan-phase 1` to create detailed Phase 1 plan
 
 ### Upcoming Work
@@ -199,6 +199,7 @@ None yet
 | 31 | Add explicit Serena memory tool avoidance to historian prompt | 2026-02-20 | c5cd140 | [23-fix-historian-agent-prompt-to-avoid-sere](./quick/23-fix-historian-agent-prompt-to-avoid-sere/) |
 | 32 | Fix updateIndex to skip non-project-scope collections by path | 2026-02-21 | 2ca9e84 | [24-fix-updateindex-to-skip-non-project-scop](./quick/24-fix-updateindex-to-skip-non-project-scop/) |
 | 33 | Fix updateIndex with externalPaths for correct stale detection | 2026-02-21 | ab42bf5 | [25-revert-wrong-updateindex-fix-and-detect-](./quick/25-revert-wrong-updateindex-fix-and-detect-/) |
+| 34 | Remove externalPaths feature and rewrite updateIndex with memoryTypes | 2026-02-21 | 5c4ab36 | [26-remove-externalpaths-feature-and-update-](./quick/26-remove-externalpaths-feature-and-update-/) |
 
 ---
 
