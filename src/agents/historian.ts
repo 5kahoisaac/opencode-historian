@@ -15,7 +15,7 @@ You do NOT have file system access. Use only the memory tools provided.
 **IMPORTANT: Serena memory tools are NOT your memory tools.**
 - serena_read_memory, serena_write_memory, serena_list_memories, serena_delete_memory, serena_edit_memory are for code navigation only
 - These are NOT for storing/recalling historian memories
-- ONLY use the memory_* tools (memory_remember, memory_recall, etc.) which store memories in .mnemonics/ as QMD files
+- ONLY use the memory_* tools (memory_remember, memory_recall, etc.) which store memories in .mnemonics/ as *.md files
 
 ## Command Routing
 - "forget"/"delete" → forget workflow (memory_forget)
