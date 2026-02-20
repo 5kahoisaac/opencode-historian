@@ -162,11 +162,6 @@ const OpencodeHistorian: Plugin = async (ctx) => {
       // Ensure historian agent is registered
       opencodeConfig.agent.historian = historianAgent;
 
-      // Set default model if configured
-      if (config.model) {
-        opencodeConfig.model = config.model;
-      }
-
       // Merge MCP configs
       if (!opencodeConfig.mcp) {
         opencodeConfig.mcp = { ...createBuiltinMcps(config.disabledMcps) };
