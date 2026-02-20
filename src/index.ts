@@ -21,8 +21,10 @@ const OpencodeHistorian: Plugin = async (ctx) => {
   if (config.externalPaths && config.externalPaths.length > 0) {
     const indexName = getIndexName(ctx.directory);
     // Run asynchronously without blocking plugin initialization
-    addExternalPathsToIndex(config.externalPaths, { index: indexName })
-      .then(() => updateIndex({ index: indexName }))
+    addExternalPathsToIndex(config.externalPaths, { index: indexName, logger })
+      .then(() =>
+        updateIndex({ index: indexName, projectRoot: ctx.directory, logger }),
+      )
       .catch((error) => {
         logger.warn(
           `Failed to initialize external paths: ${error instanceof Error ? error.message : String(error)}`,

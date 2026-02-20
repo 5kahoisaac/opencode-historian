@@ -153,7 +153,7 @@ export function createRememberTool(
       }
 
       // Update index and embeddings
-      await updateIndex({ index: indexName });
+      await updateIndex({ index: indexName, projectRoot, logger });
       await updateEmbeddings({ index: indexName });
 
       return {

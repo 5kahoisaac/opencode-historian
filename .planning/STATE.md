@@ -191,7 +191,7 @@ None yet
 | 24 | Fix multiGet to use proper qmd multi-get with collection iteration | 2026-02-20 | 948945d | [24-fix-multiget-qmd-multi-get](./quick/24-fix-multiget-qmd-multi-get/) |
 | 25 | Fix multiGet to use qmd ls + qmd get instead of broken multi-get -c | 2026-02-20 | 94dbe3e | [25-fix-multiget-qmd-ls-get](./quick/25-fix-multiget-qmd-ls-get/) |
 | 26 | Fix memory_forget parameter handling for array inputs | 2026-02-20 | 2b14b96 | [26-fix-memory-forget-array-params](./quick/26-fix-memory-forget-array-params/) |
-| 27 | Fix updateIndex to clean up stale qmd collections with missing paths | 2026-02-20 | 515af2f | [22-fix-updateindex-to-clean-up-stale-qmd-co](./quick/22-fix-updateindex-to-clean-up-stale-qmd-co/) |
+| 27 | Fix updateIndex to clean up stale qmd collections with missing paths | 2026-02-20 | cca5ed6 | [22-fix-updateindex-to-clean-up-stale-qmd-co](./quick/22-fix-updateindex-to-clean-up-stale-qmd-co/) |
 
 ---
 

@@ -101,7 +101,7 @@ export function createForgetTool(
 
       // Update index and embeddings
       const indexName = getIndexName(projectRoot);
-      await updateIndex({ index: indexName });
+      await updateIndex({ index: indexName, projectRoot, logger });
       await updateEmbeddings({ index: indexName });
 
       return {
