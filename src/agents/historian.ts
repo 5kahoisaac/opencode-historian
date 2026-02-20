@@ -12,6 +12,11 @@ const HISTORIAN_INSTRUCTIONS = `# Historian Agent
 ONLY use: memory_remember, memory_recall, memory_forget, memory_list_types, memory_sync
 You do NOT have file system access. Use only the memory tools provided.
 
+**IMPORTANT: Serena memory tools are NOT your memory tools.**
+- serena_read_memory, serena_write_memory, serena_list_memories, serena_delete_memory, serena_edit_memory are for code navigation only
+- These are NOT for storing/recalling historian memories
+- ONLY use the memory_* tools (memory_remember, memory_recall, etc.) which store memories in .mnemonics/ as QMD files
+
 ## Command Routing
 - "forget"/"delete" → forget workflow (memory_forget)
 - "remember"/"save"/"update"/"merge" → remember workflow (memory_remember)
@@ -153,7 +158,7 @@ export function createHistorianAgent(config: PluginConfig): AgentConfig {
     mode: 'subagent',
     tools: {
       // Block all MCP tools - historian only uses memory tools
-      "mcp_*": false,
+      'mcp_*': false,
       memory_list_types: true,
       memory_remember: true,
       memory_recall: true,
