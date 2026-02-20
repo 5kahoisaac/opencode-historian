@@ -194,6 +194,7 @@ None yet
 | 27 | Fix updateIndex to clean up stale qmd collections with missing paths | 2026-02-20 | d05625d | [22-fix-updateindex-to-clean-up-stale-qmd-co](./quick/22-fix-updateindex-to-clean-up-stale-qmd-co/) |
 | 28 | Block memory tools from non-historian agents | 2026-02-20 | 46857f7 | [28-block-memory-tools-from-non-historian](./quick/28-block-memory-tools-from-non-historian/) |
 | 29 | Restrict historian to only use memory tools | 2026-02-20 | ff5a81a | [29-restrict-historian-to-memory-tools-only](./quick/29-restrict-historian-to-memory-tools-only/) |
+| 30 | Block MCP in historian and update tool permissions | 2026-02-20 | a0e0698 | [30-block-mcp-update-tool-permissions](./quick/30-block-mcp-update-tool-permissions/) |
 
 ---
 
