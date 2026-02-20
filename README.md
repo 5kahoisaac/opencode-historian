@@ -36,6 +36,25 @@ Add to your `opencode.json`:
 
 That's it. MCP servers are auto-configured.
 
+## How to Use
+
+Interact with the historian agent through natural language. Just ask it to remember or recall information:
+
+**Remembering things:**
+> "Remember that we're using PostgreSQL for the database"
+> "Save this: we decided on JWT tokens with 24-hour expiry"
+> "Note that the API rate limit is 100 requests per minute"
+
+**Recalling things:**
+> "What did we decide about authentication?"
+> "Do we have any known issues?"
+> "What are my preferences for this project?"
+
+The historian automatically:
+- Classifies memories by type (decision, learning, issue, etc.)
+- Tags them for easy retrieval
+- Indexes them for semantic search
+
 ## Memory Types
 
 | Type                     | Use For                     |
@@ -74,46 +93,21 @@ Create `.opencode/opencode-historian.json` (optional):
 | `memoryTypes`  | -       | Custom memory types                  |
 | `disabledMcps` | -       | MCPs to disable (e.g., `["serena"]`) |
 
-## Internal Tools
+## Storage
 
-The historian agent has access to these memory tools:
+Memories are stored as markdown files in `.mnemonics/` at your project root:
 
-| Tool               | Description                                    |
-|--------------------|------------------------------------------------|
-| `memory_list_types`| List all available memory types                |
-| `memory_recall`    | Search and retrieve memories (semantic search) |
-| `memory_remember`  | Create or update a memory                      |
-| `memory_forget`    | Delete memories with confirmation              |
-| `memory_sync`      | Sync index after manual file changes           |
-
-### Tool Parameters
-
-**memory_recall:**
-- `query` (optional when isAll=true) - Search query
-- `memoryType` - Filter by type
-- `limit` - Max results (default: 10)
-- `type` - Search type: 'search' (keyword), 'vsearch' (semantic), 'query' (hybrid)
-- `isAll` - Get all memories (default: false)
-
-**memory_remember:**
-- `title` - Memory title
-- `content` - Memory content
-- `memoryType` - Type of memory
-- `tags` - Optional tags array
-- `filePath` - Path to update existing memory (from recall result)
-
-**memory_forget:**
-- `filePaths` - Array of file paths to delete (from recall result)
-
-**memory_sync:**
-- No parameters - syncs index and embeddings
-
-## Dev
-
-```bash
-bun run build      # Build
-bun run typecheck  # Type check
-bun run check      # Lint + format
 ```
+.mnemonics/
+├── architectural-decision/
+├── design-decision/
+├── learning/
+└── ...
+```
+
+This means:
+- Human-readable format
+- Git-friendly (commit your memories alongside code)
+- Easy to edit manually if needed
 
 MIT
