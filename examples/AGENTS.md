@@ -21,29 +21,43 @@ targeted inserts/deletes/edits.
 
 ### Serena MCP – Code Precision (LSP-powered)
 
-Call **activate_project** first on new sessions.  
-Verify with **check_onboarding_performed**.
+> Reference: https://oraios.github.io/serena/01-about/035_tools.html
 
-**Core Symbol Tools**
-- **find_symbol** — precise global/local symbol location
-- **find_referencing_symbols** — all references/uses
-- **rename_symbol** — safe codebase-wide rename
-- **replace_symbol_body** — replace entire symbol definition
+**Session Startup**
+1. `activate_project` — connect to project (required first)
+2. `check_onboarding_performed` — verify project is initialized
+3. `initial_instructions` — load Serena manual if agent seems "lost"
+
+**Symbol Tools (LSP/JetBrains)**
+- `find_symbol` — global/local search for classes, methods, functions
+- `find_referencing_symbols` — find all usages of a symbol
+- `rename_symbol` — safe codebase-wide rename
+- `get_symbols_overview` — quick summary of top-level symbols in a file
 
 **Targeted Edit Tools**
-- **insert_after_symbol** — add content after symbol end
-- **insert_before_symbol** — add content before symbol start
-- **replace_lines** — replace specific line range
-- **delete_lines** — remove specific line range
+- `replace_symbol_body` — replace entire function/class definition
+- `insert_after_symbol` / `insert_before_symbol` — add code relative to symbols
+- `replace_lines` / `delete_lines` — line-based editing (fallback for non-symbolic)
 
-**Analysis Tools**
-- **get_symbols_overview** — top-level symbols in file
-- **search_for_pattern** — regex fallback (non-symbol cases only)
+**File Operations**
+- `list_dir` — list directory contents (with recursion option)
+- `find_file` — find files by name/pattern
+- `search_for_pattern` — regex search (fallback when symbols don't work)
+
+**Thinking Tools (Meta-cognition)**
+- `think_about_collected_information` — verify enough data gathered
+- `think_about_task_adherence` — check if drifted from goal
+- `think_about_whether_you_are_done` — final completion verification
 
 **Memory Tools (INTERNAL to Serena)**
-- **write_memory** / **read_memory** — for Serena's own bookkeeping during code
-  navigation
-- **NOT for storing/recalling project memories** — delegate to historian agent
+- `write_memory` / `read_memory` / `list_memories` — for Serena's own bookkeeping
+- **NOT for project memories** — use `@historian` instead
+
+**Serena Best Practices**
+- Prefer `replace_symbol_body` over `replace_lines` for structured code
+- Use `restart_language_server` if files modified outside Serena
+- Use `think_about_*` tools before committing to complex refactors
+- Use `open_dashboard` to monitor logs and tool usage in real-time
 
 ### Memory & Semantic Search – Use @historian or mnemonics skill
 
@@ -81,11 +95,20 @@ Memory tools are **ONLY available via the historian subagent**. You have two opt
 
 ### Best Practices
 
-1. Start sessions: `activate_project` (Serena)
-2. For memory: use `@historian` or load **mnemonics** skill
-3. **NEVER** use `serena_*_memory` tools for project memories
-4. Minimize broad searches; target narrow queries
-5. Verify edits: read_file or symbol overview before/after changes
-6. Fallback: shell only when MCPs cannot help
+**Serena (Code):**
+1. Start sessions: `activate_project` → `check_onboarding_performed`
+2. Prefer symbol tools (`replace_symbol_body`) over line edits
+3. Use `restart_language_server` if files changed externally
+4. Use `think_about_*` tools before finishing complex refactors
+
+**Memory (@historian):**
+1. Use `@historian` or load **mnemonics** skill for memory operations
+2. **NEVER** use `serena_*_memory` tools for project memories
+3. Recall before deciding — check if decision already exists
+
+**General:**
+1. Minimize broad searches; target narrow queries
+2. Verify edits: read_file or symbol overview before/after changes
+3. Fallback: shell only when MCPs cannot help
 
 ---
