@@ -3,7 +3,7 @@ import { z } from 'zod';
 import type { PluginConfig } from '../config';
 import { getIndexName, updateEmbeddings, updateIndex } from '../qmd';
 import { isWithinProjectMnemonics } from '../storage';
-import { type Logger, qmdPathToFsPath } from '../utils';
+import { getBuiltinMemoryTypes, type Logger, qmdPathToFsPath } from '../utils';
 
 export function createForgetTool(
   config: PluginConfig,
@@ -101,11 +101,13 @@ export function createForgetTool(
 
       // Update index and embeddings
       const indexName = getIndexName(projectRoot);
+      const builtinTypes = getBuiltinMemoryTypes();
+      const allMemoryTypes = [...builtinTypes, ...(config.memoryTypes || [])];
       await updateIndex({
         index: indexName,
         projectRoot,
         logger,
-        externalPaths: config.externalPaths,
+        memoryTypes: allMemoryTypes.map((t) => t.name),
       });
       await updateEmbeddings({ index: indexName });
 

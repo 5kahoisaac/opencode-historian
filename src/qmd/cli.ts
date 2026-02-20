@@ -2,7 +2,8 @@ import { exec } from 'node:child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { promisify } from 'node:util';
-import { type Logger, toKebabCase } from '../utils';
+import { getProjectMemoryPath } from '../storage';
+import { getBuiltinMemoryTypes, type Logger, toKebabCase } from '../utils';
 
 const execAsync = promisify(exec);
 
@@ -12,7 +13,7 @@ export interface QmdOptions {
   index: string;
   logger?: Logger;
   projectRoot?: string; // Optional: required for stale collection cleanup
-  externalPaths?: string[]; // Optional: for detecting external collections
+  memoryTypes?: string[]; // Optional: valid memory type names for collection management
 }
 
 export interface SearchOptions {
@@ -140,35 +141,39 @@ export async function updateEmbeddings(options: QmdOptions): Promise<void> {
 }
 
 export async function updateIndex(options: QmdOptions): Promise<void> {
-  // Clean up stale collections if projectRoot is provided
-  if (options.projectRoot) {
-    const collections = await listCollections(options);
-    const memoryBasePath = path.join(options.projectRoot, '.mnemonics');
+  if (!options.projectRoot) {
+    // No project root - just run qmd update
+    const command = `qmd --index ${options.index} update`;
+    await execAsync(command);
+    return;
+  }
 
-    for (const collection of collections) {
-      const collectionPath = path.join(memoryBasePath, collection);
+  const collections = await listCollections(options);
+  const memoryBasePath = getProjectMemoryPath(options.projectRoot);
 
-      // Check if this is a valid memory type (path exists)
-      if (fs.existsSync(collectionPath)) {
-        continue; // Valid memory type, keep the collection
-      }
+  // Get all valid memory type names
+  const builtinTypes = getBuiltinMemoryTypes().map((t) => t.name);
+  const allValidTypes = [
+    ...new Set([...builtinTypes, ...(options.memoryTypes || [])]),
+  ];
 
-      // Path doesn't exist - check if it's an external collection
-      // "context" collection can be for external paths (not memory types)
-      if (collection === 'context' && options.externalPaths) {
-        // Check if any external paths still exist
-        const hasExistingExternalPath = options.externalPaths.some(
-          (externalPath) => fs.existsSync(externalPath),
-        );
-        if (hasExistingExternalPath) {
-          continue; // External collection with valid paths, keep it
-        }
-      }
+  // Ensure collections exist for all valid memory types
+  for (const memoryType of allValidTypes) {
+    const collectionPath = path.join(memoryBasePath, memoryType);
+    if (fs.existsSync(collectionPath)) {
+      await addToCollection(collectionPath, memoryType, options);
+    }
+  }
 
-      // Collection is stale - remove it
-      options.logger?.info(
-        `Removing stale collection: ${collection} (path not found: ${collectionPath})`,
-      );
+  // Clean up stale collections (only for valid memory types that no longer exist)
+  for (const collection of collections) {
+    if (!allValidTypes.includes(collection)) {
+      continue; // Not a memory type collection, skip
+    }
+
+    const collectionPath = path.join(memoryBasePath, collection);
+    if (!fs.existsSync(collectionPath)) {
+      options.logger?.info(`Removing stale collection: ${collection}`);
       try {
         await removeCollection(collection, options);
       } catch (error) {
@@ -182,30 +187,6 @@ export async function updateIndex(options: QmdOptions): Promise<void> {
   // Run qmd update
   const command = `qmd --index ${options.index} update`;
   await execAsync(command);
-}
-
-/**
- * Add external paths to the index under the "context" collection.
- * Used to index external folders configured in externalPaths.
- */
-export async function addExternalPathsToIndex(
-  paths: string[],
-  options: QmdOptions,
-): Promise<void> {
-  for (const path of paths) {
-    try {
-      // Add to "context" collection for external paths
-      const command = `qmd --index ${options.index} collection list | grep -q "context" || qmd --index ${options.index} collection add ${path} --name context`;
-      await execAsync(command);
-      options.logger?.info(
-        `Added external path to context collection: ${path}`,
-      );
-    } catch (error) {
-      options.logger?.warn(
-        `Failed to add external path ${path}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-  }
 }
 
 /**

@@ -16,6 +16,7 @@ import {
   parseMemoryFile,
 } from '../storage';
 import {
+  getBuiltinMemoryTypes,
   isValidMemoryType,
   type Logger,
   qmdPathToFsPath,
@@ -65,7 +66,7 @@ export function createRememberTool(
       let targetFilePath: string;
       let isUpdate = false;
 
-      if (filePath) {
+      if (filePath?.endsWith('.md')) {
         // UPDATE EXISTING FILE
         // Convert qmd:// path to filesystem path if needed
         const resolvedPath = qmdPathToFsPath(filePath, projectRoot);
@@ -153,11 +154,13 @@ export function createRememberTool(
       }
 
       // Update index and embeddings
+      const builtinTypes = getBuiltinMemoryTypes();
+      const allMemoryTypes = [...builtinTypes, ...(config.memoryTypes || [])];
       await updateIndex({
         index: indexName,
         projectRoot,
         logger,
-        externalPaths: config.externalPaths,
+        memoryTypes: allMemoryTypes.map((t) => t.name),
       });
       await updateEmbeddings({ index: indexName });
 

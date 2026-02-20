@@ -1,6 +1,6 @@
 import type { PluginConfig } from '../config';
 import { getIndexName, updateEmbeddings, updateIndex } from '../qmd';
-import type { Logger } from '../utils';
+import { getBuiltinMemoryTypes, type Logger } from '../utils';
 
 export function createSyncTool(
   config: PluginConfig,
@@ -17,11 +17,13 @@ export function createSyncTool(
         const indexName = getIndexName(projectRoot);
 
         logger.info('Syncing qmd index...');
+        const builtinTypes = getBuiltinMemoryTypes();
+        const allMemoryTypes = [...builtinTypes, ...(config.memoryTypes || [])];
         await updateIndex({
           index: indexName,
           projectRoot,
           logger,
-          externalPaths: config.externalPaths,
+          memoryTypes: allMemoryTypes.map((t) => t.name),
         });
 
         logger.info('Updating embeddings...');

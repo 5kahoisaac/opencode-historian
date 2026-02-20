@@ -3,9 +3,9 @@ import { tool } from '@opencode-ai/plugin';
 import { createHistorianAgent } from './agents';
 import { loadPluginConfig } from './config';
 import { createBuiltinMcps } from './mcp';
-import { addExternalPathsToIndex, getIndexName, updateIndex } from './qmd';
+import { getIndexName, updateIndex } from './qmd';
 import { createMemoryTools } from './tools';
-import { createLogger } from './utils';
+import { createLogger, getBuiltinMemoryTypes } from './utils';
 
 const OpencodeHistorian: Plugin = async (ctx) => {
   // Load configuration
@@ -17,25 +17,20 @@ const OpencodeHistorian: Plugin = async (ctx) => {
   // Create historian agent
   const historianAgent = createHistorianAgent(config);
 
-  // Initialize external paths into "context" collection (non-blocking)
-  if (config.externalPaths && config.externalPaths.length > 0) {
-    const indexName = getIndexName(ctx.directory);
-    // Run asynchronously without blocking plugin initialization
-    addExternalPathsToIndex(config.externalPaths, { index: indexName, logger })
-      .then(() =>
-        updateIndex({
-          index: indexName,
-          projectRoot: ctx.directory,
-          logger,
-          externalPaths: config.externalPaths,
-        }),
-      )
-      .catch((error) => {
-        logger.warn(
-          `Failed to initialize external paths: ${error instanceof Error ? error.message : String(error)}`,
-        );
-      });
-  }
+  // Initialize qmd index with memory types (non-blocking)
+  const indexName = getIndexName(ctx.directory);
+  const builtinTypes = getBuiltinMemoryTypes();
+  const allMemoryTypes = [...builtinTypes, ...(config.memoryTypes || [])];
+  updateIndex({
+    index: indexName,
+    projectRoot: ctx.directory,
+    logger,
+    memoryTypes: allMemoryTypes.map((t) => t.name),
+  }).catch((error) => {
+    logger.warn(
+      `Failed to initialize index: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  });
 
   // Create memory tools using CLI-based functions
   const memoryToolsArray = createMemoryTools(config, ctx.directory, logger);

@@ -1,5 +1,4 @@
 export {
-  addExternalPathsToIndex,
   addToCollection,
   execAsync,
   getIndexName,
