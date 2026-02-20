@@ -12,6 +12,7 @@ export interface QmdOptions {
   index: string;
   logger?: Logger;
   projectRoot?: string; // Optional: required for stale collection cleanup
+  externalPaths?: string[]; // Optional: for detecting external collections
 }
 
 export interface SearchOptions {
@@ -147,14 +148,34 @@ export async function updateIndex(options: QmdOptions): Promise<void> {
     for (const collection of collections) {
       const collectionPath = path.join(memoryBasePath, collection);
 
-      // Skip collections that don't have a directory under .mnemonics/
-      // These are external collections (e.g., "context" for externalPaths) or already deleted.
-      // We can only verify project-scoped collections.
-      if (!fs.existsSync(collectionPath)) {
+      // Check if this is a valid memory type (path exists)
+      if (fs.existsSync(collectionPath)) {
+        continue; // Valid memory type, keep the collection
       }
 
-      // Collection directory exists - it's a valid project-scoped collection.
-      // No cleanup needed since the directory is present.
+      // Path doesn't exist - check if it's an external collection
+      // "context" collection can be for external paths (not memory types)
+      if (collection === 'context' && options.externalPaths) {
+        // Check if any external paths still exist
+        const hasExistingExternalPath = options.externalPaths.some(
+          (externalPath) => fs.existsSync(externalPath),
+        );
+        if (hasExistingExternalPath) {
+          continue; // External collection with valid paths, keep it
+        }
+      }
+
+      // Collection is stale - remove it
+      options.logger?.info(
+        `Removing stale collection: ${collection} (path not found: ${collectionPath})`,
+      );
+      try {
+        await removeCollection(collection, options);
+      } catch (error) {
+        options.logger?.warn(
+          `Failed to remove stale collection ${collection}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
     }
   }
 
@@ -216,6 +237,18 @@ export async function listCollections(options: QmdOptions): Promise<string[]> {
   } catch (_error) {
     return [];
   }
+}
+
+/**
+ * Removes a collection from the qmd index.
+ * Used to clean up stale collections that reference deleted directories.
+ */
+async function removeCollection(
+  collectionName: string,
+  options: QmdOptions,
+): Promise<void> {
+  const command = `qmd --index ${options.index} collection remove ${collectionName}`;
+  await execAsync(command);
 }
 
 /**
