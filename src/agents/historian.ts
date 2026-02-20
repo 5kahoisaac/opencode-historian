@@ -32,6 +32,12 @@ project-preference, issue, context, recurring-pattern, conventions-pattern
 2. Check results:
    - If similar memory found → UPDATE: pass filePath from recall result
    - If no similar memory → CREATE: omit filePath parameter, use memoryType (default: "context")
+   
+**Title naming rules:**
+- MUST Be concise and descriptive
+- DO NOT include the memory type in the title (folder already shows it)
+- Good: "qmd-cli-for-writes-mcp-for-reads"
+- Bad: "architectural-decision-qmd-cli-for-writes"
 
 ### Update existing memory:
 memory_remember(
@@ -47,12 +53,6 @@ memory_remember(
   content: "memory content",
   memoryType: "context"
 )
-
-**Title naming rules:**
-- Be concise and descriptive
-- Do NOT include the memory type in the title (folder already shows it)
-- Good: "qmd-cli-for-writes-mcp-for-reads"
-- Bad: "architectural-decision-qmd-cli-for-writes"
 
 ---
 

@@ -5,7 +5,7 @@ import { loadPluginConfig } from './config';
 import { createBuiltinMcps } from './mcp';
 import { addExternalPathsToIndex, getIndexName, updateIndex } from './qmd';
 import { createMemoryTools } from './tools';
-import { createLogger } from './utils/logger';
+import { createLogger } from './utils';
 
 const OpencodeHistorian: Plugin = async (ctx) => {
   // Load configuration
@@ -130,7 +130,37 @@ const OpencodeHistorian: Plugin = async (ctx) => {
       if (!opencodeConfig.agent) {
         opencodeConfig.agent = {};
       }
-      Object.assign(opencodeConfig.agent, { historian: historianAgent });
+
+      // Block memory tools from other agents (only historian can use them)
+      const memoryTools = [
+        'memory_remember',
+        'memory_recall',
+        'memory_forget',
+        'memory_list_types',
+        'memory_sync',
+      ];
+
+      for (const [agentName, agentConfig = {}] of Object.entries(
+        opencodeConfig.agent,
+      )) {
+        if (agentName === 'historian') continue;
+
+        // Start with existing permissions and add deny for each memory tool
+        const permissions = {
+          ...(agentConfig?.permission ?? {}),
+        } as Record<string, unknown>;
+        for (const tool of memoryTools) {
+          permissions[tool] = 'deny';
+        }
+
+        opencodeConfig.agent[agentName] = {
+          ...agentConfig,
+          permission: permissions,
+        };
+      }
+
+      // Ensure historian agent is registered
+      opencodeConfig.agent.historian = historianAgent;
 
       // Set default model if configured
       if (config.model) {
