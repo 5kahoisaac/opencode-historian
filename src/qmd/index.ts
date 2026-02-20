@@ -3,6 +3,7 @@ export {
   addToCollection,
   execAsync,
   getIndexName,
+  listCollections,
   multiGet,
   type QmdOptions,
   type SearchOptions,
