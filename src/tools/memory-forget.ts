@@ -15,13 +15,38 @@ export function createForgetTool(
     description:
       'Delete memory files by their paths. Pass filePaths from memory_recall results.',
     parameters: {
-      filePaths: z
-        .union([z.array(z.string()), z.string()])
-        .transform((v) => (Array.isArray(v) ? v : [v])),
+      filePaths: z.union([z.array(z.string()), z.string()]).transform((v) => {
+        // If it's already an array, return as-is
+        if (Array.isArray(v)) return v;
+        // If it's a string that looks like a JSON array, parse it
+        if (typeof v === 'string' && v.startsWith('[')) {
+          try {
+            const parsed = JSON.parse(v);
+            return Array.isArray(parsed) ? parsed : [v];
+          } catch {
+            return [v];
+          }
+        }
+        // Otherwise, wrap in array
+        return [v];
+      }),
     },
     handler: async ({ filePaths }: { filePaths: string | string[] }) => {
       // Normalize to array (handles both string and array input)
-      const paths = Array.isArray(filePaths) ? filePaths : [filePaths];
+      // The transform above should have handled this, but double-check
+      let paths: string[];
+      if (Array.isArray(filePaths)) {
+        paths = filePaths;
+      } else if (typeof filePaths === 'string' && filePaths.startsWith('[')) {
+        try {
+          const parsed = JSON.parse(filePaths);
+          paths = Array.isArray(parsed) ? parsed : [filePaths];
+        } catch {
+          paths = [filePaths];
+        }
+      } else {
+        paths = [filePaths as string];
+      }
 
       if (!paths || paths.length === 0) {
         throw new Error('filePaths is required and cannot be empty');

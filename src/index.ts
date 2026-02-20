@@ -43,10 +43,57 @@ const OpencodeHistorian: Plugin = async (ctx) => {
     // Handle tools with no parameters
     const args: Record<string, unknown> = {};
     if (originalArgs && Object.keys(originalArgs).length > 0) {
-      for (const [key, _value] of Object.entries(originalArgs)) {
-        // For now, use a simple approach - convert to string schema
-        // This works for the basic types we use (string, optional, number, boolean, array)
-        args[key] = tool.schema.string();
+      for (const [key, value] of Object.entries(originalArgs)) {
+        // Check if the zod type is an array or union containing array
+        const zodType = value as {
+          _def?: { typeName?: string; innerType?: unknown };
+        };
+        const typeName = zodType?._def?.typeName;
+
+        // Handle different zod types
+        if (typeName === 'ZodArray') {
+          args[key] = tool.schema.array(tool.schema.string());
+        } else if (typeName === 'ZodUnion') {
+          // For union types (like string | array), use array schema
+          // The handler will normalize single strings to arrays
+          args[key] = tool.schema.array(tool.schema.string());
+        } else if (typeName === 'ZodOptional') {
+          // Check inner type
+          const innerType = zodType._def?.innerType as {
+            _def?: { typeName?: string };
+          };
+          const innerTypeName = innerType?._def?.typeName;
+          if (innerTypeName === 'ZodArray' || innerTypeName === 'ZodUnion') {
+            args[key] = tool.schema.optional(
+              tool.schema.array(tool.schema.string()),
+            );
+          } else {
+            args[key] = tool.schema.optional(tool.schema.string());
+          }
+        } else if (typeName === 'ZodDefault') {
+          const innerType = zodType._def?.innerType as {
+            _def?: { typeName?: string };
+          };
+          const innerTypeName = innerType?._def?.typeName;
+          if (innerTypeName === 'ZodArray' || innerTypeName === 'ZodUnion') {
+            args[key] = tool.schema.array(tool.schema.string());
+          } else {
+            args[key] = tool.schema.string();
+          }
+        } else if (typeName === 'ZodPipe') {
+          // ZodPipe (from .transform()) - check the input type
+          const innerType = zodType._def?.innerType as {
+            _def?: { typeName?: string };
+          };
+          const innerTypeName = innerType?._def?.typeName;
+          if (innerTypeName === 'ZodUnion' || innerTypeName === 'ZodArray') {
+            args[key] = tool.schema.array(tool.schema.string());
+          } else {
+            args[key] = tool.schema.string();
+          }
+        } else {
+          args[key] = tool.schema.string();
+        }
       }
     }
 
