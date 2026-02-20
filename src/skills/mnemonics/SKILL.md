@@ -41,6 +41,8 @@ Memory tools are **ONLY available via the @historian subagent**. You CANNOT call
 | `recurring-pattern`      | Reusable patterns           | "Error handling: wrap in try/catch, return {error}"  |
 | `conventions-pattern`    | Coding standards            | "Use named exports, avoid default exports"           |
 
+> **Note:** Projects may define custom memory types via configuration. Always use `@historian list all memory types available` to see the complete list for the current project.
+
 ## When to Delegate to Historian
 
 **Remember (create/update):**
