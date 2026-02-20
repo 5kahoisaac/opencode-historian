@@ -26,7 +26,7 @@
   "homepage": "https://github.com/5kahoisaac/opencode-historian#readme",
   "files": [
     "dist",
-    "src/skills",
+    "skills",
     "README.md",
     "LICENSE"
   ],

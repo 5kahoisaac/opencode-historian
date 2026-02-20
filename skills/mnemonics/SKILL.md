@@ -2,7 +2,7 @@
 name: mnemonics
 description: Memory management by using the historian subagent to store, recall, and manage persistent memories across conversations. Use when you need to remember decisions, preferences, learnings, or retrieve stored context.
 license: MIT
-compatibility: opencode, opencode-historian and qmd CLI.
+compatibility: opencode, opencode-historian plugin and qmd CLI.
 metadata:
     author: Isaac Ng, Ka Ho
     version: "1.0.0"

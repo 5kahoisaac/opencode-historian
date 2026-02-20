@@ -16,12 +16,10 @@
 Prioritize **Serena MCP** for code symbol navigation, reference finding, renaming,
 targeted inserts/deletes/edits.
 
-> CRITICAL: Use `@historian` subagent or the **mnemonics** skill for memory operations.
+> CRITICAL: Use `@historian` subagent directly or the **mnemonics** skill for memory operations.
 > Serena memory tools are INTERNAL to Serena — NEVER use them for project memories.
 
 ### Serena MCP – Code Precision (LSP-powered)
-
-> Reference: https://oraios.github.io/serena/01-about/035_tools.html
 
 **Session Startup**
 1. `activate_project` — connect to project (required first)
@@ -85,13 +83,13 @@ Memory tools are **ONLY available via the historian subagent**. You have two opt
 
 ### Tool Selection Table
 
-| Task | Use This |
-|------|----------|
-| Code symbol navigation (find, rename, references) | Serena |
-| Code edits (insert, replace, delete) | Serena |
-| Store/recall project memories | `@historian` or **mnemonics** skill |
-| Semantic search across docs/notes | `@historian` or **mnemonics** skill |
-| Reindex after manual file changes | `@historian sync` |
+| Task                                              | Use This                            |
+|---------------------------------------------------|-------------------------------------|
+| Code symbol navigation (find, rename, references) | Serena                              |
+| Code edits (insert, replace, delete)              | Serena                              |
+| Store/recall project memories                     | `@historian` or **mnemonics** skill |
+| Semantic search across docs/notes                 | `@historian` or **mnemonics** skill |
+| Reindex after manual file changes                 | `@historian sync`                   |
 
 ### Best Practices
 
