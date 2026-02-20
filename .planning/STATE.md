@@ -187,6 +187,8 @@ None yet
 | 20 | Extract qmdPathToFsPath to utils and fix path conversion | 2026-02-20 | f4a8130 | [20-extract-qmdpathtofspath-to-utils-and-fix](./quick/20-extract-qmdpathtofspath-to-utils-and-fix/) |
 | 21 | Fix memory_forget string vs array parameter bug | 2026-02-20 | fde8045 | [21-fix-memory-forget-string-vs-array-bug](./quick/21-fix-memory-forget-string-vs-array-bug/) |
 | 22 | Revamp qmdPathToFsPath with path.join and getProjectMemoryPath | 2026-02-20 | 5ad99fd | [22-revamp-qmdpathtofspath](./quick/22-revamp-qmdpathtofspath/) |
+| 23 | Add title naming rules to historian prompt | 2026-02-20 | 57d4b17 | [23-add-title-naming-rules](./quick/23-add-title-naming-rules/) |
+| 24 | Fix multiGet to use proper qmd multi-get with collection iteration | 2026-02-20 | 948945d | [24-fix-multiget-qmd-multi-get](./quick/24-fix-multiget-qmd-multi-get/) |
 
 ---
 

@@ -41,16 +41,6 @@ interface RawSearchResult {
 }
 
 /**
- * Raw result from qmd multi-get CLI output.
- * multi-get returns 'body' instead of 'snippet', and 'file' is just the filename.
- */
-interface RawMultiGetResult {
-  file?: string;
-  title?: string;
-  body?: string;
-}
-
-/**
  * Maps qmd CLI output to SearchResult format.
  * qmd returns 'file' property, we normalize to 'path'.
  */
@@ -207,7 +197,7 @@ export async function listCollections(options: QmdOptions): Promise<string[]> {
 
 /**
  * Gets all documents from index, optionally filtered by collection.
- * Uses qmd multi-get command with glob pattern.
+ * Uses qmd ls to get file paths per collection, then fetches content.
  * When collection is specified, only gets from that collection.
  * When no collection, iterates all collections to get all documents.
  */
@@ -241,34 +231,80 @@ export async function multiGet(
 }
 
 /**
- * Gets all documents from a specific collection using multi-get.
- * Constructs proper qmd:// paths from filename + collection name.
+ * Lists files in a collection using qmd ls command.
+ * Returns full qmd:// paths for each file.
+ */
+async function listFilesInCollection(
+  index: string,
+  collection: string,
+): Promise<string[]> {
+  const command = `qmd ls ${collection} --index ${index}`;
+
+  try {
+    const { stdout } = await execAsync(command);
+    // Parse paths from output like:
+    // 4.0 KB  Feb 20 06:05  qmd://conventions-pattern/file.md
+    const lines = stdout.split('\n');
+    const paths: string[] = [];
+
+    for (const line of lines) {
+      // Match qmd:// path at end of line
+      const match = line.match(/(qmd:\/\/\S+\.md)$/);
+      if (match?.[1]) {
+        paths.push(match[1]);
+      }
+    }
+
+    return paths;
+  } catch (_error) {
+    return [];
+  }
+}
+
+/**
+ * Gets all documents from a specific collection.
+ * Uses qmd ls to get actual file paths, then qmd get for content.
  */
 async function getFromCollection(
   index: string,
   collection: string,
   limit: number,
 ): Promise<SearchResult[]> {
-  const command = `qmd multi-get "*.md" -c ${collection} --index ${index} --json -l ${limit}`;
+  // Get actual file paths from the collection
+  const filePaths = await listFilesInCollection(index, collection);
 
-  try {
-    const { stdout } = await execAsync(command);
-    const rawResults = JSON.parse(stdout);
-
-    if (!Array.isArray(rawResults)) {
-      return [];
-    }
-
-    return rawResults.map((raw: RawMultiGetResult) => ({
-      // Construct qmd:// path from collection and filename
-      path: `qmd://${collection}/${raw.file || ''}`,
-      score: 0, // multi-get doesn't return scores
-      content: raw.body,
-      title: raw.title,
-    }));
-  } catch (_error) {
+  if (filePaths.length === 0) {
     return [];
   }
+
+  // Limit results
+  const limitedPaths = filePaths.slice(0, limit);
+
+  // Fetch content for each file
+  const results: SearchResult[] = [];
+
+  for (const qmdPath of limitedPaths) {
+    try {
+      const command = `qmd get "${qmdPath}" --index ${index}`;
+      const { stdout } = await execAsync(command);
+
+      // Extract title from path (filename without .md)
+      const filename = qmdPath.split('/').pop()?.replace('.md', '') || '';
+
+      results.push({
+        path: qmdPath,
+        score: 0,
+        content: stdout,
+        title: filename
+          .replace(/-/g, ' ')
+          .replace(/\b\w/g, (c) => c.toUpperCase()),
+      });
+    } catch (_error) {
+      // Skip files that fail to load
+    }
+  }
+
+  return results;
 }
 
 export { execAsync };
