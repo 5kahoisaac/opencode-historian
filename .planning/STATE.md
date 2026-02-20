@@ -133,7 +133,7 @@ None yet
   - Removed `externalPaths` config option and `addExternalPathsToIndex()` function
   - Rewrote `updateIndex` to manage collections based on memoryTypes
   - Stale collection cleanup only applies to valid memory type names
-- **Quick Tasks Completed:** 36 (most recent: Rewrite AGENTS.md example for historian plugin)
+- **Quick Tasks Completed:** 37 (most recent: Create mnemonics skill for historian delegation)
 - **Next Action:** `/gsd-plan-phase 1` to create detailed Phase 1 plan
 
 ### Upcoming Work
@@ -204,6 +204,7 @@ None yet
 | 27 | Fix historian prompt to correctly interpret memory_sync/re-index commands | 2026-02-20 | 80755c5 | [27-fix-historian-prompt-to-correctly-interp](./quick/27-fix-historian-prompt-to-correctly-interp/) |
 | 28 | Rewrite README for user focus | 2026-02-20 | 9ec5a19 | [28-rewrite-readme-md](./quick/28-rewrite-readme-md/) |
 | 29 | Rewrite AGENTS.md example for historian plugin | 2026-02-20 | ef1831b | [29-rewrite-agents-md-example-for-historian-](./quick/29-rewrite-agents-md-example-for-historian-/) |
+| 30 | Create mnemonics skill for historian delegation | 2026-02-20 | 3408947 | [30-create-mnemonics-skill-to-teach-agents-h](./quick/30-create-mnemonics-skill-to-teach-agents-h/) |
 
 ---
 
