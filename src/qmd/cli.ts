@@ -1,4 +1,6 @@
 import { exec } from 'node:child_process';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { promisify } from 'node:util';
 import { type Logger, toKebabCase } from '../utils';
 
@@ -9,6 +11,7 @@ export type SearchType = 'search' | 'vsearch' | 'query';
 export interface QmdOptions {
   index: string;
   logger?: Logger;
+  projectRoot?: string; // Optional: required for stale collection cleanup
 }
 
 export interface SearchOptions {
@@ -136,6 +139,33 @@ export async function updateEmbeddings(options: QmdOptions): Promise<void> {
 }
 
 export async function updateIndex(options: QmdOptions): Promise<void> {
+  // Clean up stale collections if projectRoot is provided
+  if (options.projectRoot) {
+    const collections = await listCollections(options);
+    const memoryBasePath = path.join(options.projectRoot, '.mnemonics');
+
+    for (const collection of collections) {
+      // Skip "context" collection - it's for external paths, not memory types
+      if (collection === 'context') continue;
+
+      const collectionPath = path.join(memoryBasePath, collection);
+
+      if (!fs.existsSync(collectionPath)) {
+        options.logger?.info(
+          `Removing stale collection: ${collection} (path not found: ${collectionPath})`,
+        );
+        try {
+          await removeCollection(collection, options);
+        } catch (error) {
+          options.logger?.warn(
+            `Failed to remove stale collection ${collection}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
+      }
+    }
+  }
+
+  // Run qmd update
   const command = `qmd --index ${options.index} update`;
   await execAsync(command);
 }
