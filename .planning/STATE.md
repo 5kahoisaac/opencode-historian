@@ -77,6 +77,7 @@ Success Criteria: 0/5 met
 | Phase quick-7 P01 | 5m | 3 tasks | 10 files |
 | Phase quick P9 | 5m | 3 tasks | 11 files |
 | Phase 23 P01 | 2m | 1 tasks | 1 files |
+| Phase quick-29 P01 | 2m | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -132,7 +133,7 @@ None yet
   - Removed `externalPaths` config option and `addExternalPathsToIndex()` function
   - Rewrote `updateIndex` to manage collections based on memoryTypes
   - Stale collection cleanup only applies to valid memory type names
-- **Quick Tasks Completed:** 35 (most recent: Rewrite README for user focus)
+- **Quick Tasks Completed:** 36 (most recent: Rewrite AGENTS.md example for historian plugin)
 - **Next Action:** `/gsd-plan-phase 1` to create detailed Phase 1 plan
 
 ### Upcoming Work
@@ -202,6 +203,7 @@ None yet
 | 34 | Remove externalPaths feature and rewrite updateIndex with memoryTypes | 2026-02-21 | 5c4ab36 | [26-remove-externalpaths-feature-and-update-](./quick/26-remove-externalpaths-feature-and-update-/) |
 | 27 | Fix historian prompt to correctly interpret memory_sync/re-index commands | 2026-02-20 | 80755c5 | [27-fix-historian-prompt-to-correctly-interp](./quick/27-fix-historian-prompt-to-correctly-interp/) |
 | 28 | Rewrite README for user focus | 2026-02-20 | 9ec5a19 | [28-rewrite-readme-md](./quick/28-rewrite-readme-md/) |
+| 29 | Rewrite AGENTS.md example for historian plugin | 2026-02-20 | ef1831b | [29-rewrite-agents-md-example-for-historian-](./quick/29-rewrite-agents-md-example-for-historian-/) |
 
 ---
 
