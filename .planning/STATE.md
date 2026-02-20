@@ -200,7 +200,7 @@ None yet
 | 32 | Fix updateIndex to skip non-project-scope collections by path | 2026-02-21 | 2ca9e84 | [24-fix-updateindex-to-skip-non-project-scop](./quick/24-fix-updateindex-to-skip-non-project-scop/) |
 | 33 | Fix updateIndex with externalPaths for correct stale detection | 2026-02-21 | ab42bf5 | [25-revert-wrong-updateindex-fix-and-detect-](./quick/25-revert-wrong-updateindex-fix-and-detect-/) |
 | 34 | Remove externalPaths feature and rewrite updateIndex with memoryTypes | 2026-02-21 | 5c4ab36 | [26-remove-externalpaths-feature-and-update-](./quick/26-remove-externalpaths-feature-and-update-/) |
-| 35 | Fix historian prompt to correctly interpret memory_sync/re-index commands | 2026-02-20 | 80755c5 | [27-fix-historian-prompt-to-correctly-interp](./quick/27-fix-historian-prompt-to-correctly-interp/) |
+| 27 | Fix historian prompt to correctly interpret memory_sync/re-index commands | 2026-02-20 | 80755c5 | [27-fix-historian-prompt-to-correctly-interp](./quick/27-fix-historian-prompt-to-correctly-interp/) |
 
 ---
 
