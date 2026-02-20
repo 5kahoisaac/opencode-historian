@@ -17,7 +17,7 @@ export function createSyncTool(
         const indexName = getIndexName(projectRoot);
 
         logger.info('Syncing qmd index...');
-        await updateIndex({ index: indexName });
+        await updateIndex({ index: indexName, projectRoot, logger });
 
         logger.info('Updating embeddings...');
         await updateEmbeddings({ index: indexName });
