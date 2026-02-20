@@ -132,7 +132,7 @@ None yet
   - Removed `externalPaths` config option and `addExternalPathsToIndex()` function
   - Rewrote `updateIndex` to manage collections based on memoryTypes
   - Stale collection cleanup only applies to valid memory type names
-- **Quick Tasks Completed:** 34 (most recent: Remove externalPaths feature)
+- **Quick Tasks Completed:** 35 (most recent: Rewrite README for user focus)
 - **Next Action:** `/gsd-plan-phase 1` to create detailed Phase 1 plan
 
 ### Upcoming Work
@@ -201,6 +201,7 @@ None yet
 | 33 | Fix updateIndex with externalPaths for correct stale detection | 2026-02-21 | ab42bf5 | [25-revert-wrong-updateindex-fix-and-detect-](./quick/25-revert-wrong-updateindex-fix-and-detect-/) |
 | 34 | Remove externalPaths feature and rewrite updateIndex with memoryTypes | 2026-02-21 | 5c4ab36 | [26-remove-externalpaths-feature-and-update-](./quick/26-remove-externalpaths-feature-and-update-/) |
 | 27 | Fix historian prompt to correctly interpret memory_sync/re-index commands | 2026-02-20 | 80755c5 | [27-fix-historian-prompt-to-correctly-interp](./quick/27-fix-historian-prompt-to-correctly-interp/) |
+| 28 | Rewrite README for user focus | 2026-02-20 | 9ec5a19 | [28-rewrite-readme-md](./quick/28-rewrite-readme-md/) |
 
 ---
 
