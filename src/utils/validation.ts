@@ -1,29 +1,6 @@
 import type { MemoryType } from '../config';
 
 /**
- * Validates an external path for security.
- * Returns true if valid, or an error message string if invalid.
- */
-export function validateExternalPath(path: string): boolean | string {
-  // Reject paths with parent directory references
-  if (path.includes('..')) {
-    return 'Path cannot contain parent directory references (..)';
-  }
-
-  // Require absolute path
-  if (!path.startsWith('/') && !path.match(/^[A-Za-z]:\\/)) {
-    return 'Path must be absolute';
-  }
-
-  // Check for empty path
-  if (path.trim() === '') {
-    return 'Path cannot be empty';
-  }
-
-  return true;
-}
-
-/**
  * Built-in memory types that are always available.
  * These match the types defined in the Historian agent instructions.
  *

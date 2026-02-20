@@ -132,7 +132,7 @@ None yet
   - Connected `externalPaths` config to "context" collection
   - Added `addExternalPathsToIndex()` + `qmd update` on plugin init
   - Memory recall now returns `count` instead of `projectCount`/`globalCount`
-- **Quick Tasks Completed:** 32 (most recent: Fix updateIndex skip logic)
+- **Quick Tasks Completed:** 33 (most recent: Fix updateIndex with externalPaths)
 - **Next Action:** `/gsd-plan-phase 1` to create detailed Phase 1 plan
 
 ### Upcoming Work
@@ -198,6 +198,7 @@ None yet
 | 30 | Block MCP in historian and update tool permissions | 2026-02-20 | a0e0698 | [30-block-mcp-update-tool-permissions](./quick/30-block-mcp-update-tool-permissions/) |
 | 31 | Add explicit Serena memory tool avoidance to historian prompt | 2026-02-20 | c5cd140 | [23-fix-historian-agent-prompt-to-avoid-sere](./quick/23-fix-historian-agent-prompt-to-avoid-sere/) |
 | 32 | Fix updateIndex to skip non-project-scope collections by path | 2026-02-21 | 2ca9e84 | [24-fix-updateindex-to-skip-non-project-scop](./quick/24-fix-updateindex-to-skip-non-project-scop/) |
+| 33 | Fix updateIndex with externalPaths for correct stale detection | 2026-02-21 | ab42bf5 | [25-revert-wrong-updateindex-fix-and-detect-](./quick/25-revert-wrong-updateindex-fix-and-detect-/) |
 
 ---
 

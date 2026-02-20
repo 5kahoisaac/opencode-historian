@@ -15,5 +15,4 @@ export {
   getBuiltinMemoryTypes,
   isValidMemoryType,
   toKebabCase,
-  validateExternalPath,
 } from './validation';
