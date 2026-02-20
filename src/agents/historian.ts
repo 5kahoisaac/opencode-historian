@@ -152,14 +152,14 @@ export function createHistorianAgent(config: PluginConfig): AgentConfig {
     description: 'Memory management specialist for contextual information',
     mode: 'subagent',
     tools: {
+      // Block all MCP tools - historian only uses memory tools
+      "mcp_*": false,
       memory_list_types: true,
       memory_remember: true,
       memory_recall: true,
       memory_forget: true,
       memory_sync: true,
     },
-    // Block all MCP tools - historian only uses memory tools
-    mcp: {},
     prompt,
   };
 }

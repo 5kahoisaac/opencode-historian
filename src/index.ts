@@ -163,16 +163,6 @@ const OpencodeHistorian: Plugin = async (ctx) => {
       // Historian can ONLY use memory tools - deny/ask all other tools
       opencodeConfig.agent.historian = {
         ...historianAgent,
-        permission: {
-          // Write tools - ask for permission
-          edit: 'ask',
-          bash: 'ask',
-          // Read tools - allow
-          webfetch: 'allow',
-          // Not useful for historian - deny
-          doom_loop: 'deny',
-          external_directory: 'deny',
-        },
       };
 
       // Merge MCP configs
