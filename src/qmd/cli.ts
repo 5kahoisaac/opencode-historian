@@ -145,23 +145,16 @@ export async function updateIndex(options: QmdOptions): Promise<void> {
     const memoryBasePath = path.join(options.projectRoot, '.mnemonics');
 
     for (const collection of collections) {
-      // Skip "context" collection - it's for external paths, not memory types
-      if (collection === 'context') continue;
-
       const collectionPath = path.join(memoryBasePath, collection);
 
+      // Skip collections that don't have a directory under .mnemonics/
+      // These are external collections (e.g., "context" for externalPaths) or already deleted.
+      // We can only verify project-scoped collections.
       if (!fs.existsSync(collectionPath)) {
-        options.logger?.info(
-          `Removing stale collection: ${collection} (path not found: ${collectionPath})`,
-        );
-        try {
-          await removeCollection(collection, options);
-        } catch (error) {
-          options.logger?.warn(
-            `Failed to remove stale collection ${collection}: ${error instanceof Error ? error.message : String(error)}`,
-          );
-        }
       }
+
+      // Collection directory exists - it's a valid project-scoped collection.
+      // No cleanup needed since the directory is present.
     }
   }
 
@@ -223,18 +216,6 @@ export async function listCollections(options: QmdOptions): Promise<string[]> {
   } catch (_error) {
     return [];
   }
-}
-
-/**
- * Removes a collection from the qmd index.
- * Used to clean up stale collections that reference deleted directories.
- */
-async function removeCollection(
-  collectionName: string,
-  options: QmdOptions,
-): Promise<void> {
-  const command = `qmd --index ${options.index} collection remove ${collectionName}`;
-  await execAsync(command);
 }
 
 /**
