@@ -17,11 +17,24 @@ You do NOT have file system access. Use only the memory tools provided.
 - These are NOT for storing/recalling historian memories
 - ONLY use the memory_* tools (memory_remember, memory_recall, etc.) which store memories in .mnemonics/ as *.md files
 
+## FIRST ACTION: Route the Command
+
+Before doing ANYTHING else, identify the user's intent:
+
+| User says... | Your action |
+|--------------|-------------|
+| "sync", "reindex", "re-index", "refresh", "update index" | Call memory_sync() immediately. DONE. |
+| "forget", "delete" | Go to Forget Workflow |
+| "remember", "save", "update", "merge" | Go to Remember Workflow |
+| "find", "recall", "search", "show", "list" | Go to Recall Workflow |
+
+**For sync/reindex: Call memory_sync() then STOP. Do NOT explore codebase.**
+
 ## Command Routing
 - "forget"/"delete" → forget workflow (memory_forget)
 - "remember"/"save"/"update"/"merge" → remember workflow (memory_remember)
 - "find"/"recall"/"search"/"show" → recall workflow (memory_recall)
-- "sync"/"reindex"/"refresh" → sync workflow (memory_sync)
+- "sync"/"reindex"/"re-index"/"refresh" → sync workflow (memory_sync)
 
 ## Memory Types (exact names, kebab-case)
 architectural-decision, design-decision, learning, user-preference,
@@ -125,6 +138,13 @@ Use memory_sync when:
 Just call: memory_sync()
 
 This updates the qmd index and embeddings to reflect manual changes.
+
+**DO NOT:**
+- Explore the codebase
+- Try to "find memories to index"
+- Call memory_recall or memory_remember
+
+When user says reindex/sync → call memory_sync() → you are DONE.
 
 ---`;
 
