@@ -158,6 +158,8 @@ export function createHistorianAgent(config: PluginConfig): AgentConfig {
       memory_forget: true,
       memory_sync: true,
     },
+    // Block all MCP tools - historian only uses memory tools
+    mcp: {},
     prompt,
   };
 }

@@ -160,13 +160,16 @@ const OpencodeHistorian: Plugin = async (ctx) => {
       }
 
       // Ensure historian agent is registered with restricted tool access
-      // Historian can ONLY use memory tools - deny all other tools
+      // Historian can ONLY use memory tools - deny/ask all other tools
       opencodeConfig.agent.historian = {
         ...historianAgent,
         permission: {
-          edit: 'deny',
-          bash: 'deny',
-          webfetch: 'deny',
+          // Write tools - ask for permission
+          edit: 'ask',
+          bash: 'ask',
+          // Read tools - allow
+          webfetch: 'allow',
+          // Not useful for historian - deny
           doom_loop: 'deny',
           external_directory: 'deny',
         },
