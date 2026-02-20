@@ -1,6 +1,11 @@
 ---
 name: mnemonics
-description: Guide for using the historian subagent to store, recall, and manage persistent memories across conversations. Use when you need to remember decisions, preferences, learnings, or retrieve stored context.
+description: Memory management by using the historian subagent to store, recall, and manage persistent memories across conversations. Use when you need to remember decisions, preferences, learnings, or retrieve stored context.
+license: MIT
+compatibility: opencode, opencode-historian and qmd CLI.
+metadata:
+    author: Isaac Ng, Ka Ho
+    version: "1.0.0"
 ---
 
 # Mnemonics: Memory Management via Historian
@@ -24,17 +29,17 @@ Memory tools are **ONLY available via the @historian subagent**. You CANNOT call
 
 ## Memory Types
 
-| Type | Use For | Example |
-|------|---------|---------|
-| `architectural-decision` | System architecture choices | "Using PostgreSQL with read replicas for scaling" |
-| `design-decision` | UI/UX decisions | "Card layout for dashboard, 3 columns on desktop" |
-| `learning` | Lessons and discoveries | "Bun's native TS support removes build step need" |
-| `user-preference` | User preferences | "User prefers dark mode, tabs not spaces" |
-| `project-preference` | Team conventions | "We use conventional commits, PR reviews required" |
-| `issue` | Known problems | "Rate limiting not implemented yet, tracking in #42" |
-| `context` | General context (default) | "Project started Feb 2026, MVP target Q2" |
-| `recurring-pattern` | Reusable patterns | "Error handling: wrap in try/catch, return {error}" |
-| `conventions-pattern` | Coding standards | "Use named exports, avoid default exports" |
+| Type                     | Use For                     | Example                                              |
+|--------------------------|-----------------------------|------------------------------------------------------|
+| `architectural-decision` | System architecture choices | "Using PostgreSQL with read replicas for scaling"    |
+| `design-decision`        | UI/UX decisions             | "Card layout for dashboard, 3 columns on desktop"    |
+| `learning`               | Lessons and discoveries     | "Bun's native TS support removes build step need"    |
+| `user-preference`        | User preferences            | "User prefers dark mode, tabs not spaces"            |
+| `project-preference`     | Team conventions            | "We use conventional commits, PR reviews required"   |
+| `issue`                  | Known problems              | "Rate limiting not implemented yet, tracking in #42" |
+| `context`                | General context (default)   | "Project started Feb 2026, MVP target Q2"            |
+| `recurring-pattern`      | Reusable patterns           | "Error handling: wrap in try/catch, return {error}"  |
+| `conventions-pattern`    | Coding standards            | "Use named exports, avoid default exports"           |
 
 ## When to Delegate to Historian
 

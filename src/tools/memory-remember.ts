@@ -12,6 +12,7 @@ import {
 import {
   createMemoryFile,
   generateFilename,
+  getProjectMemoryPath,
   isWithinProjectMnemonics,
   parseMemoryFile,
 } from '../storage';
@@ -116,8 +117,7 @@ export function createRememberTool(
         );
         const filename = generateFilename(title);
         const mnemonicsDir = path.join(
-          projectRoot,
-          '.mnemonics',
+          getProjectMemoryPath(projectRoot),
           normalizedMemoryType,
         );
         targetFilePath = path.join(mnemonicsDir, filename);
