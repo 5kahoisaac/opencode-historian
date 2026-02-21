@@ -16,19 +16,18 @@
     "qmd",
     "mnemonics"
   ],
+  "homepage": "https://github.com/5kahoisaac/opencode-historian#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/5kahoisaac/opencode-historian"
+    "url": "git+https://github.com/5kahoisaac/opencode-historian.git"
   },
   "bugs": {
     "url": "https://github.com/5kahoisaac/opencode-historian/issues"
   },
-  "homepage": "https://github.com/5kahoisaac/opencode-historian#readme",
+  "author": "Isaac Ng, Ka Ho <5kahoisaac@gmail.com>",
   "files": [
     "dist",
-    "src/skills",
-    "README.md",
-    "LICENSE"
+    "src/skills"
   ],
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target bun --format esm && tsc --emitDeclarationOnly",
