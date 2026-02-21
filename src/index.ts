@@ -4,6 +4,7 @@ import { createHistorianAgent } from './agents';
 import { loadPluginConfig } from './config';
 import { createBuiltinMcps } from './mcp';
 import { getIndexName, updateIndex } from './qmd';
+import { loadBuiltinSkills } from './skill-loader.js';
 import { createMemoryTools } from './tools';
 import { createLogger, getBuiltinMemoryTypes } from './utils';
 
@@ -13,6 +14,12 @@ const OpencodeHistorian: Plugin = async (ctx) => {
 
   // Create logger with config
   const logger = createLogger(config);
+
+  // Load built-in skills
+  const builtinSkills = loadBuiltinSkills();
+  logger.info(
+    `Loaded ${builtinSkills.length} built-in skill(s): ${builtinSkills.map((s) => s.name).join(', ')}`,
+  );
 
   // Create historian agent
   const historianAgent = createHistorianAgent(config);
@@ -174,6 +181,22 @@ const OpencodeHistorian: Plugin = async (ctx) => {
           createBuiltinMcps(config.disabledMcps),
         );
       }
+    },
+
+    // Inject built-in skills into system prompt
+    'experimental.chat.system.transform': async (_input, output) => {
+      if (builtinSkills.length === 0) return;
+
+      // Inject skill content wrapped in tags for visibility
+      const skillContent = builtinSkills
+        .map(
+          (skill) => `<skill name="${skill.name}">\n${skill.content}\n</skill>`,
+        )
+        .join('\n\n');
+
+      output.system.push(
+        `<available-skills>\n${skillContent}\n</available-skills>`,
+      );
     },
   };
 };
