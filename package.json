@@ -30,7 +30,7 @@
     "src/skills"
   ],
   "scripts": {
-    "build": "bun build src/index.ts --outdir dist --target bun --format esm && tsc --emitDeclarationOnly",
+    "build": "bun build src/index.ts --outdir dist --target bun --format esm && tsc --emitDeclarationOnly && cp -r src/skills dist/",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "lint": "biome lint .",
