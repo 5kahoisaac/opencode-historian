@@ -4,7 +4,7 @@ import { createHistorianAgent } from './agents';
 import { loadPluginConfig } from './config';
 import { createBuiltinMcps } from './mcp';
 import { getIndexName, updateIndex } from './qmd';
-import { loadBuiltinSkills } from './skill-loader.js';
+import { loadBuiltinSkills, registerSkillsInOpenCode } from './skill-loader.js';
 import { createMemoryTools } from './tools';
 import { createLogger, getBuiltinMemoryTypes } from './utils';
 
@@ -20,6 +20,9 @@ const OpencodeHistorian: Plugin = async (ctx) => {
   logger.info(
     `Loaded ${builtinSkills.length} built-in skill(s): ${builtinSkills.map((s) => s.name).join(', ')}`,
   );
+
+  // Register skills with OpenCode (for /skills discovery)
+  registerSkillsInOpenCode(ctx.directory, logger);
 
   // Create historian agent
   const historianAgent = createHistorianAgent(config);
