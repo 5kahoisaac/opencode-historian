@@ -27,6 +27,8 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+          registry-url: 'https://registry.npmjs.org'
+      - run: echo "//registry.npmjs.org/:_authToken=\${{ secrets.NPM_TOKEN }}" > ~/.npmrc
       - run: bun install --frozen-lockfile
       - run: npm publish --access public
         env:
