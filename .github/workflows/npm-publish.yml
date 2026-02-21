@@ -28,7 +28,6 @@ jobs:
         with:
           bun-version: latest
           registry-url: 'https://registry.npmjs.org'
-      - run: echo "//registry.npmjs.org/:_authToken=\${{ secrets.NPM_TOKEN }}" > ~/.npmrc
       - run: bun install --frozen-lockfile
       - run: bun publish --access public
         env:
