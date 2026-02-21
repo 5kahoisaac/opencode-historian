@@ -29,6 +29,6 @@ jobs:
           bun-version: latest
           registry-url: 'https://registry.npmjs.org'
       - run: bun install --frozen-lockfile
-      - run: bun publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - env:
+          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: bun publish --access public
