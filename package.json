@@ -26,11 +26,10 @@
   },
   "author": "Isaac Ng, Ka Ho <5kahoisaac@gmail.com>",
   "files": [
-    "dist",
-    "src/skills"
+    "dist"
   ],
   "scripts": {
-    "build": "bun build src/index.ts --outdir dist --target bun --format esm && tsc --emitDeclarationOnly && cp -r src/skills dist/",
+    "build": "bun build src/index.ts --outdir dist --target bun --format esm && tsc --emitDeclarationOnly && cp -r src/skills dist/ && cp -r src/prompts dist/",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "lint": "biome lint .",

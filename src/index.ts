@@ -1,10 +1,12 @@
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { Plugin, ToolContext, ToolDefinition } from '@opencode-ai/plugin';
 import { tool } from '@opencode-ai/plugin';
 import { createHistorianAgent } from './agents';
 import { loadPluginConfig } from './config';
 import { createBuiltinMcps } from './mcp';
 import { getIndexName, updateIndex } from './qmd';
-import { loadBuiltinSkills } from './skill-loader.js';
 import { createMemoryTools } from './tools';
 import { createLogger, getBuiltinMemoryTypes } from './utils';
 
@@ -15,13 +17,7 @@ const OpencodeHistorian: Plugin = async (ctx) => {
   // Create logger with config
   const logger = createLogger(config);
 
-  // Load built-in skills
-  const builtinSkills = loadBuiltinSkills();
-  logger.info(
-    `Loaded ${builtinSkills.length} built-in skill(s): ${builtinSkills.map((s) => s.name).join(', ')}`,
-  );
-
-  // Create historian agent
+  // Create historian agent/exit
   const historianAgent = createHistorianAgent(config);
 
   // Initialize qmd index with memory types (non-blocking)
@@ -183,20 +179,37 @@ const OpencodeHistorian: Plugin = async (ctx) => {
       }
     },
 
-    // Inject built-in skills into system prompt
-    'experimental.chat.system.transform': async (_input, output) => {
-      if (builtinSkills.length === 0) return;
+    // Event: Instruct agent to clarify serena and historian usages
+    event: async ({ event }) => {
+      switch (event.type) {
+        case 'session.created': {
+          const promptPath = join(
+            dirname(fileURLToPath(import.meta.url)),
+            'prompts',
+            'session.created.md',
+          );
+          const content = readFileSync(promptPath, 'utf-8');
+          await ctx.client.tui.appendPrompt({
+            body: {
+              text: content.trim(),
+            },
+          });
+          break;
+        }
+      }
+    },
 
-      // Inject skill content wrapped in tags for visibility
-      const skillContent = builtinSkills
-        .map(
-          (skill) => `<skill name="${skill.name}">\n${skill.content}\n</skill>`,
-        )
-        .join('\n\n');
-
-      output.system.push(
-        `<available-skills>\n${skillContent}\n</available-skills>`,
-      );
+    // Inject additional compound-engineering handling into the compaction prompt
+    'experimental.session.compacting': async (_, output) => {
+      if (config.autoCompound) {
+        const promptPath = join(
+          dirname(fileURLToPath(import.meta.url)),
+          'prompts',
+          'experimental.session.compacting.md',
+        );
+        const content = readFileSync(promptPath, 'utf-8');
+        output.context.push(content.trim());
+      }
     },
   };
 };

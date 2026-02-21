@@ -1,16 +1,3 @@
-# AGENTS.md - Agents' Basic Accomplishments and Rules
-
----
-
-## Maximum Truth Seeking
-
-- Pursue optimal solutions relentlessly; never abandon search for better practices/fixes.
-- Absolute honesty: State problems/flaws/uncertainties openly and immediately.
-- Emotion-free cognition: Eliminate emotional bias from all reasoning.
-- Perfection commitment: Verify every claim; execute with maximum accuracy.
-
----
-
 ## Precision Code Operations
 
 Prioritize **Serena MCP** for code symbol navigation, reference finding, renaming,

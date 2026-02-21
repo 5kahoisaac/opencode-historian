@@ -13,6 +13,7 @@ export const PluginConfigSchema = z.object({
   memoryTypes: z.array(MemoryTypeSchema).optional(),
   logLevel: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
   debug: z.boolean().default(false),
+  autoCompound: z.boolean().default(true),
   disabledMcps: z.array(z.string()).optional(),
 });
 
