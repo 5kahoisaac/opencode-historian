@@ -11,7 +11,7 @@ export interface Logger {
 
 function shouldLog(_level: LogLevel, _config: PluginConfig): boolean {
   // If debug mode is enabled, show all logs
-  return true;
+  return _config.debug;
 }
 
 function formatLogMessage(level: LogLevel, message: string): string {

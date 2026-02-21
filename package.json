@@ -1,6 +1,6 @@
 {
   "name": "opencode-historian",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Historian — agent with mnemonics for OpenCode powered by qmd",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
