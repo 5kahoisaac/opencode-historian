@@ -1,14 +1,6 @@
-import {
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-} from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-import type { Logger } from './utils/index.js';
 
 export interface LoadedSkill {
   name: string;
@@ -17,8 +9,12 @@ export interface LoadedSkill {
   path: string;
 }
 
+/**
+ * Load built-in skills from the bundled dist/skills/ directory.
+ * Skills are bundled during build (cp -r src/skills dist/).
+ */
 export function loadBuiltinSkills(): LoadedSkill[] {
-  // Get skills directory relative to this module
+  // Get skills directory relative to this module (dist/skills/)
   const skillsDir = join(dirname(fileURLToPath(import.meta.url)), 'skills');
 
   if (!existsSync(skillsDir)) {
@@ -64,57 +60,4 @@ function parseFrontmatter(content: string): Record<string, string> {
   }
 
   return frontmatter;
-}
-
-/**
- * Registers built-in skills in OpenCode's skill directory for discoverability.
- * Copies skill files to .opencode/skills/ so they appear in /skills command.
- * Skips if skill already exists to preserve user customizations.
- */
-export function registerSkillsInOpenCode(
-  projectRoot: string,
-  logger: Logger,
-): void {
-  // Define target paths for skills to register
-  const skillsToRegister = [
-    {
-      name: 'mnemonics',
-      sourceDir: 'skills',
-    },
-  ];
-
-  for (const skill of skillsToRegister) {
-    const targetDir = join(projectRoot, '.opencode', 'skills', skill.name);
-    const targetPath = join(targetDir, 'SKILL.md');
-
-    // Check if skill already exists - preserve user customizations
-    if (existsSync(targetPath)) {
-      logger.info(
-        `Skill '${skill.name}' already registered, preserving existing file`,
-      );
-      continue;
-    }
-
-    // Get source skill path (relative to this module's dist location)
-    const sourcePath = join(
-      dirname(fileURLToPath(import.meta.url)),
-      skill.sourceDir,
-      skill.name,
-      'SKILL.md',
-    );
-
-    if (!existsSync(sourcePath)) {
-      logger.warn(`Source skill not found: ${sourcePath}`);
-      continue;
-    }
-
-    // Ensure target directory exists
-    mkdirSync(targetDir, { recursive: true });
-
-    // Copy skill content
-    const content = readFileSync(sourcePath, 'utf-8');
-    writeFileSync(targetPath, content, 'utf-8');
-
-    logger.info(`Registered skill '${skill.name}' in .opencode/skills/`);
-  }
 }
