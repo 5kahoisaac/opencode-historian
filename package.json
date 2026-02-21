@@ -1,5 +1,5 @@
 {
-  "name": "opencode-historian",
+  "name": "@5kahoisaac/opencode-historian",
   "version": "1.0.0",
   "description": "Historian — agent with mnemonics for OpenCode powered by qmd",
   "main": "dist/index.js",
@@ -16,6 +16,9 @@
     "qmd",
     "mnemonics"
   ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "homepage": "https://github.com/5kahoisaac/opencode-historian#readme",
   "repository": {
     "type": "git",
