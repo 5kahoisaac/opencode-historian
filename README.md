@@ -91,6 +91,7 @@ Create `.opencode/opencode-historian.json` (optional):
 | `temperature`  | `0.3`   | Response creativity                  |
 | `appendPrompt` | -       | Custom instructions                  |
 | `memoryTypes`  | -       | Custom memory types                  |
+| `autoCompound` | `true`  | Auto-merge new learnings into existing memories |
 | `disabledMcps` | -       | Bundled MCPs to disable (e.g., `["serena"]` to disable code navigation) |
 
 ## Storage
