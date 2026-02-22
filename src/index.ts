@@ -181,7 +181,7 @@ const OpencodeHistorian: Plugin = async (ctx) => {
 
     // Event: Instruct agent to clarify serena and historian usages
     'experimental.chat.system.transform': async (_, output) => {
-      if (config.autoCompound) {
+      if (!config.disabledMcps?.includes('serena')) {
         const promptPath = join(
           dirname(fileURLToPath(import.meta.url)),
           'prompts',
