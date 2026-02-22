@@ -180,22 +180,15 @@ const OpencodeHistorian: Plugin = async (ctx) => {
     },
 
     // Event: Instruct agent to clarify serena and historian usages
-    event: async ({ event }) => {
-      switch (event.type) {
-        case 'session.created': {
-          const promptPath = join(
-            dirname(fileURLToPath(import.meta.url)),
-            'prompts',
-            'session.created.md',
-          );
-          const content = readFileSync(promptPath, 'utf-8');
-          await ctx.client.tui.appendPrompt({
-            body: {
-              text: content.trim(),
-            },
-          });
-          break;
-        }
+    'experimental.chat.system.transform': async (_, output) => {
+      if (!config.disabledMcps?.includes('serena')) {
+        const promptPath = join(
+          dirname(fileURLToPath(import.meta.url)),
+          'prompts',
+          'experimental.chat.system.transform.md',
+        );
+        const content = readFileSync(promptPath, 'utf-8');
+        output.system.push(content.trim());
       }
     },
 

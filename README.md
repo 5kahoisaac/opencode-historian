@@ -34,7 +34,7 @@ Add to your `opencode.json`:
 }
 ```
 
-That's it. MCP servers are auto-configured.
+That's it. The plugin registers memory tools automatically. An optional Serena MCP is bundled for code navigation.
 
 ## How to Use
 
@@ -79,7 +79,7 @@ Create `.opencode/opencode-historian.json` (optional):
   "memoryTypes": [
     { "name": "api-endpoint", "description": "API endpoint decisions" }
   ],
-  "disabledMcps": []
+  "disabledMcps": [] // e.g., ["serena"] to disable bundled MCPs
 }
 ```
 
@@ -91,7 +91,8 @@ Create `.opencode/opencode-historian.json` (optional):
 | `temperature`  | `0.3`   | Response creativity                  |
 | `appendPrompt` | -       | Custom instructions                  |
 | `memoryTypes`  | -       | Custom memory types                  |
-| `disabledMcps` | -       | MCPs to disable (e.g., `["serena"]`) |
+| `autoCompound` | `true`  | Auto-merge new learnings into existing memories |
+| `disabledMcps` | -       | Bundled MCPs to disable (e.g., `["serena"]` to disable code navigation) |
 
 ## Storage
 
