@@ -13,7 +13,7 @@ targeted inserts/deletes/edits.
 2. `check_onboarding_performed` — verify project is initialized
 3. `initial_instructions` — load Serena manual if agent seems "lost"
 
-**Symbol Tools (LSP/JetBrains)**
+**Symbol Tools (LSP)**
 - `find_symbol` — global/local search for classes, methods, functions
 - `find_referencing_symbols` — find all usages of a symbol
 - `rename_symbol` — safe codebase-wide rename
@@ -90,6 +90,7 @@ Memory tools are **ONLY available via the historian subagent**. You have two opt
 1. Use `@historian` or load **mnemonics** skill for memory operations
 2. **NEVER** use `serena_*_memory` tools for project memories
 3. Recall before deciding — check if decision already exists
+4. **Handle confirmation requests**: When @historian asks for confirmation (e.g., for `memory_forget` or other destructive operations), do not auto-approve. Escalate to the user for explicit confirmation, unless the user has previously granted blanket permission for such actions.
 
 **General:**
 1. Minimize broad searches; target narrow queries
