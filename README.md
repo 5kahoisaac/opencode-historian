@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/historian.jpeg" alt="historian agent" width="200">
+  <img src="assets/historian.jpeg" alt="historian agent" width="240">
   <p><i>Historian gives your AI agent persistent memory across conversations.</i></p>
   <p>Sync · Recall · Remember · Forget - <b>Compound</b></p>
 </div>
@@ -147,4 +147,6 @@ cp node_modules/opencode-historian/src/skills/mnemonics/SKILL.md \
 
 Once installed, agents can load the skill for detailed guidance on memory types and `@historian` usage.
 
-MIT
+## License
+
+This project is licensed under the terms of the [MIT License](LICENSE).
