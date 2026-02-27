@@ -1,3 +1,11 @@
+<div align="center">
+  <img src="assets/historian.jpeg" alt="historian agent" width="200">
+  <p><i>Historian gives your AI agent persistent memory across conversations.</i></p>
+  <p>Sync · Recall · Remember · Forget - <b>Compound</b></p>
+</div>
+
+---
+
 # OpenCode Historian
 
 > Memory management for AI agents. Powered by QMD.
