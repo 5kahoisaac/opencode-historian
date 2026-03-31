@@ -35,21 +35,11 @@ export function createForgetTool(
     description:
       'Delete memory files by their paths. Pass filePaths from memory_recall results.',
     parameters: {
-      filePaths: z.union([z.array(z.string()), z.string()]).transform((v) => {
-        // If it's already an array, return as-is
-        if (Array.isArray(v)) return v;
-        // If it's a string that looks like a JSON array, parse it
-        if (typeof v === 'string' && v.startsWith('[')) {
-          try {
-            const parsed = JSON.parse(v);
-            return Array.isArray(parsed) ? parsed : [v];
-          } catch {
-            return [v];
-          }
-        }
-        // Otherwise, wrap in array
-        return [v];
-      }),
+      filePaths: z
+        .union([z.array(z.string()), z.string()])
+        .describe(
+          'File paths to delete. Accepts a single path string or an array of path strings.',
+        ),
     },
     handler: async ({ filePaths }: { filePaths: string | string[] }) => {
       // Normalize to array (handles both string and array input)
