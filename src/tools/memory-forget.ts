@@ -43,7 +43,6 @@ export function createForgetTool(
     },
     handler: async ({ filePaths }: { filePaths: string | string[] }) => {
       // Normalize to array (handles both string and array input)
-      // The transform above should have handled this, but double-check
       let paths: string[];
       if (Array.isArray(filePaths)) {
         paths = filePaths;
