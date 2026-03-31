@@ -1,40 +1,42 @@
 <div align="center">
   <img src="assets/historian.jpeg" alt="historian agent" width="240">
   <p><i>Historian gives your AI agent persistent memory across conversations.</i></p>
-  <p>Sync · Recall · Remember · Forget - <b>Compound</b></p>
+  <p>Sync · Recall · Remember · Forget · <b>Compound</b></p>
 </div>
 
 ---
 
 # OpenCode Historian
 
-> Memory management for AI agents. Powered by QMD.
+Persistent memory for OpenCode agents, powered by QMD.
 
-## What It Does
+Historian helps your agent remember decisions, preferences, learnings, and project context across sessions. It stores memories as markdown, indexes them with QMD, and exposes tools for remembering, recalling, forgetting, and syncing memory.
 
-Historian gives your AI agent persistent memory across conversations. It automatically stores, retrieves, and organizes important context so your agent remembers decisions, preferences, and learnings.
+## What You Get
 
-**Features:**
-- Persistent memory across sessions
-- Semantic search for finding relevant context
-- 9 built-in memory types (decisions, learnings, issues, etc.)
-- Automatic classification and tagging
+- Persistent memory across conversations
+- Semantic search over saved memories
+- Built-in memory types for decisions, issues, learnings, and preferences
+- Markdown-based storage in your repo
+- A bundled `historian` agent and memory tools
+- Optional Serena MCP support for code navigation
 
 ## Prerequisites
 
-- **Bun** 1.3.9+ - JavaScript runtime
-- **QMD** - Memory indexing and search engine
+- **Bun** `1.3.9+`
+- **QMD** installed globally
 
 Install QMD:
+
 ```bash
 npm install -g qmd
 # or
 bun install -g qmd
 ```
 
-## Install
+## Install the Plugin
 
-Add to your `opencode.json`:
+Add the plugin to your `opencode.json`:
 
 ```json
 {
@@ -42,28 +44,50 @@ Add to your `opencode.json`:
 }
 ```
 
-That's it. The plugin registers memory tools automatically. An optional Serena MCP is bundled for code navigation.
+That is enough to register the plugin, the bundled `historian` agent, and the memory tools.
 
-## How to Use
+## Install the `mnemonics` Skill
 
-Interact with the historian agent through natural language. Just ask it to remember or recall information:
+The plugin also includes a `mnemonics` skill that teaches agents how to use the `@historian` subagent effectively.
 
-**Remembering things:**
+Recommended install:
+
+```bash
+npx skills add https://github.com/5kahoisaac/opencode-historian/tree/main/src --skill mnemonics
+```
+
+After installing it, agents can load `mnemonics` for guidance on memory types, when to use `@historian`, and how to store or recall project knowledge correctly.
+
+## Quick Start
+
+Once the plugin is enabled, talk to the historian agent in natural language.
+
+### Save information
+
 > "Remember that we're using PostgreSQL for the database"
+>
 > "Save this: we decided on JWT tokens with 24-hour expiry"
+>
 > "Note that the API rate limit is 100 requests per minute"
 
-**Recalling things:**
+### Recall information
+
 > "What did we decide about authentication?"
+>
 > "Do we have any known issues?"
+>
 > "What are my preferences for this project?"
 
-The historian automatically:
-- Classifies memories by type (decision, learning, issue, etc.)
-- Tags them for easy retrieval
-- Indexes them for semantic search
+Historian will:
+
+- classify memories by type
+- tag them for retrieval
+- index them for semantic search
+- keep them in a git-friendly markdown format
 
 ## Memory Types
+
+Historian ships with these built-in memory types:
 
 | Type                     | Use For                     |
 |--------------------------|-----------------------------|
@@ -79,34 +103,43 @@ The historian automatically:
 
 ## Configuration
 
-Create `.opencode/opencode-historian.json` (optional):
+Optional config file:
+
+```text
+.opencode/opencode-historian.json
+```
+
+Example:
 
 ```json
 {
   "appendPrompt": "Focus on API design decisions.",
   "memoryTypes": [
-    { "name": "api-endpoint", "description": "API endpoint decisions" }
+    {
+      "name": "api-endpoint",
+      "description": "API endpoint decisions"
+    }
   ],
-  "disabledMcps": [] // e.g., ["serena"] to disable bundled MCPs
+  "disabledMcps": ["serena"]
 }
 ```
 
 ### Options
 
-| Option         | Default | Description                          |
-|----------------|---------|--------------------------------------|
-| `model`        | -       | AI model                             |
-| `temperature`  | `0.3`   | Response creativity                  |
-| `appendPrompt` | -       | Custom instructions                  |
-| `memoryTypes`  | -       | Custom memory types                  |
-| `autoCompound` | `true`  | Auto-merge new learnings into existing memories |
-| `disabledMcps` | -       | Bundled MCPs to disable (e.g., `["serena"]` to disable code navigation) |
+| Option         | Default | Description |
+|----------------|---------|-------------|
+| `model`        | - | Model used by the historian agent |
+| `temperature`  | `0.3` | Response creativity |
+| `appendPrompt` | - | Additional instructions appended to the historian prompt |
+| `memoryTypes`  | - | Custom memory types to add alongside the built-ins |
+| `autoCompound` | `true` | Automatically merge new learnings into existing memories when appropriate |
+| `disabledMcps` | - | Bundled MCPs to disable, for example `["serena"]` |
 
 ## Storage
 
-Memories are stored as markdown files in `.mnemonics/` at your project root:
+Memories are stored as markdown files under `.mnemonics/` in your project root:
 
-```
+```text
 .mnemonics/
 ├── architectural-decision/
 ├── design-decision/
@@ -114,39 +147,30 @@ Memories are stored as markdown files in `.mnemonics/` at your project root:
 └── ...
 ```
 
-This means:
-- Human-readable format
-- Git-friendly (commit your memories alongside code)
-- Easy to edit manually if needed
+Benefits:
 
-## Included Skills
+- human-readable
+- easy to version with git
+- easy to inspect or edit manually
 
-This plugin includes a **mnemonics** skill that teaches agents how to use the historian subagent for memory operations.
+## Included Tools
 
-> **Note:** As of early 2026, OpenCode's native skills system does not automatically install `SKILL.md` files from npm-published plugin packages. You need to manually copy the skill to your project.
+The plugin registers these memory tools:
 
-### Install the Skill
+- `memory_remember`
+- `memory_recall`
+- `memory_forget`
+- `memory_list_types`
+- `memory_sync`
 
-Copy the skill to your project's `.opencode/skills/` directory:
+## When to Use the Skill vs. the Tools
 
-```bash
-# Create skills directory if needed
-mkdir -p .opencode/skills/mnemonics
+- Use the **plugin** to make memory available inside OpenCode
+- Use the **`mnemonics` skill** to teach agents how to use `@historian` well
+- Use the **memory tools** when you want direct programmatic memory operations
 
-# Download the skill file
-curl -o .opencode/skills/mnemonics/SKILL.md \
-  https://raw.githubusercontent.com/5kahoisaac/opencode-historian/main/src/skills/mnemonics/SKILL.md
-```
-
-Or manually copy from the package:
-```bash
-# If installed via npm/bun
-cp node_modules/opencode-historian/src/skills/mnemonics/SKILL.md \
-   .opencode/skills/mnemonics/
-```
-
-Once installed, agents can load the skill for detailed guidance on memory types and `@historian` usage.
+In short: the plugin gives you capability, and the skill gives agents better judgment about how to use it.
 
 ## License
 
-This project is licensed under the terms of the [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).

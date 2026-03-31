@@ -1,4 +1,5 @@
-// Logger utilities
+// Concurrency utilities
+export { batchedPromiseAll, DEFAULT_CONCURRENCY } from './concurrency';
 
 // Helper utilities
 export {

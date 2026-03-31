@@ -6,6 +6,7 @@ import type { PluginConfig } from '../config';
 import {
   addToCollection,
   getIndexName,
+  type QmdOptions,
   updateEmbeddings,
   updateIndex,
 } from '../qmd';
@@ -29,6 +30,21 @@ export function createRememberTool(
   projectRoot: string,
   logger: Logger,
 ) {
+  let updateIndexTimer: ReturnType<typeof setTimeout> | null = null;
+  const debouncedUpdateIndex = (options: QmdOptions) => {
+    if (updateIndexTimer !== null) {
+      clearTimeout(updateIndexTimer);
+    }
+    updateIndexTimer = setTimeout(() => {
+      updateIndexTimer = null;
+      updateIndex(options).catch((err: unknown) =>
+        logger.warn(
+          `Background index update failed: ${err instanceof Error ? err.message : String(err)}`,
+        ),
+      );
+    }, 500);
+  };
+
   return {
     name: 'memory_remember',
     description:
@@ -85,7 +101,7 @@ export function createRememberTool(
         }
 
         // Read existing file to preserve metadata
-        const existingMemory = parseMemoryFile(resolvedPath);
+        const existingMemory = await parseMemoryFile(resolvedPath);
 
         // Update the memory with new content and modified timestamp
         const updatedMemory = {
@@ -137,13 +153,6 @@ export function createRememberTool(
         );
         await fs.promises.writeFile(targetFilePath, fileContent, 'utf-8');
 
-        // Verify file was created
-        if (!fs.existsSync(targetFilePath)) {
-          throw new Error(
-            `Failed to create memory file: ${targetFilePath}. File does not exist after write.`,
-          );
-        }
-
         // Add to collection (pass directory, not file - qmd watches directories)
         await addToCollection(mnemonicsDir, normalizedMemoryType, {
           index: indexName,
@@ -153,16 +162,20 @@ export function createRememberTool(
         logger.info(`Created memory file: ${targetFilePath}`);
       }
 
-      // Update index and embeddings
+      // Fire-and-forget: update index (debounced) and embeddings
       const builtinTypes = getBuiltinMemoryTypes();
       const allMemoryTypes = [...builtinTypes, ...(config.memoryTypes || [])];
-      await updateIndex({
+      debouncedUpdateIndex({
         index: indexName,
         projectRoot,
         logger,
         memoryTypes: allMemoryTypes.map((t) => t.name),
       });
-      await updateEmbeddings({ index: indexName });
+      updateEmbeddings({ index: indexName }).catch((err: unknown) =>
+        logger.warn(
+          `Background embeddings update failed: ${err instanceof Error ? err.message : String(err)}`,
+        ),
+      );
 
       return {
         success: true,

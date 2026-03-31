@@ -1,7 +1,12 @@
 import * as fs from 'node:fs';
 import { z } from 'zod';
 import type { PluginConfig } from '../config';
-import { getIndexName, updateEmbeddings, updateIndex } from '../qmd';
+import {
+  getIndexName,
+  type QmdOptions,
+  updateEmbeddings,
+  updateIndex,
+} from '../qmd';
 import { isWithinProjectMnemonics } from '../storage';
 import { getBuiltinMemoryTypes, type Logger, qmdPathToFsPath } from '../utils';
 
@@ -10,6 +15,21 @@ export function createForgetTool(
   projectRoot: string,
   logger: Logger,
 ) {
+  let updateIndexTimer: ReturnType<typeof setTimeout> | null = null;
+  const debouncedUpdateIndex = (options: QmdOptions) => {
+    if (updateIndexTimer !== null) {
+      clearTimeout(updateIndexTimer);
+    }
+    updateIndexTimer = setTimeout(() => {
+      updateIndexTimer = null;
+      updateIndex(options).catch((err: unknown) =>
+        logger.warn(
+          `Background index update failed: ${err instanceof Error ? err.message : String(err)}`,
+        ),
+      );
+    }, 500);
+  };
+
   return {
     name: 'memory_forget',
     description:
@@ -99,17 +119,21 @@ export function createForgetTool(
         }
       }
 
-      // Update index and embeddings
+      // Fire-and-forget: update index and embeddings in the background
       const indexName = getIndexName(projectRoot);
       const builtinTypes = getBuiltinMemoryTypes();
       const allMemoryTypes = [...builtinTypes, ...(config.memoryTypes || [])];
-      await updateIndex({
+      debouncedUpdateIndex({
         index: indexName,
         projectRoot,
         logger,
         memoryTypes: allMemoryTypes.map((t) => t.name),
       });
-      await updateEmbeddings({ index: indexName });
+      updateEmbeddings({ index: indexName }).catch((err: unknown) =>
+        logger.warn(
+          `Background embeddings update failed: ${err instanceof Error ? err.message : String(err)}`,
+        ),
+      );
 
       return {
         success: deletedFiles.length > 0,
