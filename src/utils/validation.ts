@@ -27,51 +27,51 @@ const BUILTIN_MEMORY_TYPES = [
  */
 const BUILTIN_MEMORY_TYPES_WITH_DESCRIPTIONS: readonly MemoryType[] =
   Object.freeze([
-    {
+    Object.freeze({
       name: 'architectural-decision',
       description:
         'High-level system architecture choices and their rationale (e.g., technology stack, system design)',
-    },
-    {
+    }),
+    Object.freeze({
       name: 'design-decision',
       description:
         'UI/UX or component-level design choices and their reasoning',
-    },
-    {
+    }),
+    Object.freeze({
       name: 'learning',
       description:
         'Insights, lessons learned, or discoveries made during development',
-    },
-    {
+    }),
+    Object.freeze({
       name: 'user-preference',
       description:
         'Personal preferences of the user (coding style, workflow, tools)',
-    },
-    {
+    }),
+    Object.freeze({
       name: 'project-preference',
       description:
         'Project-specific conventions and preferences (patterns, libraries used)',
-    },
-    {
+    }),
+    Object.freeze({
       name: 'issue',
       description:
         'Known issues, bugs, or problems encountered and their status',
-    },
-    {
+    }),
+    Object.freeze({
       name: 'context',
       description:
         'General context information, background knowledge, or miscellaneous memories (DEFAULT fallback type)',
-    },
-    {
+    }),
+    Object.freeze({
       name: 'recurring-pattern',
       description:
         'Patterns that occur repeatedly in the codebase or development process',
-    },
-    {
+    }),
+    Object.freeze({
       name: 'conventions-pattern',
       description:
         'Coding conventions, naming patterns, and style guidelines for the project',
-    },
+    }),
   ]);
 
 /**

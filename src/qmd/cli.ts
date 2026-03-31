@@ -270,11 +270,11 @@ export async function multiGet(
   }
 
   const collections = await listCollections({ index: options.index });
-  const allResults = await Promise.all(
-    collections.map((collection) =>
+  const factories = collections.map(
+    (collection) => () =>
       getFromCollection(options.index, collection, options.n || 100),
-    ),
   );
+  const allResults = await batchedPromiseAll(factories, 3);
   return allResults.flat();
 }
 

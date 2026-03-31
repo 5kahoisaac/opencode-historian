@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Plugin, ToolContext, ToolDefinition } from '@opencode-ai/plugin';
-import { tool } from '@opencode-ai/plugin';
 import { createHistorianAgent } from './agents';
 import { loadPluginConfig } from './config';
 import { createBuiltinMcps } from './mcp';
@@ -11,14 +10,21 @@ import { createMemoryTools } from './tools';
 import { createLogger, getBuiltinMemoryTypes } from './utils';
 
 const PROMPTS_DIR = join(dirname(fileURLToPath(import.meta.url)), 'prompts');
-const SYSTEM_TRANSFORM_PROMPT = readFileSync(
-  join(PROMPTS_DIR, 'experimental.chat.system.transform.md'),
-  'utf-8',
-).trim();
-const SESSION_COMPACTING_PROMPT = readFileSync(
-  join(PROMPTS_DIR, 'experimental.session.compacting.md'),
-  'utf-8',
-).trim();
+
+function readPromptFile(filename: string): string {
+  try {
+    return readFileSync(join(PROMPTS_DIR, filename), 'utf-8').trim();
+  } catch {
+    return '';
+  }
+}
+
+const SYSTEM_TRANSFORM_PROMPT = readPromptFile(
+  'experimental.chat.system.transform.md',
+);
+const SESSION_COMPACTING_PROMPT = readPromptFile(
+  'experimental.session.compacting.md',
+);
 
 const OpencodeHistorian: Plugin = async (ctx) => {
   // Load configuration
@@ -48,39 +54,15 @@ const OpencodeHistorian: Plugin = async (ctx) => {
   // Create memory tools using CLI-based functions
   const memoryToolsArray = createMemoryTools(config, ctx.directory, logger);
 
-  // Static parameter schemas — replaces runtime Zod _def.typeName introspection.
-  // Tools not listed here (memory_list_types, memory_sync) have no parameters
-  // and fall through to the `?? {}` default below.
-  const TOOL_PARAM_SCHEMAS: Record<string, Record<string, unknown>> = {
-    memory_recall: {
-      query: tool.schema.optional(tool.schema.string()),
-      memoryType: tool.schema.optional(tool.schema.string()),
-      limit: tool.schema.optional(tool.schema.string()),
-      type: tool.schema.string(),
-      isAll: tool.schema.string(),
-    },
-    memory_remember: {
-      title: tool.schema.string(),
-      content: tool.schema.string(),
-      memoryType: tool.schema.string(),
-      tags: tool.schema.optional(tool.schema.array(tool.schema.string())),
-      filePath: tool.schema.optional(tool.schema.string()),
-    },
-    memory_forget: {
-      filePaths: tool.schema.array(tool.schema.string()),
-    },
-  };
-
-  // Convert internal tool format to Plugin ToolDefinition format
+  // Convert internal tool format to Plugin ToolDefinition format.
+  // Pass through the actual Zod parameter schemas from each tool
+  // rather than duplicating them in a static map.
   const toolDefinitions: Record<string, ToolDefinition> = {};
   for (const toolDef of memoryToolsArray) {
-    const args = TOOL_PARAM_SCHEMAS[toolDef.name] ?? {};
-
     toolDefinitions[toolDef.name] = {
       description: toolDef.description,
-      args: args as ToolDefinition['args'],
+      args: (toolDef.parameters ?? {}) as ToolDefinition['args'],
       execute: async (args: Record<string, unknown>, _context: ToolContext) => {
-        // Call the internal handler and convert result to string
         const result = await (
           toolDef.handler as (args: Record<string, unknown>) => Promise<unknown>
         )(args);

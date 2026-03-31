@@ -43,7 +43,25 @@ describe('batchedPromiseAll', () => {
 
   it('throws on concurrency < 1', async () => {
     expect(batchedPromiseAll([() => Promise.resolve(1)], 0)).rejects.toThrow(
-      'Concurrency must be at least 1',
+      'Concurrency must be a positive integer',
+    );
+  });
+
+  it('throws on NaN concurrency', async () => {
+    expect(
+      batchedPromiseAll([() => Promise.resolve(1)], Number.NaN),
+    ).rejects.toThrow('Concurrency must be a positive integer');
+  });
+
+  it('throws on Infinity concurrency', async () => {
+    expect(
+      batchedPromiseAll([() => Promise.resolve(1)], Number.POSITIVE_INFINITY),
+    ).rejects.toThrow('Concurrency must be a positive integer');
+  });
+
+  it('throws on non-integer concurrency', async () => {
+    expect(batchedPromiseAll([() => Promise.resolve(1)], 2.5)).rejects.toThrow(
+      'Concurrency must be a positive integer',
     );
   });
 

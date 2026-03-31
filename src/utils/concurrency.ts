@@ -30,8 +30,12 @@ export async function batchedPromiseAll<T>(
     return [];
   }
 
-  if (concurrency < 1) {
-    throw new Error('Concurrency must be at least 1');
+  if (
+    !Number.isFinite(concurrency) ||
+    !Number.isInteger(concurrency) ||
+    concurrency < 1
+  ) {
+    throw new Error('Concurrency must be a positive integer');
   }
 
   const results: T[] = new Array(factories.length);
