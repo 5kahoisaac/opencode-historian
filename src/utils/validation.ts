@@ -25,56 +25,60 @@ const BUILTIN_MEMORY_TYPES = [
  * Built-in memory types with descriptions.
  * Used by memory_list_types tool to show available types to the LLM.
  */
-const BUILTIN_MEMORY_TYPES_WITH_DESCRIPTIONS: MemoryType[] = [
-  {
-    name: 'architectural-decision',
-    description:
-      'High-level system architecture choices and their rationale (e.g., technology stack, system design)',
-  },
-  {
-    name: 'design-decision',
-    description: 'UI/UX or component-level design choices and their reasoning',
-  },
-  {
-    name: 'learning',
-    description:
-      'Insights, lessons learned, or discoveries made during development',
-  },
-  {
-    name: 'user-preference',
-    description:
-      'Personal preferences of the user (coding style, workflow, tools)',
-  },
-  {
-    name: 'project-preference',
-    description:
-      'Project-specific conventions and preferences (patterns, libraries used)',
-  },
-  {
-    name: 'issue',
-    description: 'Known issues, bugs, or problems encountered and their status',
-  },
-  {
-    name: 'context',
-    description:
-      'General context information, background knowledge, or miscellaneous memories (DEFAULT fallback type)',
-  },
-  {
-    name: 'recurring-pattern',
-    description:
-      'Patterns that occur repeatedly in the codebase or development process',
-  },
-  {
-    name: 'conventions-pattern',
-    description:
-      'Coding conventions, naming patterns, and style guidelines for the project',
-  },
-];
+const BUILTIN_MEMORY_TYPES_WITH_DESCRIPTIONS: readonly MemoryType[] =
+  Object.freeze([
+    {
+      name: 'architectural-decision',
+      description:
+        'High-level system architecture choices and their rationale (e.g., technology stack, system design)',
+    },
+    {
+      name: 'design-decision',
+      description:
+        'UI/UX or component-level design choices and their reasoning',
+    },
+    {
+      name: 'learning',
+      description:
+        'Insights, lessons learned, or discoveries made during development',
+    },
+    {
+      name: 'user-preference',
+      description:
+        'Personal preferences of the user (coding style, workflow, tools)',
+    },
+    {
+      name: 'project-preference',
+      description:
+        'Project-specific conventions and preferences (patterns, libraries used)',
+    },
+    {
+      name: 'issue',
+      description:
+        'Known issues, bugs, or problems encountered and their status',
+    },
+    {
+      name: 'context',
+      description:
+        'General context information, background knowledge, or miscellaneous memories (DEFAULT fallback type)',
+    },
+    {
+      name: 'recurring-pattern',
+      description:
+        'Patterns that occur repeatedly in the codebase or development process',
+    },
+    {
+      name: 'conventions-pattern',
+      description:
+        'Coding conventions, naming patterns, and style guidelines for the project',
+    },
+  ]);
 
 /**
  * Returns all built-in memory types with their descriptions.
+ * Returns a frozen array — callers must not mutate the result.
  */
-export function getBuiltinMemoryTypes(): MemoryType[] {
+export function getBuiltinMemoryTypes(): readonly MemoryType[] {
   return BUILTIN_MEMORY_TYPES_WITH_DESCRIPTIONS;
 }
 

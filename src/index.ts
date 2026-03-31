@@ -10,6 +10,16 @@ import { getIndexName, updateIndex } from './qmd';
 import { createMemoryTools } from './tools';
 import { createLogger, getBuiltinMemoryTypes } from './utils';
 
+const PROMPTS_DIR = join(dirname(fileURLToPath(import.meta.url)), 'prompts');
+const SYSTEM_TRANSFORM_PROMPT = readFileSync(
+  join(PROMPTS_DIR, 'experimental.chat.system.transform.md'),
+  'utf-8',
+).trim();
+const SESSION_COMPACTING_PROMPT = readFileSync(
+  join(PROMPTS_DIR, 'experimental.session.compacting.md'),
+  'utf-8',
+).trim();
+
 const OpencodeHistorian: Plugin = async (ctx) => {
   // Load configuration
   const config = loadPluginConfig(ctx.directory);
@@ -38,69 +48,33 @@ const OpencodeHistorian: Plugin = async (ctx) => {
   // Create memory tools using CLI-based functions
   const memoryToolsArray = createMemoryTools(config, ctx.directory, logger);
 
+  // Static parameter schemas — replaces runtime Zod _def.typeName introspection.
+  // Tools not listed here (memory_list_types, memory_sync) have no parameters
+  // and fall through to the `?? {}` default below.
+  const TOOL_PARAM_SCHEMAS: Record<string, Record<string, unknown>> = {
+    memory_recall: {
+      query: tool.schema.optional(tool.schema.string()),
+      memoryType: tool.schema.optional(tool.schema.string()),
+      limit: tool.schema.optional(tool.schema.string()),
+      type: tool.schema.string(),
+      isAll: tool.schema.string(),
+    },
+    memory_remember: {
+      title: tool.schema.string(),
+      content: tool.schema.string(),
+      memoryType: tool.schema.string(),
+      tags: tool.schema.optional(tool.schema.array(tool.schema.string())),
+      filePath: tool.schema.optional(tool.schema.string()),
+    },
+    memory_forget: {
+      filePaths: tool.schema.array(tool.schema.string()),
+    },
+  };
+
   // Convert internal tool format to Plugin ToolDefinition format
   const toolDefinitions: Record<string, ToolDefinition> = {};
   for (const toolDef of memoryToolsArray) {
-    // The parameters is already a plain object with Zod types as values
-    // We need to convert it to use the plugin's Zod instance
-    const originalArgs = toolDef.parameters as Record<string, unknown>;
-
-    // Handle tools with no parameters
-    const args: Record<string, unknown> = {};
-    if (originalArgs && Object.keys(originalArgs).length > 0) {
-      for (const [key, value] of Object.entries(originalArgs)) {
-        // Check if the zod type is an array or union containing array
-        const zodType = value as {
-          _def?: { typeName?: string; innerType?: unknown };
-        };
-        const typeName = zodType?._def?.typeName;
-
-        // Handle different zod types
-        if (typeName === 'ZodArray') {
-          args[key] = tool.schema.array(tool.schema.string());
-        } else if (typeName === 'ZodUnion') {
-          // For union types (like string | array), use array schema
-          // The handler will normalize single strings to arrays
-          args[key] = tool.schema.array(tool.schema.string());
-        } else if (typeName === 'ZodOptional') {
-          // Check inner type
-          const innerType = zodType._def?.innerType as {
-            _def?: { typeName?: string };
-          };
-          const innerTypeName = innerType?._def?.typeName;
-          if (innerTypeName === 'ZodArray' || innerTypeName === 'ZodUnion') {
-            args[key] = tool.schema.optional(
-              tool.schema.array(tool.schema.string()),
-            );
-          } else {
-            args[key] = tool.schema.optional(tool.schema.string());
-          }
-        } else if (typeName === 'ZodDefault') {
-          const innerType = zodType._def?.innerType as {
-            _def?: { typeName?: string };
-          };
-          const innerTypeName = innerType?._def?.typeName;
-          if (innerTypeName === 'ZodArray' || innerTypeName === 'ZodUnion') {
-            args[key] = tool.schema.array(tool.schema.string());
-          } else {
-            args[key] = tool.schema.string();
-          }
-        } else if (typeName === 'ZodPipe') {
-          // ZodPipe (from .transform()) - check the input type
-          const innerType = zodType._def?.innerType as {
-            _def?: { typeName?: string };
-          };
-          const innerTypeName = innerType?._def?.typeName;
-          if (innerTypeName === 'ZodUnion' || innerTypeName === 'ZodArray') {
-            args[key] = tool.schema.array(tool.schema.string());
-          } else {
-            args[key] = tool.schema.string();
-          }
-        } else {
-          args[key] = tool.schema.string();
-        }
-      }
-    }
+    const args = TOOL_PARAM_SCHEMAS[toolDef.name] ?? {};
 
     toolDefinitions[toolDef.name] = {
       description: toolDef.description,
@@ -182,26 +156,14 @@ const OpencodeHistorian: Plugin = async (ctx) => {
     // Event: Instruct agent to clarify serena and historian usages
     'experimental.chat.system.transform': async (_, output) => {
       if (!config.disabledMcps?.includes('serena')) {
-        const promptPath = join(
-          dirname(fileURLToPath(import.meta.url)),
-          'prompts',
-          'experimental.chat.system.transform.md',
-        );
-        const content = readFileSync(promptPath, 'utf-8');
-        output.system.push(content.trim());
+        output.system.push(SYSTEM_TRANSFORM_PROMPT);
       }
     },
 
     // Inject additional compound-engineering handling into the compaction prompt
     'experimental.session.compacting': async (_, output) => {
       if (config.autoCompound) {
-        const promptPath = join(
-          dirname(fileURLToPath(import.meta.url)),
-          'prompts',
-          'experimental.session.compacting.md',
-        );
-        const content = readFileSync(promptPath, 'utf-8');
-        output.context.push(content.trim());
+        output.context.push(SESSION_COMPACTING_PROMPT);
       }
     },
   };

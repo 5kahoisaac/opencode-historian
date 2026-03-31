@@ -33,8 +33,8 @@ export function createMemoryFile(
   };
 }
 
-export function parseMemoryFile(filePath: string): MemoryFile {
-  const fileContent = fs.readFileSync(filePath, 'utf-8');
+export async function parseMemoryFile(filePath: string): Promise<MemoryFile> {
+  const fileContent = await fs.promises.readFile(filePath, 'utf-8');
   const parsed = matter(fileContent);
   return {
     content: parsed.content,

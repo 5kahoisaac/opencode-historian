@@ -3,7 +3,12 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { promisify } from 'node:util';
 import { getProjectMemoryPath } from '../storage';
-import { getBuiltinMemoryTypes, type Logger, toKebabCase } from '../utils';
+import {
+  batchedPromiseAll,
+  getBuiltinMemoryTypes,
+  type Logger,
+  toKebabCase,
+} from '../utils';
 
 const execAsync = promisify(exec);
 
@@ -60,11 +65,17 @@ function mapToSearchResult(raw: RawSearchResult): SearchResult {
   };
 }
 
+const indexNameCache = new Map<string, string>();
+
 /**
  * Extracts the index name from a project root path.
  * Uses the folder name converted to kebab-case.
+ * Results are cached per projectRoot for repeated calls.
  */
 export function getIndexName(projectRoot: string): string {
+  const cached = indexNameCache.get(projectRoot);
+  if (cached !== undefined) return cached;
+
   if (!projectRoot || projectRoot.trim() === '') {
     throw new Error(
       'Invalid project root: projectRoot must be a non-empty string',
@@ -79,7 +90,9 @@ export function getIndexName(projectRoot: string): string {
     );
   }
 
-  return toKebabCase(folderName);
+  const result = toKebabCase(folderName);
+  indexNameCache.set(projectRoot, result);
+  return result;
 }
 
 /**
@@ -158,12 +171,19 @@ export async function updateIndex(options: QmdOptions): Promise<void> {
   ];
 
   // Ensure collections exist for all valid memory types
-  for (const memoryType of allValidTypes) {
-    const collectionPath = path.join(memoryBasePath, memoryType);
-    if (fs.existsSync(collectionPath)) {
-      await addToCollection(collectionPath, memoryType, options);
-    }
-  }
+  await Promise.all(
+    allValidTypes
+      .filter((memoryType) =>
+        fs.existsSync(path.join(memoryBasePath, memoryType)),
+      )
+      .map((memoryType) =>
+        addToCollection(
+          path.join(memoryBasePath, memoryType),
+          memoryType,
+          options,
+        ),
+      ),
+  );
 
   // Clean up stale collections (only for valid memory types that no longer exist)
   for (const collection of collections) {
@@ -241,30 +261,21 @@ async function removeCollection(
 export async function multiGet(
   options: SearchOptions,
 ): Promise<SearchResult[]> {
-  const results: SearchResult[] = [];
-
   if (options.collection) {
-    // Get from specific collection
-    const collectionResults = await getFromCollection(
+    return getFromCollection(
       options.index,
       options.collection,
       options.n || 100,
     );
-    results.push(...collectionResults);
-  } else {
-    // Get from all collections
-    const collections = await listCollections({ index: options.index });
-    for (const collection of collections) {
-      const collectionResults = await getFromCollection(
-        options.index,
-        collection,
-        options.n || 100,
-      );
-      results.push(...collectionResults);
-    }
   }
 
-  return results;
+  const collections = await listCollections({ index: options.index });
+  const allResults = await Promise.all(
+    collections.map((collection) =>
+      getFromCollection(options.index, collection, options.n || 100),
+    ),
+  );
+  return allResults.flat();
 }
 
 /**
@@ -317,31 +328,33 @@ async function getFromCollection(
   // Limit results
   const limitedPaths = filePaths.slice(0, limit);
 
-  // Fetch content for each file
-  const results: SearchResult[] = [];
+  // Fetch content for each file in parallel
+  const factories = limitedPaths.map(
+    (qmdPath) => async (): Promise<SearchResult | null> => {
+      try {
+        const command = `qmd get "${qmdPath}" --index ${index}`;
+        const { stdout } = await execAsync(command);
 
-  for (const qmdPath of limitedPaths) {
-    try {
-      const command = `qmd get "${qmdPath}" --index ${index}`;
-      const { stdout } = await execAsync(command);
+        // Extract title from path (filename without .md)
+        const filename = qmdPath.split('/').pop()?.replace('.md', '') || '';
 
-      // Extract title from path (filename without .md)
-      const filename = qmdPath.split('/').pop()?.replace('.md', '') || '';
+        return {
+          path: qmdPath,
+          score: 0,
+          content: stdout,
+          title: filename
+            .replace(/-/g, ' ')
+            .replace(/\b\w/g, (c) => c.toUpperCase()),
+        };
+      } catch (_error) {
+        // Skip files that fail to load (preserves existing behavior)
+        return null;
+      }
+    },
+  );
 
-      results.push({
-        path: qmdPath,
-        score: 0,
-        content: stdout,
-        title: filename
-          .replace(/-/g, ' ')
-          .replace(/\b\w/g, (c) => c.toUpperCase()),
-      });
-    } catch (_error) {
-      // Skip files that fail to load
-    }
-  }
-
-  return results;
+  const results = await batchedPromiseAll(factories);
+  return results.filter((r): r is SearchResult => r !== null);
 }
 
 export { execAsync };

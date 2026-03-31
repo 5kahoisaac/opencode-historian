@@ -120,7 +120,7 @@ export function createRecallTool(
           try {
             // Convert qmd:// URI to real filesystem path
             const fsPath = qmdPathToFsPath(result.path, projectRoot);
-            const memoryFile = parseMemoryFile(fsPath);
+            const memoryFile = await parseMemoryFile(fsPath);
             // Extract title from filename (e.g., "my-memory.md" -> "My Memory")
             const filename = result.path.split('/').pop() || '';
             const title = filename
