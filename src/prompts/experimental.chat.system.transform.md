@@ -3,7 +3,7 @@
 Prioritize **Serena MCP** for code symbol navigation, reference finding, renaming,
 targeted inserts/deletes/edits.
 
-> CRITICAL: Use `@historian` subagent directly or the **mnemonics** skill for memory operations.
+> CRITICAL: Use `@historian` subagent directly, the **mnemonics** skill for core memory workflows, or the **heuristics** skill for ingest/audit workflows.
 > Serena memory tools are INTERNAL to Serena — NEVER use them for project memories.
 
 ### Serena MCP – Code Precision (LSP-powered)
@@ -44,12 +44,13 @@ targeted inserts/deletes/edits.
 - Use `think_about_*` tools before committing to complex refactors
 - Use `open_dashboard` to monitor logs and tool usage in real-time
 
-### Memory & Semantic Search – Use @historian or mnemonics skill
+### Memory & Semantic Search – Use @historian, mnemonics, or heuristics
 
 Memory tools are **ONLY available via the historian subagent**. You have two options:
 
 1. **Direct invocation:** `@historian remember that we use PostgreSQL`
-2. **Load mnemonics skill:** Use the skill for detailed guidance on memory types
+2. **Load mnemonics skill:** Use it for core memory store/recall/update workflows
+3. **Load heuristics skill:** Use it for ingest, lint, and ambiguous review workflows
 
 > **NEVER confuse Serena memory tools with historian memory tools.**
 > - `serena_write_memory` / `serena_read_memory` → INTERNAL to Serena for code navigation
@@ -61,12 +62,16 @@ Memory tools are **ONLY available via the historian subagent**. You have two opt
 - `memory_forget` — delete memories by file path
 - `memory_list_types` — list available memory types in the project
 - `memory_sync` — reindex after manual file changes (rarely needed)
+- `memory_ingest` — ingest raw content or configured source files into structured memories
+- `memory_lint` — audit the `.mnemonics/` store for broken links, invalid metadata, duplicates, stale/orphan memories, and overall health
 
 **When to Use @historian**
 - Storing project knowledge, decisions, or learnings
 - Recalling relevant context from past sessions
 - Semantic search across docs, notes, or transcripts
 - Reindexing after manual external file modifications
+- Importing/processing source material into memories via `memory_ingest`
+- Health-checking the memory store via `memory_lint`
 
 ### Tool Selection Table
 
@@ -76,7 +81,11 @@ Memory tools are **ONLY available via the historian subagent**. You have two opt
 | Code edits (insert, replace, delete)              | Serena                              |
 | Store/recall project memories                     | `@historian` or **mnemonics** skill |
 | Semantic search across docs/notes                 | `@historian` or **mnemonics** skill |
-| Reindex after manual file changes                 | `@historian sync`                   |
+| Reindex after manual file changes                 | `@historian sync` or **mnemonics** skill |
+| Ingest raw text directly                          | `@historian ingest` or **heuristics** skill |
+| Ingest configured source files                    | `@historian ingest` or **heuristics** skill |
+| Audit memory quality / broken links / duplicates  | `@historian lint` or **heuristics** skill |
+| Review ambiguous ingest results                   | `@historian` or **heuristics** skill |
 
 ### Best Practices
 
@@ -87,7 +96,7 @@ Memory tools are **ONLY available via the historian subagent**. You have two opt
 4. Use `think_about_*` tools before finishing complex refactors
 
 **Memory (@historian):**
-1. Use `@historian` or load **mnemonics** skill for memory operations
+1. Use `@historian` directly, load **mnemonics** for core memory workflows, or load **heuristics** for ingest/audit workflows
 2. **NEVER** use `serena_*_memory` tools for project memories
 3. Recall before deciding — check if decision already exists
 4. **Handle confirmation requests**: When @historian asks for confirmation (e.g., for `memory_forget` or other destructive operations), do not auto-approve. Escalate to the user for explicit confirmation, unless the user has previously granted blanket permission for such actions.

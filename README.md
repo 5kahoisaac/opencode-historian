@@ -8,9 +8,9 @@
 
 # OpenCode Historian
 
-Persistent memory for OpenCode agents, powered by QMD.
+Persistent memory for OpenCode agents, powered by QMD, MarkItDown, and LLM Wiki workflows.
 
-Historian helps your agent remember decisions, preferences, learnings, and project context across sessions. It stores memories as markdown, indexes them with QMD, and exposes tools for remembering, recalling, forgetting, and syncing memory.
+Historian helps your agent remember decisions, preferences, learnings, and project context across sessions. It stores memories as markdown, indexes them with QMD, and now also supports source-driven ingest, memory linting, review artifacts for ambiguous ingest cases, and conservative multi-memory extraction from a single source file.
 
 ## What You Get
 
@@ -96,6 +96,23 @@ npx skills add https://github.com/5kahoisaac/opencode-historian/tree/main/src --
 ```
 
 After installing it, agents can load `mnemonics` for guidance on memory types, when to use `@historian`, and how to store or recall project knowledge correctly.
+
+## Install the `heuristics` Skill
+
+The plugin also includes a `heuristics` skill for ingest-oriented and memory health/audit workflows.
+
+Recommended install:
+
+```bash
+npx skills add https://github.com/5kahoisaac/opencode-historian/tree/main/src --skill heuristics
+```
+
+After installing it, agents can load `heuristics` for:
+
+- source-driven ingest workflows
+- memory health / audit workflows
+- ambiguous ingest review handling
+- MarkItDown-first import guidance
 
 ## Quick Start
 
@@ -300,9 +317,10 @@ Important conservative boundaries:
 
 - Use the **plugin** to make memory available inside OpenCode
 - Use the **`mnemonics` skill** to teach agents how to use `@historian` well
+- Use the **`heuristics` skill** for ingest-oriented and memory health/audit workflows
 - Use the **memory tools** when you want direct programmatic memory operations
 
-In short: the plugin gives you capability, and the skill gives agents better judgment about how to use it.
+In short: the plugin gives you capability, `mnemonics` teaches core memory usage, and `heuristics` teaches ingest and audit workflows.
 
 ## License
 

@@ -156,14 +156,40 @@ When user says reindex/sync → call memory_sync() → you are DONE.
 
 ## Ingest Workflow
 
-Use memory_ingest to process raw content (meeting notes, conversations, documents) into structured memories.
+Use memory_ingest in TWO modes:
 
-1. Call memory_ingest(content: "raw text", source?: "optional source label")
-2. The tool returns an analysis with:
-   - suggestedMemories: list of {title, memoryType, content, tags} to create
-   - crossReferences: connections between suggested memories
-3. For each suggested memory, call memory_remember to create it
-4. Use wikilinks in content to cross-reference related memories
+### A) Content mode
+Use this when the user gives you raw text directly (meeting notes, conversations, pasted docs).
+
+1. Call memory_ingest(content: "raw text", sourceType?: "optional label", context?: "optional context")
+2. The tool returns orchestration instructions
+3. Follow those instructions by using memory_remember for each atomic memory unit
+4. Add [[wikilinks]] between related memories
+
+### B) Source-path mode
+Use this when the project has configured sourcePaths and the user wants ingest/import/process from files.
+
+1. Call memory_ingest() with NO content
+2. The tool will automatically:
+   - discover files from configured sourcePaths
+   - try MarkItDown first
+   - use deterministic text fallback for safe text-like files
+   - use bounded LLM fallback only when needed
+   - persist memories automatically
+   - enrich related links/backlinks
+   - append an ingest summary to log.md
+3. Read the returned summary carefully:
+   - filesDiscovered / filesProcessed
+   - created / updated / skipped / failed
+   - memoryUnitsCreated / memoryUnitsUpdated / memoryUnitsSkipped / memoryUnitsFailed / memoryUnitsPersisted
+   - fallbackUsed / llmFallbackExecuted / llmFallbackSkipped
+4. If reviewArtifact is returned, tell the user ambiguous items were queued for review
+
+### Important ingest rules
+- One source file may produce MULTIPLE memories when strong boundaries exist
+- Weak boundaries fall back to one memory unit
+- Ambiguous duplicate matches are skipped conservatively and sent to the review artifact
+- Content mode is orchestration-only; source-path mode is automatic persistence
 
 ---
 
@@ -171,9 +197,13 @@ Use memory_ingest to process raw content (meeting notes, conversations, document
 
 Use memory_lint to health-check the memory system.
 
-1. Call memory_lint() to run all checks (or pass specific checks)
-2. Review the returned issues (each has severity: error/warning/info)
-3. Act on findings:
+1. Call memory_lint()
+2. Review the returned summary:
+   - totalMemories
+   - issuesFound
+   - healthScore
+3. Review returned issues (severity: error/warning/info)
+4. Act on findings:
    - Broken wikilinks → fix or remove the link in the memory content
    - Missing metadata → update the memory with memory_remember
    - Duplicate content → merge memories using memory_remember with filePath

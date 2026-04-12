@@ -1,7 +1,7 @@
 {
   "name": "opencode-historian",
-  "version": "1.1.3",
-  "description": "Historian — agent with mnemonics for OpenCode powered by qmd",
+  "version": "1.2.0",
+  "description": "Historian — agent with mnemonics for OpenCode powered by qmd, markitdown & llm wiki",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
@@ -14,7 +14,10 @@
     "historian",
     "llm",
     "qmd",
-    "mnemonics"
+    "mnemonics",
+    "knowledge-base",
+    "markitdown",
+    "llm-wiki"
   ],
   "homepage": "https://github.com/5kahoisaac/opencode-historian#readme",
   "repository": {
