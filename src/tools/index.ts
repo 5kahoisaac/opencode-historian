@@ -1,3 +1,4 @@
+import type { OpencodeClient } from '@opencode-ai/sdk';
 import type { PluginConfig } from '../config';
 import type { Logger } from '../utils';
 import { createForgetTool } from './memory-forget';
@@ -12,6 +13,7 @@ export function createMemoryTools(
   config: PluginConfig,
   projectRoot: string,
   logger: Logger,
+  client?: OpencodeClient,
 ) {
   return [
     createListTypesTool(config),
@@ -19,7 +21,7 @@ export function createMemoryTools(
     createRememberTool(config, projectRoot, logger),
     createForgetTool(config, projectRoot, logger),
     createSyncTool(config, projectRoot, logger),
-    createIngestTool(config, projectRoot, logger),
+    createIngestTool(config, projectRoot, logger, {}, { client }),
     createLintTool(config, projectRoot, logger),
   ];
 }

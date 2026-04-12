@@ -67,7 +67,7 @@ export function loadConfigFromPath(
 }
 
 /**
- * Deep merge two objects, handling arrays by concatenating for memoryTypes
+ * Deep merge two objects
  * @param base - Base object to merge into
  * @param override - Object with override values
  * @returns Merged object
@@ -95,6 +95,11 @@ function deepMerge<T extends Record<string, unknown>>(
         ...baseValue,
         ...overrideValue,
       ];
+      continue;
+    }
+
+    if (key === 'sourcePaths' && Array.isArray(overrideValue)) {
+      (result as Record<string, unknown>)[key] = [...overrideValue];
       continue;
     }
 

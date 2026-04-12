@@ -25,6 +25,7 @@ Historian helps your agent remember decisions, preferences, learnings, and proje
 
 - **Bun** `1.3.9+`
 - **QMD** installed globally
+- **Python 3.10+** if you want MarkItDown-powered source ingest
 
 Install QMD:
 
@@ -33,6 +34,44 @@ npm install -g qmd
 # or
 bun install -g qmd
 ```
+
+## Install MarkItDown (Optional, Recommended for Source Ingest)
+
+`memory_ingest` uses MarkItDown first when processing configured `sourcePaths`.
+
+Recommended install:
+
+```bash
+# Basic installation
+pip install markitdown
+
+# Full installation (recommended)
+pip install 'markitdown[all]'
+
+# Selective extras example
+pip install 'markitdown[pdf,docx,pptx]'
+```
+
+Key notes from the official installation guide:
+
+- use a **virtual environment** when possible
+- `markitdown[all]` enables the broadest format support
+- useful extras include:
+  - `pdf`
+  - `docx`
+  - `pptx`
+  - `xlsx`
+  - `xls`
+  - `outlook`
+  - `audio-transcription`
+  - `youtube-transcription`
+  - `az-doc-intel`
+- for richer image metadata extraction, install **ExifTool**
+  - macOS: `brew install exiftool`
+  - Linux: `apt-get install libimage-exiftool-perl`
+
+Official reference:
+- https://mintlify.wiki/microsoft/markitdown/installation
 
 ## Install the Plugin
 
@@ -164,6 +203,98 @@ The plugin registers these memory tools:
 - `memory_forget`
 - `memory_list_types`
 - `memory_sync`
+- `memory_ingest`
+- `memory_lint`
+
+### Memory linting
+
+`memory_lint` audits the `.mnemonics/` store and reports memory health issues such as:
+
+- broken wikilinks
+- missing frontmatter
+- invalid memory types
+- empty content
+- duplicate titles across types
+- stale/orphan memories
+
+It returns a structured summary with:
+
+- `totalMemories`
+- `issuesFound`
+- `healthScore`
+
+Use it when you want to verify memory quality after manual edits or large ingest runs.
+
+### Source-driven ingest
+
+`memory_ingest` supports two modes:
+
+- **content mode**: pass raw `content` directly
+- **source-path mode**: omit `content` and configure `sourcePaths`
+
+In source-path mode, `memory_ingest` now runs an automatic **discover → convert/extract → persist → report** pipeline:
+
+- if `sourcePaths` is empty/missing, returns a no-op summary
+- resolves configured directories/globs into concrete files
+- runs a MarkItDown preflight check (`markitdown --help`)
+- if MarkItDown is available:
+  - attempts MarkItDown conversion per discovered file
+  - persists extracted content automatically through the existing memory pipeline
+- if MarkItDown is unavailable or a conversion fails:
+  - attempts a deterministic text fallback for safe text-like files
+  - if deterministic fallback cannot extract safely, attempts a bounded LLM fallback
+  - persists fallback-extracted content automatically when fallback succeeds
+  - returns explicit failures when no fallback path can safely extract
+
+Per-file results are returned in `files[]`, including:
+
+- `sourcePath`
+- `methodAttempted` (`markitdown`, `text-fallback`, `llm-fallback`, or `none`)
+- `status` (`created`, `updated`, `skipped`, `failed`)
+- `outcome`
+- `message`
+- `fallbackUsed`
+- `fallbackExecution`
+- `memory` metadata when persistence succeeded
+
+Source-path persistence is automatic and now also includes:
+
+- source ingest run metadata embedded in each generated record (`source_path`, `source_fingerprint`, extraction method, fallback marker)
+- normalized LLM fallback output before persistence (text-only extraction, bounded and trimmed)
+- post-persist related-link/backlink enrichment for successfully persisted memories so memory graphs stay connected when high-confidence related memories are found
+- conservative multi-memory extraction from one source file:
+  - strong boundaries (`##` headings or repeated `---` sections) may produce multiple memory units
+  - weak/unclear boundaries fall back to one memory unit for that file
+  - each unit includes `source_unit` and `source_locator` markers for traceability
+- explicit ambiguity handling at unit level:
+  - when duplicate signals are ambiguous (`source_path`/`source_unit` or `source_fingerprint`), that unit is skipped
+  - skip reason is surfaced in per-unit result messages for manual review
+
+Summary counters include:
+
+- `summary.filesDiscovered`
+- `summary.filesProcessed`
+- `summary.created`
+- `summary.updated`
+- `summary.skipped`
+- `summary.failed`
+- `summary.fallbackUsed`
+- `summary.llmFallbackExecuted`
+- `summary.llmFallbackSkipped`
+- `summary.memoryUnitsCreated`
+- `summary.memoryUnitsUpdated`
+- `summary.memoryUnitsSkipped`
+- `summary.memoryUnitsFailed`
+- `summary.memoryUnitsPersisted`
+
+Important conservative boundaries:
+
+- automatic LLM fallback is bounded by strict per-run file count, file-size, and output-size limits
+- text fallback is limited to safe text-like files
+- duplicate handling is conservative; exact source-path/fingerprint signals may update, but uncertain merges are skipped
+- deterministic text fallback is extension-gated and binary-aware (safe text-like files only)
+- memory typing is heuristic and restricted to allowed memory types; weak signals fall back to `context`
+- content mode is preserved: passing non-empty `content` returns orchestration instructions and does not run source-path conversion
 
 ## When to Use the Skill vs. the Tools
 

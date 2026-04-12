@@ -52,7 +52,12 @@ const OpencodeHistorian: Plugin = async (ctx) => {
   });
 
   // Create memory tools using CLI-based functions
-  const memoryToolsArray = createMemoryTools(config, ctx.directory, logger);
+  const memoryToolsArray = createMemoryTools(
+    config,
+    ctx.directory,
+    logger,
+    ctx.client,
+  );
 
   // Convert internal tool format to Plugin ToolDefinition format.
   // Pass through the actual Zod parameter schemas from each tool
@@ -62,10 +67,13 @@ const OpencodeHistorian: Plugin = async (ctx) => {
     toolDefinitions[toolDef.name] = {
       description: toolDef.description,
       args: (toolDef.parameters ?? {}) as ToolDefinition['args'],
-      execute: async (args: Record<string, unknown>, _context: ToolContext) => {
+      execute: async (args: Record<string, unknown>, context: ToolContext) => {
         const result = await (
-          toolDef.handler as (args: Record<string, unknown>) => Promise<unknown>
-        )(args);
+          toolDef.handler as (
+            args: Record<string, unknown>,
+            context?: ToolContext,
+          ) => Promise<unknown>
+        )(args, context);
         return JSON.stringify(result);
       },
     };
@@ -154,3 +162,15 @@ const OpencodeHistorian: Plugin = async (ctx) => {
 };
 
 export default OpencodeHistorian;
+
+export {
+  convertFileWithMarkitdown,
+  type MarkitdownConvertResult,
+  type MarkitdownFailureReason,
+  type MarkitdownFailureResult,
+  type MarkitdownPreflightResult,
+  type MarkitdownSuccessResult,
+  type ProcessRunner,
+  type ProcessRunResult,
+  preflightMarkitdown,
+} from './ingest';
