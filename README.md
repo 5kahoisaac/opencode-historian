@@ -25,9 +25,9 @@ Historian helps your agent remember decisions, preferences, learnings, and proje
 
 - **Bun** `1.3.9+`
 - **QMD** installed globally
-- **Python 3.10+** if you want MarkItDown-powered source ingest
+- **Python 3.10+** for MarkItDown-powered source ingest
 
-Install QMD:
+### Install QMD:
 
 ```bash
 npm install -g qmd
@@ -35,7 +35,7 @@ npm install -g qmd
 bun install -g qmd
 ```
 
-## Install MarkItDown (Optional, Recommended for Source Ingest)
+### Install MarkItDown
 
 `memory_ingest` uses MarkItDown first when processing configured `sourcePaths`.
 
@@ -52,7 +52,7 @@ pip install 'markitdown[all]'
 pip install 'markitdown[pdf,docx,pptx]'
 ```
 
-Key notes from the official installation guide:
+#### Key notes from the official installation guide:
 
 - use a **virtual environment** when possible
 - `markitdown[all]` enables the broadest format support
