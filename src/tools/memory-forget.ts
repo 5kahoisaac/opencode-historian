@@ -1,4 +1,5 @@
 import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { z } from 'zod';
 import type { PluginConfig } from '../config';
 import {
@@ -9,6 +10,7 @@ import {
 } from '../qmd';
 import { isWithinProjectMnemonics } from '../storage';
 import { getBuiltinMemoryTypes, type Logger, qmdPathToFsPath } from '../utils';
+import { appendToLog, generateIndex } from '../wiki';
 
 export function createForgetTool(
   config: PluginConfig,
@@ -101,6 +103,21 @@ export function createForgetTool(
 
           deletedFiles.push(resolvedPath);
           logger.info(`Deleted memory file: ${resolvedPath}`);
+
+          // Fire-and-forget: log deletion to activity log
+          const filename = path.basename(resolvedPath, '.md');
+          const memoryType = path.basename(path.dirname(resolvedPath));
+          appendToLog(projectRoot, {
+            action: 'forget',
+            memoryType,
+            filePath: resolvedPath,
+            title: filename,
+            summary: `Deleted memory: ${filename}`,
+          }).catch((err: unknown) =>
+            logger.warn(
+              `Activity log update failed: ${err instanceof Error ? err.message : String(err)}`,
+            ),
+          );
         } catch (error) {
           errors.push(
             `Error deleting ${resolvedPath}: ${error instanceof Error ? error.message : String(error)}`,
@@ -123,6 +140,15 @@ export function createForgetTool(
           `Background embeddings update failed: ${err instanceof Error ? err.message : String(err)}`,
         ),
       );
+
+      // Fire-and-forget: regenerate wiki index after deletions
+      if (deletedFiles.length > 0) {
+        generateIndex(projectRoot, logger).catch((err: unknown) =>
+          logger.warn(
+            `Index generation failed: ${err instanceof Error ? err.message : String(err)}`,
+          ),
+        );
+      }
 
       return {
         success: deletedFiles.length > 0,

@@ -97,6 +97,8 @@ const OpencodeHistorian: Plugin = async (ctx) => {
         'memory_forget',
         'memory_list_types',
         'memory_sync',
+        'memory_ingest',
+        'memory_lint',
       ];
 
       for (const [agentName, agentConfig = {}] of Object.entries(

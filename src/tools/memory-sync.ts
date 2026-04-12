@@ -1,6 +1,7 @@
 import type { PluginConfig } from '../config';
 import { getIndexName, updateEmbeddings, updateIndex } from '../qmd';
 import { getBuiltinMemoryTypes, type Logger } from '../utils';
+import { appendToLog, generateIndex, generateSchema } from '../wiki';
 
 export function createSyncTool(
   config: PluginConfig,
@@ -30,6 +31,18 @@ export function createSyncTool(
         await updateEmbeddings({ index: indexName });
 
         logger.info('Memory sync complete');
+
+        await generateIndex(projectRoot, logger);
+        await generateSchema(projectRoot, config, logger);
+        appendToLog(projectRoot, {
+          action: 'sync',
+          title: 'Manual sync',
+          summary: 'Reindexed memories and regenerated wiki artifacts',
+        }).catch((err: unknown) =>
+          logger.warn(
+            `Activity log update failed: ${err instanceof Error ? err.message : String(err)}`,
+          ),
+        );
 
         return {
           success: true,

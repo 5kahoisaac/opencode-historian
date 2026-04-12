@@ -9,13 +9,13 @@ import type { PluginConfig } from '../config';
 const HISTORIAN_INSTRUCTIONS = `# Historian Agent
 
 ## Constraint
-ONLY use: memory_remember, memory_recall, memory_forget, memory_list_types, memory_sync
+ONLY use: memory_remember, memory_recall, memory_forget, memory_list_types, memory_sync, memory_ingest, memory_lint
 You do NOT have file system access. Use only the memory tools provided.
 
 **IMPORTANT: Serena memory tools are NOT your memory tools.**
 - serena_read_memory, serena_write_memory, serena_list_memories, serena_delete_memory, serena_edit_memory are for code navigation only
 - These are NOT for storing/recalling historian memories
-- ONLY use the memory_* tools (memory_remember, memory_recall, etc.) which store memories in .mnemonics/ as *.md files
+- ONLY use the memory_* tools which store memories in .mnemonics/ as *.md files
 
 ## FIRST ACTION: Route the Command
 
@@ -27,18 +27,21 @@ Before doing ANYTHING else, identify the user's intent:
 | "forget", "delete" | Go to Forget Workflow |
 | "remember", "save", "update", "merge" | Go to Remember Workflow |
 | "find", "recall", "search", "show", "list" | Go to Recall Workflow |
+| "ingest", "analyze", "process", "import" | Go to Ingest Workflow |
+| "lint", "audit", "health", "check memories" | Go to Lint Workflow |
 
 **For sync/reindex: Call memory_sync() then STOP. Do NOT explore codebase.**
-
-## Command Routing
-- "forget"/"delete" → forget workflow (memory_forget)
-- "remember"/"save"/"update"/"merge" → remember workflow (memory_remember)
-- "find"/"recall"/"search"/"show" → recall workflow (memory_recall)
-- "sync"/"reindex"/"re-index"/"refresh" → sync workflow (memory_sync)
 
 ## Memory Types (exact names, kebab-case)
 architectural-decision, design-decision, learning, user-preference,
 project-preference, issue, context, recurring-pattern, conventions-pattern
+
+## Wikilinks
+Use \`[[memory-title]]\` wikilinks in memory content to cross-reference related memories.
+Example: "See [[jwt-token-expiry]] for the auth decision."
+
+## Index-First Recall
+Start recall by checking index.md for an overview before searching individual memories.
 
 ---
 
@@ -106,6 +109,9 @@ memory_recall(query: "api design", type: "vsearch", memoryType: "architectural-d
 If vsearch/search returns NO results → ALWAYS try query:
 memory_recall(query: "original query", type: "query")
 
+### Step 5: Check related field
+Recall results include a \`related\` array of paths to related memories. Surface these to the user.
+
 **REMEMBER: Default "context" is for SAVING new memories. For RECALL, omit memoryType if unclear.**
 
 ---
@@ -137,7 +143,7 @@ Use memory_sync when:
 
 Just call: memory_sync()
 
-This updates the qmd index and embeddings to reflect manual changes.
+This updates the qmd index, embeddings, wiki index, and schema.
 
 **DO NOT:**
 - Explore the codebase
@@ -145,6 +151,34 @@ This updates the qmd index and embeddings to reflect manual changes.
 - Call memory_recall or memory_remember
 
 When user says reindex/sync → call memory_sync() → you are DONE.
+
+---
+
+## Ingest Workflow
+
+Use memory_ingest to process raw content (meeting notes, conversations, documents) into structured memories.
+
+1. Call memory_ingest(content: "raw text", source?: "optional source label")
+2. The tool returns an analysis with:
+   - suggestedMemories: list of {title, memoryType, content, tags} to create
+   - crossReferences: connections between suggested memories
+3. For each suggested memory, call memory_remember to create it
+4. Use wikilinks in content to cross-reference related memories
+
+---
+
+## Lint Workflow
+
+Use memory_lint to health-check the memory system.
+
+1. Call memory_lint() to run all checks (or pass specific checks)
+2. Review the returned issues (each has severity: error/warning/info)
+3. Act on findings:
+   - Broken wikilinks → fix or remove the link in the memory content
+   - Missing metadata → update the memory with memory_remember
+   - Duplicate content → merge memories using memory_remember with filePath
+   - Orphaned memories → add wikilinks to connect them
+   - Stale memories → update or delete as appropriate
 
 ---`;
 
@@ -177,13 +211,14 @@ export function createHistorianAgent(config: PluginConfig): AgentConfig {
     description: 'Memory management specialist for contextual information',
     mode: 'subagent',
     tools: {
-      // Block all MCP tools - historian only uses memory tools
       'mcp_*': false,
       memory_list_types: true,
       memory_remember: true,
       memory_recall: true,
       memory_forget: true,
       memory_sync: true,
+      memory_ingest: true,
+      memory_lint: true,
     },
     prompt,
   };

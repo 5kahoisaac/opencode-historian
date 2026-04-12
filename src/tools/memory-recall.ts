@@ -11,6 +11,7 @@ export interface MemoryRecallResult {
   title: string;
   memoryType: string;
   tags: string[];
+  related: string[];
   created: string;
   modified: string;
   content: string;
@@ -134,6 +135,7 @@ export function createRecallTool(
               title,
               memoryType: memoryFile.data.memory_type,
               tags: memoryFile.data.tags || [],
+              related: (memoryFile.data.related as string[]) || [],
               created: memoryFile.data.created,
               modified: memoryFile.data.modified,
               content: memoryFile.content,

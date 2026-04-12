@@ -24,6 +24,13 @@ import {
   qmdPathToFsPath,
   toKebabCase,
 } from '../utils';
+import {
+  addBacklinks,
+  appendToLog,
+  findRelatedMemories,
+  generateIndex,
+  updateRelatedField,
+} from '../wiki';
 
 export function createRememberTool(
   config: PluginConfig,
@@ -176,6 +183,43 @@ export function createRememberTool(
           `Background embeddings update failed: ${err instanceof Error ? err.message : String(err)}`,
         ),
       );
+
+      // Fire-and-forget: wiki integration (index, log, related)
+      const filename = path.basename(targetFilePath);
+      generateIndex(projectRoot, logger).catch((err: unknown) =>
+        logger.warn(
+          `Wiki index update failed: ${err instanceof Error ? err.message : String(err)}`,
+        ),
+      );
+      appendToLog(projectRoot, {
+        action: isUpdate ? 'update' : 'remember',
+        memoryType: normalizedMemoryType,
+        filePath: filename,
+        title,
+      }).catch((err: unknown) =>
+        logger.warn(
+          `Activity log append failed: ${err instanceof Error ? err.message : String(err)}`,
+        ),
+      );
+      findRelatedMemories(targetFilePath, projectRoot, logger)
+        .then((relatedPaths) => {
+          if (relatedPaths.length > 0) {
+            return Promise.all([
+              updateRelatedField(
+                targetFilePath,
+                relatedPaths,
+                projectRoot,
+                logger,
+              ),
+              addBacklinks(targetFilePath, relatedPaths, projectRoot, logger),
+            ]);
+          }
+        })
+        .catch((err: unknown) =>
+          logger.warn(
+            `Related memories update failed: ${err instanceof Error ? err.message : String(err)}`,
+          ),
+        );
 
       return {
         success: true,

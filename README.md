@@ -120,6 +120,7 @@ Example:
       "description": "API endpoint decisions"
     }
   ],
+  "sourcePaths": ["./docs/**/*.md", "./sources/"],
   "disabledMcps": ["serena"]
 }
 ```
@@ -132,6 +133,7 @@ Example:
 | `temperature`  | `0.3` | Response creativity |
 | `appendPrompt` | - | Additional instructions appended to the historian prompt |
 | `memoryTypes`  | - | Custom memory types to add alongside the built-ins |
+| `sourcePaths`  | - | Raw source path patterns for ingest context (glob or directory), for example `"./docs/**/*.md"`, `"./sources/"` |
 | `autoCompound` | `true` | Automatically merge new learnings into existing memories when appropriate |
 | `disabledMcps` | - | Bundled MCPs to disable, for example `["serena"]` |
 

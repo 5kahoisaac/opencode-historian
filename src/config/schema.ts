@@ -15,6 +15,7 @@ export const PluginConfigSchema = z.object({
   debug: z.boolean().default(false),
   autoCompound: z.boolean().default(true),
   disabledMcps: z.array(z.string()).optional(),
+  sourcePaths: z.array(z.string()).optional(),
 });
 
 export type MemoryType = z.infer<typeof MemoryTypeSchema>;
