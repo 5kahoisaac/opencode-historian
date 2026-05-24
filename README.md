@@ -105,6 +105,8 @@ Use the `heuristics` skill when you want the agent to turn existing source files
 >
 > "Use heuristics to extract these screenshots into memory: ./notes/*.png"
 
+The skill takes inspiration from the useful part of the "Karpathy LLM Wiki" idea: ingest source material into a durable knowledge base. Instead of adding a separate wiki system, it keeps Historian's existing qmd-backed memory model as the source of truth.
+
 The skill checks available memory types first, extracts content from each file, classifies durable knowledge, and saves it through `@historian`. It can use `markitdown` for documents when available, vision MCPs for images, and LLM extraction as a fallback.
 
 Historian will:
@@ -149,20 +151,22 @@ Example:
       "description": "API endpoint decisions"
     }
   ],
-  "disabledMcps": ["serena"]
+  "disabledMcps": [
+    "serena"
+  ]
 }
 ```
 
 ### Options
 
-| Option         | Default | Description |
-|----------------|---------|-------------|
-| `model`        | - | Model used by the historian agent |
-| `temperature`  | `0.3` | Response creativity |
-| `appendPrompt` | - | Additional instructions appended to the historian prompt |
-| `memoryTypes`  | - | Custom memory types to add alongside the built-ins |
-| `autoCompound` | `true` | Automatically merge new learnings into existing memories when appropriate |
-| `disabledMcps` | - | Bundled MCPs to disable, for example `["serena"]` |
+| Option         | Default | Description                                                               |
+|----------------|---------|---------------------------------------------------------------------------|
+| `model`        | -       | Model used by the historian agent                                         |
+| `temperature`  | `0.3`   | Response creativity                                                       |
+| `appendPrompt` | -       | Additional instructions appended to the historian prompt                  |
+| `memoryTypes`  | -       | Custom memory types to add alongside the built-ins                        |
+| `autoCompound` | `true`  | Automatically merge new learnings into existing memories when appropriate |
+| `disabledMcps` | -       | Bundled MCPs to disable, for example `["serena"]`                         |
 
 ## Storage
 
