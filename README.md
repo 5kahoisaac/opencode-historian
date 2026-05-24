@@ -19,12 +19,14 @@ Historian helps your agent remember decisions, preferences, learnings, and proje
 - Built-in memory types for decisions, issues, learnings, and preferences
 - Markdown-based storage in your repo
 - A bundled `historian` agent and memory tools
+- Bundled `mnemonics` and `heuristics` skills for better agent memory workflows
 - Optional Serena MCP support for code navigation
 
 ## Prerequisites
 
 - **Bun** `1.3.9+`
 - **QMD** installed globally
+- **MarkItDown** optional, for better document extraction with the `heuristics` skill
 
 Install QMD:
 
@@ -33,6 +35,14 @@ npm install -g qmd
 # or
 bun install -g qmd
 ```
+
+Optional: install MarkItDown if you want `heuristics` to convert PDFs, Office documents, HTML, and other document formats before storing memories:
+
+```bash
+pip install markitdown
+```
+
+If MarkItDown is not installed, `heuristics` can still use LLM extraction or other available tools as a fallback.
 
 ## Install the Plugin
 
@@ -46,17 +56,24 @@ Add the plugin to your `opencode.json`:
 
 That is enough to register the plugin, the bundled `historian` agent, and the memory tools.
 
-## Install the `mnemonics` Skill
+## Install the Skills
 
-The plugin also includes a `mnemonics` skill that teaches agents how to use the `@historian` subagent effectively.
+The plugin also includes skills that teach agents how to use Historian well:
+
+- `mnemonics` - memory management guidance for `@historian`
+- `heuristics` - source-to-memory ingestion for files and folders
 
 Recommended install:
 
 ```bash
 npx skills add https://github.com/5kahoisaac/opencode-historian/tree/main/src --skill mnemonics
+npx skills add https://github.com/5kahoisaac/opencode-historian/tree/main/src --skill heuristics
 ```
 
-After installing it, agents can load `mnemonics` for guidance on memory types, when to use `@historian`, and how to store or recall project knowledge correctly.
+After installing them:
+
+- agents can load `mnemonics` for guidance on memory types, when to use `@historian`, and how to store or recall project knowledge correctly
+- agents can load `heuristics` when you want to ingest documents, screenshots, notes, code, or mixed source folders into memories
 
 ## Quick Start
 
@@ -77,6 +94,20 @@ Once the plugin is enabled, talk to the historian agent in natural language.
 > "Do we have any known issues?"
 >
 > "What are my preferences for this project?"
+
+### Ingest files or folders
+
+Use the `heuristics` skill when you want the agent to turn existing source files into memories:
+
+> "Use heuristics to ingest ./docs into historian memories"
+>
+> "Use heuristics on ./research and only save architectural decisions and issues"
+>
+> "Use heuristics to extract these screenshots into memory: ./notes/*.png"
+
+The skill takes inspiration from the useful part of the "Karpathy LLM Wiki" idea: ingest source material into a durable knowledge base. Instead of adding a separate wiki system, it keeps Historian's existing qmd-backed memory model as the source of truth.
+
+The skill checks available memory types first, extracts content from each file, classifies durable knowledge, and saves it through `@historian`. It can use `markitdown` for documents when available, vision MCPs for images, and LLM extraction as a fallback.
 
 Historian will:
 
@@ -120,20 +151,22 @@ Example:
       "description": "API endpoint decisions"
     }
   ],
-  "disabledMcps": ["serena"]
+  "disabledMcps": [
+    "serena"
+  ]
 }
 ```
 
 ### Options
 
-| Option         | Default | Description |
-|----------------|---------|-------------|
-| `model`        | - | Model used by the historian agent |
-| `temperature`  | `0.3` | Response creativity |
-| `appendPrompt` | - | Additional instructions appended to the historian prompt |
-| `memoryTypes`  | - | Custom memory types to add alongside the built-ins |
-| `autoCompound` | `true` | Automatically merge new learnings into existing memories when appropriate |
-| `disabledMcps` | - | Bundled MCPs to disable, for example `["serena"]` |
+| Option         | Default | Description                                                               |
+|----------------|---------|---------------------------------------------------------------------------|
+| `model`        | -       | Model used by the historian agent                                         |
+| `temperature`  | `0.3`   | Response creativity                                                       |
+| `appendPrompt` | -       | Additional instructions appended to the historian prompt                  |
+| `memoryTypes`  | -       | Custom memory types to add alongside the built-ins                        |
+| `autoCompound` | `true`  | Automatically merge new learnings into existing memories when appropriate |
+| `disabledMcps` | -       | Bundled MCPs to disable, for example `["serena"]`                         |
 
 ## Storage
 
@@ -167,9 +200,10 @@ The plugin registers these memory tools:
 
 - Use the **plugin** to make memory available inside OpenCode
 - Use the **`mnemonics` skill** to teach agents how to use `@historian` well
+- Use the **`heuristics` skill** to convert existing files or folders into historian memories
 - Use the **memory tools** when you want direct programmatic memory operations
 
-In short: the plugin gives you capability, and the skill gives agents better judgment about how to use it.
+In short: the plugin gives you capability, and the skills give agents better judgment about how to use it.
 
 ## License
 
